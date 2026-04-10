@@ -19,6 +19,7 @@ import {
   X,
 } from 'lucide-react';
 import { useSocialFeed } from './hooks/useSocialFeed';
+import profileImage from './assets/profile-benjamin.png';
 
 const navItems = [
   { id: 'story', label: 'Propuesta' },
@@ -262,9 +263,8 @@ export default function App() {
                 <MapPin size={14} /> La Plata, Buenos Aires | Disponible para colaboraciones estrategicas
               </span>
               <h1>
-                Ayudo a organizaciones a convertir
-                <span> AI adoption + service transformation </span>
-                en ventaja competitiva real.
+                Convierto AI adoption
+                <span> en resultados de negocio.</span>
               </h1>
               <p>
                 Soy VP Senior Service Manager en CitiService. Combino experiencia en banca corporativa, ejecucion operativa y
@@ -291,6 +291,9 @@ export default function App() {
             </div>
 
             <aside className="hero-aside">
+              <div className="hero-portrait-wrap">
+                <img src={profileImage} alt="Benjamin Ibanez" className="hero-portrait" />
+              </div>
               <p className="eyebrow">Posicionamiento</p>
               <h3>Perfil hibrido para entornos complejos</h3>
               <p>
