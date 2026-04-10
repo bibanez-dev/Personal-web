@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -203,18 +203,33 @@
 
   .hero h1 {
     margin: 0;
-    font-size: clamp(2rem, 5.7vw, 4rem);
-    line-height: 1.04;
-    letter-spacing: -0.04em;
+    font-size: clamp(2rem, 5.2vw, 3.7rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
     color: var(--color-ink-950);
     text-wrap: balance;
-    max-width: 16ch;
+    max-width: 14ch;
   }
 
   .hero h1 span {
-    font-family: "Fraunces", serif;
     color: var(--color-accent-700);
-    font-weight: 600;
+    font-weight: 700;
+  }
+
+  .hero-portrait-wrap {
+    width: 100%;
+    margin-bottom: 1.1rem;
+    border-radius: 0.95rem;
+    overflow: hidden;
+    border: 1px solid rgba(164, 174, 201, 0.45);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .hero-portrait {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: center 30%;
   }
 
   .hero > .container > div > p {
