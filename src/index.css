@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-citi-blue: #003b70;
+  --color-citi-medium: #0057a8;
+  --color-citi-red: #e31837;
+  --color-citi-bg: #f5f6f8;
+  --color-citi-pale: #f0f5fb;
+  
+  --shadow-subtle: 0 2px 10px rgba(0, 0, 0, 0.05);
+  --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+@layer base {
+  body {
+    @apply bg-citi-bg text-gray-800 font-sans antialiased;
+  }
+}
+
+@layer utilities {
+  .glass-nav {
+    @apply sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200;
+  }
+  
+  .citi-gradient-bar {
+    @apply h-1 w-full bg-linear-to-r from-citi-blue to-citi-red;
+  }
+  
+  .skill-bar-container {
+    @apply h-1 w-full bg-gray-200 rounded-full overflow-hidden;
+  }
+  
+  .skill-bar-fill {
+    @apply h-full bg-linear-to-r from-citi-blue to-citi-medium transition-all duration-1000 ease-out;
+  }
+}
+
+@keyframes pulse-green {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+.animate-pulse-green {
+  animation: pulse-green 2s infinite;
+}
