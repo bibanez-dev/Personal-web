@@ -1,578 +1,337 @@
-
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
+  ArrowRight,
   ArrowUpRight,
-  Award,
-  BookOpen,
+  Brain,
   Briefcase,
+  Building2,
   CheckCircle2,
   ChevronUp,
-  Cpu,
-  Globe,
+  ExternalLink,
   Instagram,
+  Layers,
   Linkedin,
   Mail,
   MapPin,
   Menu,
   Sparkles,
+  Target,
   X,
-  Zap,
 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { useSocialFeed } from './hooks/useSocialFeed';
 
-type Language = 'es' | 'en';
-type TranslationMap = Record<string, { es: string; en: string }>;
+const navItems = [
+  { id: 'story', label: 'Propuesta' },
+  { id: 'experience', label: 'Trayectoria' },
+  { id: 'projects', label: 'Proyectos' },
+  { id: 'capabilities', label: 'Capacidades' },
+  { id: 'education', label: 'Formacion' },
+  { id: 'social', label: 'Social' },
+  { id: 'contact', label: 'Contacto' },
+] as const;
 
-const translations: TranslationMap = {
-  nav_about: { es: 'Sobre mi', en: 'About' },
-  nav_exp: { es: 'Experiencia', en: 'Experience' },
-  nav_projects: { es: 'Proyectos', en: 'Projects' },
-  nav_skills: { es: 'Skills', en: 'Skills' },
-  nav_edu: { es: 'Formacion', en: 'Education' },
-  nav_social: { es: 'Social', en: 'Social' },
-  nav_contact: { es: 'Contacto', en: 'Contact' },
-  hero_status: {
-    es: 'La Plata, Buenos Aires - Disponible para colaborar',
-    en: 'La Plata, Buenos Aires - Open to collaborate',
+const impactMetrics = [
+  { value: '10+', label: 'anios liderando operaciones y servicio enterprise' },
+  { value: '500+', label: 'clientes corporativos impactados' },
+  { value: '15+', label: 'iniciativas AI y automatizacion impulsadas' },
+  { value: '3', label: 'frentes estrategicos activos: banca, AI, producto' },
+];
+
+const valuePillars = [
+  {
+    icon: Building2,
+    title: 'Enterprise Service Transformation',
+    text: 'Redisenio operaciones de servicio complejas para elevar velocidad, consistencia y confianza del cliente corporativo.',
   },
-  hero_title: { es: 'Benjamin Ibanez', en: 'Benjamin Ibanez' },
-  hero_role: {
-    es: 'VP Senior Service Manager - CitiService',
-    en: 'VP Senior Service Manager - CitiService',
+  {
+    icon: Brain,
+    title: 'AI Adoption con foco de negocio',
+    text: 'Convierto GenAI en capacidades reales: casos de uso priorizados, procesos claros y medicion de impacto tangible.',
   },
-  hero_desc: {
-    es: 'Lidero excelencia operativa y transformacion digital en servicios financieros corporativos, con foco estrategico en adopcion de IA Generativa.',
-    en: 'I lead operational excellence and digital transformation in corporate financial services, with a strategic focus on Generative AI adoption.',
+  {
+    icon: Layers,
+    title: 'Product Strategy aplicada',
+    text: 'Uso mentalidad de producto para alinear equipos, priorizar valor y ejecutar transformaciones sin perder gobernanza.',
   },
-  hero_cta_primary: { es: 'Contactar', en: 'Contact' },
-  hero_cta_secondary: { es: 'Ver LinkedIn', en: 'View LinkedIn' },
-  hero_card_title: { es: 'Perfil profesional', en: 'Professional profile' },
-  section_about_title: { es: 'Sobre mi', en: 'About me' },
-  section_about_sub: {
-    es: 'Estrategia, operaciones y adopcion de IA para negocio real.',
-    en: 'Strategy, operations, and AI adoption for real business impact.',
+];
+
+const timeline = [
+  {
+    period: '2023 - Hoy',
+    role: 'VP Senior Service Manager - CitiService, Citi Argentina',
+    summary:
+      'Gestion de servicio corporativo end-to-end, mejora de SLAs criticos y liderazgo de iniciativas de transformacion digital con AI.',
   },
-  about_p1: {
-    es: 'Como VP Senior Service Manager en CitiService, optimizo la experiencia de clientes corporativos con modelos operativos claros, medibles y escalables.',
-    en: 'As a VP Senior Service Manager at CitiService, I optimize the corporate client experience through clear, measurable, and scalable operating models.',
+  {
+    period: '2022 - 2023',
+    role: 'Service Delivery Manager - SupportYourApp',
+    summary:
+      'Escalado de operaciones globales, estandarizacion de reporting y mejora de eficiencia operativa para cuentas internacionales.',
   },
-  about_p2: {
-    es: 'Hoy impulso iniciativas internas de GenAI para transformar procesos tradicionales en flujos inteligentes y automatizados.',
-    en: 'I currently drive internal GenAI initiatives that transform traditional processes into intelligent and automated workflows.',
+  {
+    period: '2021 - 2022',
+    role: 'Global Compliance & Reporting Senior - EY',
+    summary:
+      'Coordinacion de reporting ejecutivo y compliance global, con foco en control, trazabilidad y toma de decisiones.',
   },
-  about_p3: {
-    es: 'Me enfoco en combinar la robustez de la banca global con una mentalidad de producto moderna y ejecucion pragmatica.',
-    en: 'I focus on combining global banking robustness with a modern product mindset and pragmatic execution.',
+  {
+    period: '2020 - 2021',
+    role: 'Sr Analyst + Team Leader - DiDi',
+    summary:
+      'Liderazgo de equipos de atencion operacional y optimizacion de tiempos de respuesta en un entorno de alta demanda.',
   },
-  section_exp_title: { es: 'Experiencia', en: 'Experience' },
-  section_exp_sub: {
-    es: 'Trayectoria en operaciones, servicio corporativo y liderazgo.',
-    en: 'Background in operations, corporate service, and leadership.',
+];
+
+const projects = [
+  {
+    name: 'SurIA',
+    type: 'AI adoption platform',
+    challenge: 'Equipos de servicio con alta carga manual, baja trazabilidad y tiempos de respuesta inestables.',
+    approach: 'Disenio de flujos asistidos por AI para automatizar tareas repetitivas, asistir decisiones y reducir friccion operativa.',
+    impact: [
+      'Framework de priorizacion de casos de uso AI por valor de negocio y factibilidad.',
+      'Playbook replicable para escalar adopcion de AI en operaciones de servicio.',
+      'Mejor visibilidad para lideres con metricas de adopcion, calidad y velocidad.',
+    ],
+    tags: ['AI Adoption', 'Automation', 'Ops Design', 'Execution'],
   },
-  section_projects_title: { es: 'Proyectos', en: 'Projects' },
-  section_projects_sub: {
-    es: 'Iniciativas orientadas a impacto, innovacion y producto.',
-    en: 'Initiatives focused on impact, innovation, and product.',
+  {
+    name: 'Postales Argentinas',
+    type: 'Cultural product venture',
+    challenge: 'Construir una marca con identidad local fuerte y ejecucion digital consistente en un mercado saturado.',
+    approach: 'Estrategia de narrativa de marca, producto visual y distribucion digital con ciclos rapidos de aprendizaje.',
+    impact: [
+      'Posicionamiento diferencial con una propuesta cultural y contemporanea.',
+      'Sistema de contenido para sostener frecuencia y coherencia de marca.',
+      'Aprendizajes aplicables a product storytelling en contextos corporativos.',
+    ],
+    tags: ['Brand Strategy', 'Narrative', 'Digital Product', 'Growth'],
   },
-  section_skills_title: { es: 'Skills', en: 'Skills' },
-  section_skills_sub: {
-    es: 'Capacidades clave para construir y escalar resultados.',
-    en: 'Core capabilities to build and scale outcomes.',
+];
+
+const capabilities = [
+  {
+    title: 'AI Adoption Leadership',
+    level: 'Avanzado',
+    evidence: 'Defino roadmaps de adopcion, marco de priorizacion y rituales para pasar de piloto a capacidad estable.',
   },
-  section_edu_title: { es: 'Formacion y certificaciones', en: 'Education and certifications' },
-  section_edu_sub: {
-    es: 'Base academica y aprendizaje continuo orientado a negocio.',
-    en: 'Academic foundation and continuous learning focused on business.',
+  {
+    title: 'Service Model Design',
+    level: 'Experto',
+    evidence: 'Transformo modelos operativos de servicio con foco en SLA, experiencia de cliente y eficiencia.',
   },
-  section_social_title: { es: 'Presencia digital', en: 'Digital presence' },
-  section_social_sub: {
-    es: 'Canales para contenido profesional, cultura e innovacion.',
-    en: 'Channels for professional, culture, and innovation content.',
+  {
+    title: 'Product Strategy para entornos enterprise',
+    level: 'Avanzado',
+    evidence: 'Traduzco objetivos ejecutivos en iniciativas ejecutables con ownership, metricas y gobernanza.',
   },
-  section_contact_title: { es: 'Contacto', en: 'Contact' },
-  section_contact_sub: {
-    es: 'Si queres conversar sobre transformacion, IA o producto, hablemos.',
-    en: 'If you want to discuss transformation, AI, or product, let us connect.',
+  {
+    title: 'Stakeholder & Change Management',
+    level: 'Experto',
+    evidence: 'Alineo liderazgo, equipos y areas de control para ejecutar cambios sin perder estabilidad.',
   },
-  footer_copy: { es: '(c) 2026 - Buenos Aires', en: '(c) 2026 - Buenos Aires' },
-  footer_top: { es: 'Volver arriba', en: 'Back to top' },
+  {
+    title: 'Innovation Program Execution',
+    level: 'Avanzado',
+    evidence: 'Convierto vision de innovacion en programas concretos, con entregables visibles y aprendizaje continuo.',
+  },
+  {
+    title: 'Data-informed decision making',
+    level: 'Solido',
+    evidence: 'Diseno tableros y metricas accionables para gestionar performance y calidad de servicio.',
+  },
+];
+
+const educationItems = [
+  {
+    label: 'Licenciatura en Administracion de Empresas',
+    detail: 'Universidad del Este La Plata',
+    period: '2015 - 2020',
+  },
+];
+
+const certifications = [
+  'Generative AI for Leaders and Business Professionals',
+  'Generative AI Risks and Cyber Security Masterclass',
+  'ChatGPT for Finance and Investment Professionals',
+  'The Fundamentals of Digital Marketing',
+];
+
+const contactLinks = [
+  {
+    icon: Mail,
+    label: 'Email',
+    value: 'bibanez00@gmail.com',
+    href: 'mailto:bibanez00@gmail.com',
+  },
+  {
+    icon: Linkedin,
+    label: 'LinkedIn',
+    value: '/in/ibanezbenjamin',
+    href: 'https://www.linkedin.com/in/ibanezbenjamin/',
+  },
+  {
+    icon: Instagram,
+    label: 'Instagram',
+    value: '@benjaminibanezz',
+    href: 'https://www.instagram.com/benjaminibanezz/',
+  },
+];
+
+const formatDate = (isoDate: string): string => {
+  const date = new Date(isoDate);
+  if (Number.isNaN(date.getTime())) return isoDate;
+
+  return new Intl.DateTimeFormat('es-AR', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(date);
 };
 
-const sections = ['about', 'exp', 'projects', 'skills', 'edu', 'social', 'contact'] as const;
-
-interface SkillBarProps {
-  label: string;
-  percentage: number;
-  animate: boolean;
-}
-
-const SkillBar: React.FC<SkillBarProps> = ({ label, percentage, animate }) => (
-  <div className="space-y-2">
-    <div className="flex items-center justify-between">
-      <span className="text-sm font-semibold text-slate-700">{label}</span>
-      <span className="text-xs font-bold text-brand-700">{percentage}%</span>
-    </div>
-    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200/80">
-      <div
-        className="h-full rounded-full bg-gradient-to-r from-brand-600 to-brand-500 transition-all duration-1000 ease-out"
-        style={{ width: animate ? `${percentage}%` : '0%' }}
-      />
-    </div>
-  </div>
-);
-
-const SectionHeading: React.FC<{ title: string; subtitle: string; align?: 'left' | 'center' }> = ({
+const SectionTitle: React.FC<{ eyebrow: string; title: string; description: string }> = ({
+  eyebrow,
   title,
-  subtitle,
-  align = 'left',
+  description,
 }) => (
-  <div className={`mb-12 space-y-3 ${align === 'center' ? 'text-center' : ''}`}>
-    <h2 className="text-balance text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">{title}</h2>
-    <p
-      className={`text-pretty text-base text-slate-600 md:text-lg ${
-        align === 'center' ? 'mx-auto max-w-2xl' : 'max-w-2xl'
-      }`}
-    >
-      {subtitle}
-    </p>
+  <div className="section-title">
+    <p className="eyebrow">{eyebrow}</p>
+    <h2>{title}</h2>
+    <p>{description}</p>
   </div>
 );
 
 export default function App() {
-  const [lang, setLang] = useState<Language>('es');
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [skillsVisible, setSkillsVisible] = useState(false);
-  const skillsRef = useRef<HTMLDivElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { data: socialData, loading: socialLoading, error: socialError } = useSocialFeed();
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setSkillsVisible(true);
-        }
-      },
-      { threshold: 0.25 },
-    );
-    const target = skillsRef.current;
-    if (target) observer.observe(target);
-    return () => observer.disconnect();
-  }, []);
+  const instagramItems = socialData.instagram.items;
+  const linkedinItems = socialData.linkedin.items;
 
-  const t = (key: string) => (translations[key] ? translations[key][lang] : key);
-  const closeMenu = () => setIsMenuOpen(false);
-  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  const metrics = [
-    { value: '10+', es: 'anos de experiencia', en: 'years of experience' },
-    { value: '500+', es: 'clientes corporativos', en: 'corporate clients' },
-    { value: '15+', es: 'proyectos GenAI', en: 'GenAI projects' },
-    { value: '2', es: 'ventures activas', en: 'active ventures' },
-  ];
-
-  const aboutTags = [
-    'Client Optimization',
-    'Operating Models',
-    'GenAI Adoption',
-    'Corporate Banking',
-    'Entrepreneurship',
-    'Business Strategy',
-    'Global Mindset',
-    'ES / EN',
-  ];
-
-  const infoRows = [
-    { label: { es: 'Empresa', en: 'Company' }, value: 'Citi Argentina' },
-    { label: { es: 'Rol', en: 'Role' }, value: 'VP Senior Service Manager' },
-    { label: { es: 'Area', en: 'Area' }, value: 'CitiService' },
-    { label: { es: 'Ubicacion', en: 'Location' }, value: 'La Plata, Buenos Aires' },
-    { label: { es: 'Email', en: 'Email' }, value: 'bibanez00@gmail.com' },
-    { label: { es: 'Proyectos', en: 'Projects' }, value: 'SurIA - Postales Argentinas' },
-  ];
-
-  const experience = [
-    {
-      company: 'Citi',
-      role: 'VP Senior Service Manager - CitiService',
-      period: { es: 'ene 2023 - presente', en: 'jan 2023 - present' },
-      badge: { es: 'Actual', en: 'Current' },
-      description: {
-        es: 'Gestion end-to-end de cuentas corporativas, mejora de SLAs y programas de transformacion digital con foco en IA.',
-        en: 'End-to-end corporate account management, SLA improvement, and digital transformation programs focused on AI.',
-      },
-      accent: 'bg-brand-700 text-white',
-    },
-    {
-      company: 'SupportYourApp',
-      role: 'Service Delivery Manager',
-      period: { es: 'feb 2022 - ene 2023', en: 'feb 2022 - jan 2023' },
-      badge: { es: '1 ano', en: '1 year' },
-      description: {
-        es: 'Onboarding y reporting para clientes globales, con estandares operativos orientados a calidad y escalabilidad.',
-        en: 'Onboarding and reporting for global clients with operational standards focused on quality and scalability.',
-      },
-      accent: 'bg-slate-900 text-white',
-    },
-    {
-      company: 'EY',
-      role: 'Global Compliance & Reporting Senior',
-      period: { es: 'dic 2021 - feb 2022', en: 'dec 2021 - feb 2022' },
-      badge: { es: '3 meses', en: '3 months' },
-      description: {
-        es: 'Service management office para compliance global y tableros ejecutivos de seguimiento.',
-        en: 'Service management office for global compliance and executive reporting dashboards.',
-      },
-      accent: 'bg-amber-200 text-amber-900',
-    },
-    {
-      company: 'DiDi',
-      role: 'Driver Center Sr. Analyst + Team Leader',
-      period: { es: 'jun 2020 - dic 2021', en: 'jun 2020 - dec 2021' },
-      badge: { es: '1 ano 7 meses', en: '1 year 7 months' },
-      description: {
-        es: 'Operacion diaria y liderazgo de equipo en atencion al conductor, optimizando tiempos de respuesta.',
-        en: 'Daily operations and team leadership in driver support, optimizing response times.',
-      },
-      accent: 'bg-orange-100 text-orange-800',
-    },
-  ];
-
-  const projects = [
-    {
-      name: 'SurIA',
-      category: { es: 'Inteligencia Artificial', en: 'Artificial Intelligence' },
-      description: {
-        es: 'Plataforma orientada a automatizar procesos, reducir tareas manuales y mejorar decisiones con IA aplicada.',
-        en: 'Platform focused on automating processes, reducing manual work, and improving decision making with applied AI.',
-      },
-      tags: ['AI', 'Automation', 'LLMs', 'SaaS'],
-      icon: Cpu,
-    },
-    {
-      name: 'Postales Argentinas',
-      category: { es: 'Cultura y Diseno', en: 'Culture and Design' },
-      description: {
-        es: 'Marca cultural que conecta identidad argentina con una narrativa visual contemporanea y digital-first.',
-        en: 'Cultural brand connecting Argentine identity with a contemporary and digital-first visual narrative.',
-      },
-      tags: ['Brand', 'Culture', 'Design', 'Storytelling'],
-      icon: Globe,
-    },
-  ];
-
-  const skillCategories = [
-    {
-      title: { es: 'Optimizacion y servicio', en: 'Optimization and service' },
-      skills: [
-        { label: 'Client Optimization', val: 95 },
-        { label: 'Operating Model Design', val: 92 },
-        { label: 'Service Transformation', val: 90 },
-        { label: 'Stakeholder Management', val: 93 },
-      ],
-    },
-    {
-      title: { es: 'AI y tecnologia', en: 'AI and technology' },
-      skills: [
-        { label: 'GenAI / LLMs', val: 90 },
-        { label: 'AI Adoption', val: 88 },
-        { label: 'Digital Transformation', val: 86 },
-        { label: 'Automation Workflows', val: 87 },
-      ],
-    },
-    {
-      title: { es: 'Liderazgo y negocio', en: 'Leadership and business' },
-      skills: [
-        { label: 'Team Leadership', val: 91 },
-        { label: 'Project Management', val: 89 },
-        { label: 'Business Strategy', val: 86 },
-        { label: 'Entrepreneurship', val: 88 },
-      ],
-    },
-  ];
-
-  const certifications = [
-    'Generative AI for Leaders & Business Professionals',
-    'Generative AI - Risks & Cyber Security Masterclass 2024',
-    'ChatGPT for Finance and Investment Professionals',
-    'The Fundamentals of Digital Marketing',
-  ];
-
-  const contactItems = [
-    { icon: Mail, label: 'Email', value: 'bibanez00@gmail.com' },
-    { icon: Linkedin, label: 'LinkedIn', value: 'ibanezbenjamin' },
-    { icon: Instagram, label: 'Instagram', value: '@benjaminibanezz' },
-  ];
+  const socialStatus = useMemo(() => {
+    if (socialData.instagram.source === 'instagram_api') {
+      return 'Instagram conectado en vivo via Meta Graph API';
+    }
+    return 'Instagram en modo curado temporal (fallback cacheado)';
+  }, [socialData.instagram.source]);
 
   return (
-    <div className="min-h-screen bg-app-gradient text-slate-900">
-      <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <a href="#" className="inline-flex items-center gap-3" onClick={closeMenu}>
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-brand-700 text-xs font-bold text-white shadow-sm">
-              BI
+    <div className="site-shell">
+      <header className="topbar">
+        <div className="container topbar-inner">
+          <a href="#" className="brand" onClick={() => setMenuOpen(false)}>
+            <span className="brand-mark">BI</span>
+            <span className="brand-copy">
+              <strong>Benjamin Ibanez</strong>
+              <small>AI adoption | Product strategy | Service transformation</small>
             </span>
-            <span className="text-sm font-semibold tracking-tight text-slate-900 sm:text-base">Benjamin Ibanez</span>
           </a>
 
-          <nav className="hidden items-center gap-6 md:flex">
-            {sections.map((section) => (
-              <a
-                key={section}
-                href={`#${section}`}
-                className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
-              >
-                {t(`nav_${section}`)}
+          <nav className="nav-desktop">
+            {navItems.map((item) => (
+              <a key={item.id} href={`#${item.id}`}>
+                {item.label}
               </a>
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
-            <div className="hidden items-center rounded-full border border-slate-200 bg-white p-1 shadow-sm sm:flex">
-              <button
-                onClick={() => setLang('es')}
-                className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
-                  lang === 'es' ? 'bg-brand-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'
-                }`}
-              >
-                ES
-              </button>
-              <button
-                onClick={() => setLang('en')}
-                className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
-                  lang === 'en' ? 'bg-brand-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'
-                }`}
-              >
-                EN
-              </button>
-            </div>
-
-            <button
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 md:hidden"
-              onClick={() => setIsMenuOpen((prev) => !prev)}
-              aria-label="Toggle navigation"
-            >
-              {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
-            </button>
-          </div>
+          <button className="menu-trigger" onClick={() => setMenuOpen((v) => !v)} aria-label="Abrir menu">
+            {menuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
         </div>
 
-        {isMenuOpen && (
-          <div className="border-t border-slate-200 bg-white px-4 py-4 md:hidden">
-            <div className="mx-auto flex max-w-6xl flex-col gap-1">
-              {sections.map((section) => (
-                <a
-                  key={section}
-                  href={`#${section}`}
-                  onClick={closeMenu}
-                  className="rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
-                >
-                  {t(`nav_${section}`)}
+        {menuOpen && (
+          <div className="mobile-nav">
+            <div className="container mobile-nav-items">
+              {navItems.map((item) => (
+                <a key={item.id} href={`#${item.id}`} onClick={() => setMenuOpen(false)}>
+                  {item.label}
                 </a>
               ))}
-              <div className="mt-2 flex items-center gap-2 rounded-xl border border-slate-200 p-1">
-                <button
-                  onClick={() => setLang('es')}
-                  className={`flex-1 rounded-lg py-2 text-xs font-semibold ${
-                    lang === 'es' ? 'bg-brand-700 text-white' : 'text-slate-500'
-                  }`}
-                >
-                  ES
-                </button>
-                <button
-                  onClick={() => setLang('en')}
-                  className={`flex-1 rounded-lg py-2 text-xs font-semibold ${
-                    lang === 'en' ? 'bg-brand-700 text-white' : 'text-slate-500'
-                  }`}
-                >
-                  EN
-                </button>
-              </div>
             </div>
           </div>
         )}
       </header>
 
       <main>
-        <section className="relative overflow-hidden border-b border-slate-200/70">
-          <div className="hero-grid-overlay" aria-hidden="true" />
-          <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 pb-14 pt-14 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-12 lg:px-8 lg:pt-18">
+        <section className="hero" id="top">
+          <div className="container hero-grid">
             <div>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                {t('hero_status')}
-              </div>
-
-              <h1 className="text-balance text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-                {t('hero_title')}
+              <span className="hero-badge">
+                <MapPin size={14} /> La Plata, Buenos Aires | Disponible para colaboraciones estrategicas
+              </span>
+              <h1>
+                Ayudo a organizaciones a convertir
+                <span> AI adoption + service transformation </span>
+                en ventaja competitiva real.
               </h1>
+              <p>
+                Soy VP Senior Service Manager en CitiService. Combino experiencia en banca corporativa, ejecucion operativa y
+                product strategy para disenar transformaciones de alto impacto que si llegan a produccion.
+              </p>
 
-              <p className="mt-4 text-lg font-medium text-brand-700">{t('hero_role')}</p>
-              <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-slate-600 sm:text-lg">{t('hero_desc')}</p>
-
-              <div className="mt-8 flex flex-wrap items-center gap-3">
-                <a href="#contact" className="btn-primary">
-                  {t('hero_cta_primary')}
+              <div className="hero-cta-row">
+                <a className="btn btn-primary" href="#projects">
+                  Ver proyectos <ArrowRight size={16} />
                 </a>
-                <a href="#social" className="btn-secondary">
-                  {t('hero_cta_secondary')}
-                  <ArrowUpRight size={16} />
+                <a className="btn btn-secondary" href="https://www.linkedin.com/in/ibanezbenjamin/" target="_blank" rel="noreferrer">
+                  Conectar en LinkedIn <ArrowUpRight size={16} />
                 </a>
               </div>
 
-              <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {metrics.map((metric) => (
-                  <div key={metric.value + metric.en} className="surface-card px-4 py-4">
-                    <div className="text-2xl font-semibold text-slate-900">{metric.value}</div>
-                    <div className="mt-1 text-xs uppercase tracking-wide text-slate-500">
-                      {lang === 'es' ? metric.es : metric.en}
-                    </div>
-                  </div>
+              <div className="metric-grid">
+                {impactMetrics.map((metric) => (
+                  <article key={metric.value + metric.label} className="metric-card">
+                    <strong>{metric.value}</strong>
+                    <p>{metric.label}</p>
+                  </article>
                 ))}
               </div>
             </div>
 
-            <motion.aside
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="surface-card p-6 sm:p-7"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t('hero_card_title')}</p>
-                  <h3 className="mt-2 text-xl font-semibold text-slate-900">Benjamin Ibanez</h3>
-                  <p className="mt-1 text-sm text-brand-700">VP Senior Service Manager</p>
-                </div>
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-700 text-sm font-bold text-white shadow-sm">
-                  BI
-                </span>
-              </div>
-
-              <div className="my-6 h-px w-full bg-slate-200" />
-              <div className="space-y-3 text-sm text-slate-600">
-                <div className="inline-flex items-center gap-2">
-                  <Briefcase size={16} className="text-brand-700" /> Citi Argentina
-                </div>
-                <div className="inline-flex items-center gap-2">
-                  <MapPin size={16} className="text-brand-700" /> La Plata, Argentina
-                </div>
-                <div className="inline-flex items-center gap-2">
-                  <Mail size={16} className="text-brand-700" /> bibanez00@gmail.com
-                </div>
-                <div className="inline-flex items-center gap-2">
-                  <Zap size={16} className="text-brand-700" /> SurIA - Postales Argentinas
-                </div>
-              </div>
-
-              <div className="mt-6 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm font-medium text-brand-800">
-                Strategy + Operations + AI adoption with enterprise focus.
-              </div>
-            </motion.aside>
+            <aside className="hero-aside">
+              <p className="eyebrow">Posicionamiento</p>
+              <h3>Perfil hibrido para entornos complejos</h3>
+              <p>
+                Lidero la interseccion entre estrategia, operaciones y tecnologia para acelerar decision, ejecucion y resultados en
+                negocios de servicio.
+              </p>
+              <ul>
+                <li>
+                  <CheckCircle2 size={16} /> Vision enterprise con mentalidad builder.
+                </li>
+                <li>
+                  <CheckCircle2 size={16} /> Foco en impacto medible, no en experimentos aislados.
+                </li>
+                <li>
+                  <CheckCircle2 size={16} /> Capacidad de alinear negocio, riesgo y ejecucion.
+                </li>
+              </ul>
+              <a className="inline-link" href="mailto:bibanez00@gmail.com">
+                Iniciar conversacion <ExternalLink size={15} />
+              </a>
+            </aside>
           </div>
         </section>
 
-        <section id="about" className="section-shell">
-          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-            <SectionHeading title={t('section_about_title')} subtitle={t('section_about_sub')} />
-
-            <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-              <article className="surface-card p-7 sm:p-8">
-                <div className="space-y-4 text-pretty text-base leading-relaxed text-slate-600">
-                  <p>{t('about_p1')}</p>
-                  <p>{t('about_p2')}</p>
-                  <p>{t('about_p3')}</p>
-                </div>
-              </article>
-
-              <div className="space-y-6">
-                <div className="surface-card p-6">
-                  <p className="mb-4 text-sm font-semibold text-slate-700">Focus areas</p>
-                  <div className="flex flex-wrap gap-2">
-                    {aboutTags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="surface-card overflow-hidden">
-                  <div className="border-b border-slate-200/70 bg-slate-50 px-6 py-4 text-sm font-semibold text-slate-800">
-                    Professional details
-                  </div>
-                  <div className="divide-y divide-slate-100 px-6 py-2">
-                    {infoRows.map((row) => (
-                      <div key={row.value} className="flex items-center justify-between gap-5 py-3">
-                        <span className="text-xs uppercase tracking-wide text-slate-500">{row.label[lang]}</span>
-                        <span className="text-right text-sm font-semibold text-slate-800">{row.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="exp" className="section-shell section-muted">
-          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-            <SectionHeading title={t('section_exp_title')} subtitle={t('section_exp_sub')} />
-            <div className="space-y-4">
-              {experience.map((item, index) => (
-                <article key={item.company} className="surface-card p-6 transition hover:-translate-y-[2px] hover:shadow-elevated">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                    <div className="flex gap-4">
-                      <div className={`mt-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-xs font-bold ${item.accent}`}>
-                        {item.company.slice(0, 2).toUpperCase()}
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-slate-900">{item.company}</h3>
-                        <p className="mt-1 text-sm font-medium text-brand-700">{item.role}</p>
-                        <p className="mt-1 text-sm text-slate-500">{item.period[lang]}</p>
-                      </div>
-                    </div>
-                    <span
-                      className={`inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${
-                        index === 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'
-                      }`}
-                    >
-                      {item.badge[lang]}
-                    </span>
-                  </div>
-                  <p className="mt-4 text-sm leading-relaxed text-slate-600">{item.description[lang]}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="projects" className="section-shell">
-          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-            <SectionHeading title={t('section_projects_title')} subtitle={t('section_projects_sub')} />
-            <div className="grid gap-6 md:grid-cols-2">
-              {projects.map((project) => {
-                const Icon = project.icon;
+        <section className="section" id="story">
+          <div className="container">
+            <SectionTitle
+              eyebrow="Propuesta de valor"
+              title="No solo gestiono operaciones: construyo capacidades de transformacion"
+              description="Mi diferencial es integrar disciplina enterprise con velocidad de producto para llevar ideas de innovacion a resultados sostenibles."
+            />
+            <div className="pillar-grid">
+              {valuePillars.map((pillar) => {
+                const Icon = pillar.icon;
                 return (
-                  <article key={project.name} className="surface-card p-7 transition hover:-translate-y-[2px] hover:shadow-elevated">
-                    <div className="flex items-center gap-4">
-                      <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
-                        <Icon size={20} />
-                      </span>
-                      <div>
-                        <h3 className="text-xl font-semibold text-slate-900">{project.name}</h3>
-                        <p className="text-xs uppercase tracking-wide text-slate-500">{project.category[lang]}</p>
-                      </div>
-                    </div>
-                    <p className="mt-5 text-sm leading-relaxed text-slate-600">{project.description[lang]}</p>
-                    <div className="mt-5 flex flex-wrap gap-2">
-                      {project.tags.map((tag) => (
-                        <span key={tag} className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
+                  <article key={pillar.title} className="panel panel-hover">
+                    <span className="icon-box">
+                      <Icon size={20} />
+                    </span>
+                    <h3>{pillar.title}</h3>
+                    <p>{pillar.text}</p>
                   </article>
                 );
               })}
@@ -580,19 +339,63 @@ export default function App() {
           </div>
         </section>
 
-        <section id="skills" ref={skillsRef} className="section-shell section-muted">
-          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-            <SectionHeading title={t('section_skills_title')} subtitle={t('section_skills_sub')} />
-            <div className="grid gap-6 md:grid-cols-3">
-              {skillCategories.map((category) => (
-                <article key={category.title.en} className="surface-card p-6">
-                  <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-700">
-                    <Sparkles size={14} />
-                    {category.title[lang]}
+        <section className="section section-muted" id="experience">
+          <div className="container">
+            <SectionTitle
+              eyebrow="Trayectoria"
+              title="Experiencia construida en servicio corporativo, compliance y operaciones globales"
+              description="Un recorrido que combina rigor operativo, liderazgo de equipos y ejecucion de iniciativas estrategicas."
+            />
+            <div className="timeline-list">
+              {timeline.map((item) => (
+                <article key={item.role} className="timeline-item panel">
+                  <div className="timeline-meta">
+                    <span>{item.period}</span>
+                    <Briefcase size={16} />
                   </div>
-                  <div className="space-y-5">
-                    {category.skills.map((skill) => (
-                      <SkillBar key={skill.label} label={skill.label} percentage={skill.val} animate={skillsVisible} />
+                  <h3>{item.role}</h3>
+                  <p>{item.summary}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section" id="projects">
+          <div className="container">
+            <SectionTitle
+              eyebrow="Proyectos"
+              title="Iniciativas con contexto, criterio de priorizacion e impacto"
+              description="Cada proyecto esta pensado como una plataforma de aprendizaje y ejecucion para resolver problemas reales de negocio."
+            />
+            <div className="project-grid">
+              {projects.map((project) => (
+                <article key={project.name} className="panel project-card">
+                  <div className="project-head">
+                    <h3>{project.name}</h3>
+                    <span>{project.type}</span>
+                  </div>
+                  <div className="project-block">
+                    <p className="label">Problema</p>
+                    <p>{project.challenge}</p>
+                  </div>
+                  <div className="project-block">
+                    <p className="label">Enfoque</p>
+                    <p>{project.approach}</p>
+                  </div>
+                  <div className="project-block">
+                    <p className="label">Impacto</p>
+                    <ul>
+                      {project.impact.map((point) => (
+                        <li key={point}>
+                          <CheckCircle2 size={14} /> {point}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="chip-row">
+                    {project.tags.map((tag) => (
+                      <span key={tag}>{tag}</span>
                     ))}
                   </div>
                 </article>
@@ -601,33 +404,55 @@ export default function App() {
           </div>
         </section>
 
-        <section id="edu" className="section-shell">
-          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-            <SectionHeading title={t('section_edu_title')} subtitle={t('section_edu_sub')} />
-            <div className="grid gap-6 md:grid-cols-2">
-              <article className="surface-card p-7">
-                <div className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-800">
-                  <BookOpen size={16} className="text-brand-700" />
-                  {lang === 'es' ? 'Educacion formal' : 'Formal education'}
+        <section className="section section-muted" id="capabilities">
+          <div className="container">
+            <SectionTitle
+              eyebrow="Capacidades"
+              title="Skills priorizadas por valor, no por barras de porcentaje"
+              description="Este stack refleja donde agrego mas valor estrategico y operativo en entornos de transformacion."
+            />
+            <div className="capability-grid">
+              {capabilities.map((capability) => (
+                <article key={capability.title} className="panel capability-card">
+                  <div className="capability-head">
+                    <h3>{capability.title}</h3>
+                    <span>{capability.level}</span>
+                  </div>
+                  <p>{capability.evidence}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section" id="education">
+          <div className="container">
+            <SectionTitle
+              eyebrow="Formacion"
+              title="Base academica y upskilling continuo orientado a AI + negocio"
+              description="Formacion formal mas certificaciones practicas para liderar transformaciones en contextos enterprise."
+            />
+            <div className="education-grid">
+              <article className="panel">
+                <h3>Formacion academica</h3>
+                <div className="edu-list">
+                  {educationItems.map((item) => (
+                    <div key={item.label}>
+                      <strong>{item.label}</strong>
+                      <p>{item.detail}</p>
+                      <span>{item.period}</span>
+                    </div>
+                  ))}
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900">Universidad Del Este La Plata</h3>
-                <p className="mt-2 text-sm text-brand-700">
-                  {lang === 'es' ? 'Lic. en Administracion de Empresas' : 'B.S. in Business Administration'}
-                </p>
-                <p className="mt-3 text-xs uppercase tracking-wide text-slate-500">2015 - 2020</p>
               </article>
 
-              <article className="surface-card p-7">
-                <div className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-800">
-                  <Award size={16} className="text-brand-700" />
-                  {lang === 'es' ? 'Certificaciones' : 'Certifications'}
-                </div>
-                <div className="space-y-3">
+              <article className="panel">
+                <h3>Certificaciones destacadas</h3>
+                <div className="cert-list">
                   {certifications.map((certification) => (
-                    <div key={certification} className="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-                      <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-brand-700" />
-                      <span className="text-sm leading-relaxed text-slate-700">{certification}</span>
-                    </div>
+                    <p key={certification}>
+                      <Sparkles size={14} /> {certification}
+                    </p>
                   ))}
                 </div>
               </article>
@@ -635,96 +460,114 @@ export default function App() {
           </div>
         </section>
 
-        <section id="social" className="section-shell section-muted">
-          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-            <SectionHeading title={t('section_social_title')} subtitle={t('section_social_sub')} />
-            <div className="grid gap-6 md:grid-cols-2">
-              {[
-                { handle: '@benjaminibanezz', accent: 'from-fuchsia-500 to-orange-400', label: 'Instagram' },
-                { handle: '@postalesargentinas', accent: 'from-sky-500 to-amber-400', label: 'Instagram' },
-              ].map((account) => (
-                <article key={account.handle} className="surface-card overflow-hidden">
-                  <div className="flex items-center justify-between border-b border-slate-200/70 px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <span className={`inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${account.accent} text-xs font-bold text-white`}>
-                        {account.handle.slice(1, 3).toUpperCase()}
-                      </span>
-                      <div>
-                        <p className="text-sm font-semibold text-slate-900">{account.handle}</p>
-                        <p className="text-xs text-slate-500">{account.label}</p>
-                      </div>
-                    </div>
-                    <button className="btn-quiet">Ver perfil</button>
-                  </div>
-                  <div className="grid grid-cols-3 gap-1 p-1.5">
-                    {Array.from({ length: 9 }).map((_, idx) => (
-                      <div key={`${account.handle}-${idx}`} className="group relative aspect-square overflow-hidden rounded-md bg-slate-100">
-                        <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-slate-400">Preview</div>
-                        <div className="absolute inset-0 bg-brand-700/65 opacity-0 transition group-hover:opacity-100" />
-                      </div>
-                    ))}
-                  </div>
-                </article>
-              ))}
+        <section className="section section-muted" id="social">
+          <div className="container">
+            <SectionTitle
+              eyebrow="Presencia digital"
+              title="Seccion social conectada para produccion"
+              description="Instagram consume API real cuando hay credenciales. LinkedIn usa una capa curada y mantenible sin scraping."
+            />
+
+            <div className="social-status panel">
+              <p>
+                <Target size={16} /> {socialStatus}
+              </p>
+              <p>
+                <Linkedin size={16} /> LinkedIn curado manualmente desde dataset estructurado y versionable.
+              </p>
             </div>
 
-            <article className="surface-card mt-6 p-7">
-              <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-4">
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-700 text-sm font-bold text-white shadow-sm">BI</span>
-                  <div>
-                    <h3 className="text-lg font-semibold text-slate-900">Benjamin Ibanez</h3>
-                    <p className="text-sm text-slate-600">VP Senior Service Manager - GenAI Adoption - Innovation</p>
-                  </div>
-                </div>
-                <button className="btn-secondary">
-                  {lang === 'es' ? 'Conectar en LinkedIn' : 'Connect on LinkedIn'}
-                  <ArrowUpRight size={16} />
-                </button>
-              </div>
+            {socialError ? <div className="social-alert">No se pudo refrescar el feed en vivo. Se muestra fallback curado.</div> : null}
 
-              <div className="mt-6 grid gap-4 md:grid-cols-3">
-                {[
-                  {
-                    es: 'Explorando el impacto de IA Generativa en banca corporativa. Eficiencia es precision + contexto.',
-                    en: 'Exploring the impact of Generative AI in corporate banking. Efficiency is precision plus context.',
-                  },
-                  {
-                    es: 'Avances en SurIA: automatizar lo repetitivo para liberar foco estrategico.',
-                    en: 'Progress with SurIA: automate repetitive work to unlock strategic focus.',
-                  },
-                  {
-                    es: 'Postales Argentinas: producto cultural con narrativa digital y ejecucion consistente.',
-                    en: 'Postales Argentinas: cultural product with digital storytelling and consistent execution.',
-                  },
-                ].map((post, index) => (
-                  <div key={index} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                    <p className="text-sm leading-relaxed text-slate-700">{post[lang]}</p>
-                    <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
-                      <span>LinkedIn</span>
-                      <span>{index + 1}w</span>
-                    </div>
+            <div className="social-grid">
+              <article className="panel social-card">
+                <div className="social-head">
+                  <div>
+                    <h3>Instagram</h3>
+                    <p>Ultimos contenidos visuales</p>
                   </div>
-                ))}
-              </div>
-            </article>
+                  <a href={socialData.instagram.profileUrl} target="_blank" rel="noreferrer">
+                    Ver perfil <ArrowUpRight size={15} />
+                  </a>
+                </div>
+
+                {socialLoading ? (
+                  <div className="instagram-grid instagram-loading">
+                    {Array.from({ length: 6 }).map((_, index) => (
+                      <div key={`ig-skeleton-${index}`} className="skeleton-box" />
+                    ))}
+                  </div>
+                ) : instagramItems.length === 0 ? (
+                  <div className="empty-state">Todavia no hay posts para mostrar.</div>
+                ) : (
+                  <div className="instagram-grid">
+                    {instagramItems.map((post) => (
+                      <a key={post.id} href={post.url} target="_blank" rel="noreferrer" className="instagram-item">
+                        <img src={post.imageUrl} alt={post.title} loading="lazy" />
+                        <span>{post.title}</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </article>
+
+              <article className="panel social-card">
+                <div className="social-head">
+                  <div>
+                    <h3>LinkedIn Insights</h3>
+                    <p>Feed editorial curado para marca profesional</p>
+                  </div>
+                  <a href={socialData.linkedin.profileUrl} target="_blank" rel="noreferrer">
+                    Ir a LinkedIn <ArrowUpRight size={15} />
+                  </a>
+                </div>
+
+                {socialLoading ? (
+                  <div className="linkedin-list">
+                    {Array.from({ length: 3 }).map((_, index) => (
+                      <div key={`li-skeleton-${index}`} className="skeleton-line" />
+                    ))}
+                  </div>
+                ) : linkedinItems.length === 0 ? (
+                  <div className="empty-state">Todavia no hay entradas curadas.</div>
+                ) : (
+                  <div className="linkedin-list">
+                    {linkedinItems.map((post) => (
+                      <a key={post.id} href={post.url} target="_blank" rel="noreferrer" className="linkedin-item">
+                        <div className="linkedin-meta">
+                          <span>{post.tag ?? 'LinkedIn'}</span>
+                          <time>{formatDate(post.publishedAt)}</time>
+                        </div>
+                        <h4>{post.title}</h4>
+                        <p>{post.excerpt}</p>
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </article>
+            </div>
           </div>
         </section>
 
-        <section id="contact" className="section-shell">
-          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-            <SectionHeading title={t('section_contact_title')} subtitle={t('section_contact_sub')} align="center" />
-            <div className="grid gap-4 md:grid-cols-3">
-              {contactItems.map((item) => {
+        <section className="section" id="contact">
+          <div className="container">
+            <SectionTitle
+              eyebrow="Contacto"
+              title="Si estas impulsando AI adoption o transformacion de servicio, conversemos"
+              description="Disponible para colaboraciones en consultoria estrategica, advisory en adopcion AI y proyectos de innovacion aplicada."
+            />
+
+            <div className="contact-grid">
+              {contactLinks.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <article key={item.label} className="surface-card p-6 text-center transition hover:-translate-y-[2px] hover:shadow-elevated">
-                    <span className="mx-auto inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
-                      <Icon size={20} />
+                  <a key={item.label} href={item.href} target="_blank" rel="noreferrer" className="panel contact-item">
+                    <span>
+                      <Icon size={18} />
                     </span>
-                    <p className="mt-4 text-xs uppercase tracking-wide text-slate-500">{item.label}</p>
-                    <p className="mt-1 text-sm font-semibold text-slate-900">{item.value}</p>
-                  </article>
+                    <p>{item.label}</p>
+                    <strong>{item.value}</strong>
+                  </a>
                 );
               })}
             </div>
@@ -732,23 +575,14 @@ export default function App() {
         </section>
       </main>
 
-      <footer className="border-t border-slate-200 bg-slate-950 py-8 text-white">
-        <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-5 px-4 sm:flex-row sm:px-6 lg:px-8">
-          <div className="inline-flex items-center gap-3">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-xs font-bold">BI</span>
-            <span className="text-sm font-medium text-slate-100">Benjamin Ibanez</span>
-          </div>
-          <p className="text-sm text-slate-400">{t('footer_copy')}</p>
-          <button onClick={scrollToTop} className="inline-flex items-center gap-2 text-sm font-medium text-slate-200 transition hover:text-white">
-            {t('footer_top')}
-            <ChevronUp size={16} />
+      <footer className="footer">
+        <div className="container footer-inner">
+          <p>Benjamin Ibanez | AI adoption, product strategy, service transformation</p>
+          <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            Volver arriba <ChevronUp size={14} />
           </button>
         </div>
       </footer>
-
-      <button className="floating-top" onClick={scrollToTop} aria-label="Back to top">
-        <ChevronUp size={16} />
-      </button>
     </div>
   );
 }
