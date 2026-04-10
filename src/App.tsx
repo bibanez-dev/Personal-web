@@ -1,95 +1,104 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
 
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Linkedin, 
-  Instagram, 
-  Mail, 
-  MapPin, 
-  Briefcase, 
-  ChevronUp, 
-  ExternalLink,
-  Globe,
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  ArrowUpRight,
   Award,
   BookOpen,
+  Briefcase,
+  CheckCircle2,
+  ChevronUp,
   Cpu,
-  TrendingUp,
-  Users,
-  Smartphone,
-  ShieldCheck,
-  Zap
+  Globe,
+  Instagram,
+  Linkedin,
+  Mail,
+  MapPin,
+  Menu,
+  Sparkles,
+  X,
+  Zap,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 
 type Language = 'es' | 'en';
+type TranslationMap = Record<string, { es: string; en: string }>;
 
-interface Translation {
-  [key: string]: {
-    es: string;
-    en: string;
-  };
-}
-
-const translations: Translation = {
-  nav_about: { es: 'Sobre mí', en: 'About me' },
+const translations: TranslationMap = {
+  nav_about: { es: 'Sobre mi', en: 'About' },
   nav_exp: { es: 'Experiencia', en: 'Experience' },
   nav_projects: { es: 'Proyectos', en: 'Projects' },
   nav_skills: { es: 'Skills', en: 'Skills' },
-  nav_edu: { es: 'Formación', en: 'Education' },
+  nav_edu: { es: 'Formacion', en: 'Education' },
   nav_social: { es: 'Social', en: 'Social' },
   nav_contact: { es: 'Contacto', en: 'Contact' },
-  hero_badge: { es: 'La Plata, Buenos Aires · Disponible para conectar', en: 'La Plata, Buenos Aires · Open to connect' },
-  hero_subtitle: { es: 'VP · Senior Service Manager · CitiService', en: 'VP · Senior Service Manager · CitiService' },
-  hero_desc: { es: 'Liderando la excelencia operativa y la transformación digital en servicios financieros corporativos, con un enfoque estratégico en la adopción de Inteligencia Artificial Generativa.', en: 'Leading operational excellence and digital transformation in corporate financial services, with a strategic focus on Generative AI adoption.' },
-  hero_btn_contact: { es: 'Contactar', en: 'Contact' },
-  hero_btn_linkedin: { es: 'LinkedIn', en: 'LinkedIn' },
-  hero_stat_citi: { es: 'CitiService', en: 'CitiService' },
-  hero_stat_ai: { es: 'Proyecto de IA', en: 'AI Project' },
-  hero_stat_culture: { es: 'Cultura argentina', en: 'Argentine Culture' },
-  hero_stat_tz: { es: 'La Plata / GMT-3', en: 'La Plata / GMT-3' },
-  card_employee: { es: 'EMPLEADO CITI', en: 'CITI EMPLOYEE' },
-  about_title: { es: 'Sobre mí', en: 'About me' },
-  about_p1: { es: 'Como <strong>VP Senior Service Manager</strong> en <strong>CitiService</strong>, mi misión es optimizar la experiencia de clientes corporativos a través de modelos operativos eficientes y soluciones innovadoras.', en: 'As a <strong>Senior Service Manager VP</strong> at <strong>CitiService</strong>, my mission is to optimize the corporate client experience through efficient operating models and innovative solutions.' },
-  about_p2: { es: 'Actualmente lidero iniciativas de <strong>adopción de GenAI</strong> internamente, transformando procesos tradicionales en flujos de trabajo inteligentes y automatizados que escalan el valor del negocio.', en: 'I currently lead <strong>GenAI adoption</strong> initiatives internally, transforming traditional processes into intelligent, automated workflows that scale business value.' },
-  about_p3: { es: 'Apasionado por el <strong>producto y la innovación</strong>, busco constantemente el equilibrio entre la robustez de la banca global y la agilidad del ecosistema emprendedor.', en: 'Passionate about <strong>product and innovation</strong>, I constantly seek the balance between the robustness of global banking and the agility of the entrepreneurial ecosystem.' },
-  info_company: { es: 'Empresa', en: 'Company' },
-  info_role: { es: 'Rol', en: 'Role' },
-  info_area: { es: 'Área', en: 'Area' },
-  info_location: { es: 'Ubicación', en: 'Location' },
-  info_projects: { es: 'Proyectos', en: 'Projects' },
-  exp_title: { es: 'Experiencia', en: 'Experience' },
-  exp_citi_badge: { es: 'Actual · 3 años+', en: 'Current · 3 years+' },
-  exp_citi_desc: { es: 'Gestión end-to-end de clientes corporativos, transformación digital, GenAI.', en: 'End-to-end management of corporate clients, digital transformation, GenAI.' },
-  exp_sya_desc: { es: 'Onboarding y reportes de servicio para clientes globales.', en: 'Onboarding and service reporting for global clients.' },
-  exp_ey_desc: { es: 'Service Management Office en cumplimiento global y reportes.', en: 'Service Management Office in global compliance and reporting.' },
-  exp_didi_desc: { es: 'Operaciones y liderazgo de equipo en el centro de conductores.', en: 'Operations and team leadership at the driver center.' },
-  exp_acc_desc: { es: 'Control de proyectos y automatización de operaciones de seguridad.', en: 'Project control and security operations automation.' },
-  proj_title: { es: 'Proyectos', en: 'Projects' },
-  proj_suria_cat: { es: 'Inteligencia Artificial', en: 'Artificial Intelligence' },
-  proj_suria_desc: { es: 'Plataforma de IA para automatizar y escalar procesos...', en: 'AI platform to automate and scale processes...' },
-  proj_postales_cat: { es: 'Cultura & Diseño', en: 'Culture & Design' },
-  proj_postales_desc: { es: 'Marca cultural que celebra la identidad argentina...', en: 'Cultural brand celebrating Argentine identity...' },
-  skills_title: { es: 'Skills', en: 'Skills' },
-  skills_cat1: { es: 'Optimización & Servicio', en: 'Optimization & Service' },
-  skills_cat2: { es: 'AI & Tecnología', en: 'AI & Technology' },
-  skills_cat3: { es: 'Liderazgo & Proyectos', en: 'Leadership & Projects' },
-  edu_title: { es: 'Formación & Certificaciones', en: 'Education & Certifications' },
-  edu_uni: { es: 'Universidad Del Este La Plata', en: 'Universidad Del Este La Plata' },
-  edu_degree: { es: 'Lic. en Administración de Empresas', en: 'B.S. in Business Administration' },
-  social_title: { es: 'Social', en: 'Social' },
-  social_ig_preview: { es: 'Vista previa — imágenes reales desde Instagram', en: 'Preview — real images from Instagram' },
-  social_li_post1: { es: 'Explorando el impacto de la <strong>IA Generativa</strong> en la banca corporativa. La eficiencia no es solo velocidad, es precisión.', en: 'Exploring the impact of <strong>Generative AI</strong> in corporate banking. Efficiency is not just speed, it is precision.' },
-  social_li_post2: { es: 'Orgulloso del progreso con <strong>SurIA</strong>. Automatizar lo repetitivo para liberar el potencial creativo.', en: 'Proud of the progress with <strong>SurIA</strong>. Automating the repetitive to unleash creative potential.' },
-  social_li_post3: { es: '<strong>Postales Argentinas</strong>: conectando con nuestras raíces a través del diseño moderno.', en: '<strong>Postales Argentinas</strong>: connecting with our roots through modern design.' },
-  social_li_connect: { es: 'Conectar en LinkedIn', en: 'Connect on LinkedIn' },
-  contact_title: { es: 'Contacto', en: 'Contact' },
-  contact_desc: { es: '¿Interesado en colaborar o charlar sobre innovación? Estoy a un mensaje de distancia.', en: 'Interested in collaborating or chatting about innovation? I am just a message away.' },
-  footer_copy: { es: '© 2026 · Buenos Aires', en: '© 2026 · Buenos Aires' },
+  hero_status: {
+    es: 'La Plata, Buenos Aires - Disponible para colaborar',
+    en: 'La Plata, Buenos Aires - Open to collaborate',
+  },
+  hero_title: { es: 'Benjamin Ibanez', en: 'Benjamin Ibanez' },
+  hero_role: {
+    es: 'VP Senior Service Manager - CitiService',
+    en: 'VP Senior Service Manager - CitiService',
+  },
+  hero_desc: {
+    es: 'Lidero excelencia operativa y transformacion digital en servicios financieros corporativos, con foco estrategico en adopcion de IA Generativa.',
+    en: 'I lead operational excellence and digital transformation in corporate financial services, with a strategic focus on Generative AI adoption.',
+  },
+  hero_cta_primary: { es: 'Contactar', en: 'Contact' },
+  hero_cta_secondary: { es: 'Ver LinkedIn', en: 'View LinkedIn' },
+  hero_card_title: { es: 'Perfil profesional', en: 'Professional profile' },
+  section_about_title: { es: 'Sobre mi', en: 'About me' },
+  section_about_sub: {
+    es: 'Estrategia, operaciones y adopcion de IA para negocio real.',
+    en: 'Strategy, operations, and AI adoption for real business impact.',
+  },
+  about_p1: {
+    es: 'Como VP Senior Service Manager en CitiService, optimizo la experiencia de clientes corporativos con modelos operativos claros, medibles y escalables.',
+    en: 'As a VP Senior Service Manager at CitiService, I optimize the corporate client experience through clear, measurable, and scalable operating models.',
+  },
+  about_p2: {
+    es: 'Hoy impulso iniciativas internas de GenAI para transformar procesos tradicionales en flujos inteligentes y automatizados.',
+    en: 'I currently drive internal GenAI initiatives that transform traditional processes into intelligent and automated workflows.',
+  },
+  about_p3: {
+    es: 'Me enfoco en combinar la robustez de la banca global con una mentalidad de producto moderna y ejecucion pragmatica.',
+    en: 'I focus on combining global banking robustness with a modern product mindset and pragmatic execution.',
+  },
+  section_exp_title: { es: 'Experiencia', en: 'Experience' },
+  section_exp_sub: {
+    es: 'Trayectoria en operaciones, servicio corporativo y liderazgo.',
+    en: 'Background in operations, corporate service, and leadership.',
+  },
+  section_projects_title: { es: 'Proyectos', en: 'Projects' },
+  section_projects_sub: {
+    es: 'Iniciativas orientadas a impacto, innovacion y producto.',
+    en: 'Initiatives focused on impact, innovation, and product.',
+  },
+  section_skills_title: { es: 'Skills', en: 'Skills' },
+  section_skills_sub: {
+    es: 'Capacidades clave para construir y escalar resultados.',
+    en: 'Core capabilities to build and scale outcomes.',
+  },
+  section_edu_title: { es: 'Formacion y certificaciones', en: 'Education and certifications' },
+  section_edu_sub: {
+    es: 'Base academica y aprendizaje continuo orientado a negocio.',
+    en: 'Academic foundation and continuous learning focused on business.',
+  },
+  section_social_title: { es: 'Presencia digital', en: 'Digital presence' },
+  section_social_sub: {
+    es: 'Canales para contenido profesional, cultura e innovacion.',
+    en: 'Channels for professional, culture, and innovation content.',
+  },
+  section_contact_title: { es: 'Contacto', en: 'Contact' },
+  section_contact_sub: {
+    es: 'Si queres conversar sobre transformacion, IA o producto, hablemos.',
+    en: 'If you want to discuss transformation, AI, or product, let us connect.',
+  },
+  footer_copy: { es: '(c) 2026 - Buenos Aires', en: '(c) 2026 - Buenos Aires' },
   footer_top: { es: 'Volver arriba', en: 'Back to top' },
 };
+
+const sections = ['about', 'exp', 'projects', 'skills', 'edu', 'social', 'contact'] as const;
 
 interface SkillBarProps {
   label: string;
@@ -97,31 +106,43 @@ interface SkillBarProps {
   animate: boolean;
 }
 
-const SkillBar: React.FC<SkillBarProps> = ({ label, percentage, animate }) => {
-  return (
-    <div className="mb-4">
-      <div className="flex justify-between mb-1">
-        <span className="text-sm font-medium text-gray-700">{label}</span>
-        <span className="text-sm font-medium text-citi-medium">{percentage}%</span>
-      </div>
-      <div className="skill-bar-container">
-        <div 
-          className="skill-bar-fill" 
-          style={{ width: animate ? `${percentage}%` : '0%' }}
-        />
-      </div>
+const SkillBar: React.FC<SkillBarProps> = ({ label, percentage, animate }) => (
+  <div className="space-y-2">
+    <div className="flex items-center justify-between">
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
+      <span className="text-xs font-bold text-brand-700">{percentage}%</span>
     </div>
-  );
-};
+    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200/80">
+      <div
+        className="h-full rounded-full bg-gradient-to-r from-brand-600 to-brand-500 transition-all duration-1000 ease-out"
+        style={{ width: animate ? `${percentage}%` : '0%' }}
+      />
+    </div>
+  </div>
+);
+
+const SectionHeading: React.FC<{ title: string; subtitle: string; align?: 'left' | 'center' }> = ({
+  title,
+  subtitle,
+  align = 'left',
+}) => (
+  <div className={`mb-12 space-y-3 ${align === 'center' ? 'text-center' : ''}`}>
+    <h2 className="text-balance text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">{title}</h2>
+    <p
+      className={`text-pretty text-base text-slate-600 md:text-lg ${
+        align === 'center' ? 'mx-auto max-w-2xl' : 'max-w-2xl'
+      }`}
+    >
+      {subtitle}
+    </p>
+  </div>
+);
 
 export default function App() {
   const [lang, setLang] = useState<Language>('es');
-  const [skillsVisible, setSkillsVisible] = useState<boolean>(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [skillsVisible, setSkillsVisible] = useState(false);
   const skillsRef = useRef<HTMLDivElement>(null);
-
-  const t = (key: string) => {
-    return translations[key] ? translations[key][lang] : key;
-  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -130,619 +151,604 @@ export default function App() {
           setSkillsVisible(true);
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.25 },
     );
-
-    if (skillsRef.current) {
-      observer.observe(skillsRef.current);
-    }
-
+    const target = skillsRef.current;
+    if (target) observer.observe(target);
     return () => observer.disconnect();
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const t = (key: string) => (translations[key] ? translations[key][lang] : key);
+  const closeMenu = () => setIsMenuOpen(false);
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const metrics = [
+    { value: '10+', es: 'anos de experiencia', en: 'years of experience' },
+    { value: '500+', es: 'clientes corporativos', en: 'corporate clients' },
+    { value: '15+', es: 'proyectos GenAI', en: 'GenAI projects' },
+    { value: '2', es: 'ventures activas', en: 'active ventures' },
+  ];
+
+  const aboutTags = [
+    'Client Optimization',
+    'Operating Models',
+    'GenAI Adoption',
+    'Corporate Banking',
+    'Entrepreneurship',
+    'Business Strategy',
+    'Global Mindset',
+    'ES / EN',
+  ];
+
+  const infoRows = [
+    { label: { es: 'Empresa', en: 'Company' }, value: 'Citi Argentina' },
+    { label: { es: 'Rol', en: 'Role' }, value: 'VP Senior Service Manager' },
+    { label: { es: 'Area', en: 'Area' }, value: 'CitiService' },
+    { label: { es: 'Ubicacion', en: 'Location' }, value: 'La Plata, Buenos Aires' },
+    { label: { es: 'Email', en: 'Email' }, value: 'bibanez00@gmail.com' },
+    { label: { es: 'Proyectos', en: 'Projects' }, value: 'SurIA - Postales Argentinas' },
+  ];
+
+  const experience = [
+    {
+      company: 'Citi',
+      role: 'VP Senior Service Manager - CitiService',
+      period: { es: 'ene 2023 - presente', en: 'jan 2023 - present' },
+      badge: { es: 'Actual', en: 'Current' },
+      description: {
+        es: 'Gestion end-to-end de cuentas corporativas, mejora de SLAs y programas de transformacion digital con foco en IA.',
+        en: 'End-to-end corporate account management, SLA improvement, and digital transformation programs focused on AI.',
+      },
+      accent: 'bg-brand-700 text-white',
+    },
+    {
+      company: 'SupportYourApp',
+      role: 'Service Delivery Manager',
+      period: { es: 'feb 2022 - ene 2023', en: 'feb 2022 - jan 2023' },
+      badge: { es: '1 ano', en: '1 year' },
+      description: {
+        es: 'Onboarding y reporting para clientes globales, con estandares operativos orientados a calidad y escalabilidad.',
+        en: 'Onboarding and reporting for global clients with operational standards focused on quality and scalability.',
+      },
+      accent: 'bg-slate-900 text-white',
+    },
+    {
+      company: 'EY',
+      role: 'Global Compliance & Reporting Senior',
+      period: { es: 'dic 2021 - feb 2022', en: 'dec 2021 - feb 2022' },
+      badge: { es: '3 meses', en: '3 months' },
+      description: {
+        es: 'Service management office para compliance global y tableros ejecutivos de seguimiento.',
+        en: 'Service management office for global compliance and executive reporting dashboards.',
+      },
+      accent: 'bg-amber-200 text-amber-900',
+    },
+    {
+      company: 'DiDi',
+      role: 'Driver Center Sr. Analyst + Team Leader',
+      period: { es: 'jun 2020 - dic 2021', en: 'jun 2020 - dec 2021' },
+      badge: { es: '1 ano 7 meses', en: '1 year 7 months' },
+      description: {
+        es: 'Operacion diaria y liderazgo de equipo en atencion al conductor, optimizando tiempos de respuesta.',
+        en: 'Daily operations and team leadership in driver support, optimizing response times.',
+      },
+      accent: 'bg-orange-100 text-orange-800',
+    },
+  ];
+
+  const projects = [
+    {
+      name: 'SurIA',
+      category: { es: 'Inteligencia Artificial', en: 'Artificial Intelligence' },
+      description: {
+        es: 'Plataforma orientada a automatizar procesos, reducir tareas manuales y mejorar decisiones con IA aplicada.',
+        en: 'Platform focused on automating processes, reducing manual work, and improving decision making with applied AI.',
+      },
+      tags: ['AI', 'Automation', 'LLMs', 'SaaS'],
+      icon: Cpu,
+    },
+    {
+      name: 'Postales Argentinas',
+      category: { es: 'Cultura y Diseno', en: 'Culture and Design' },
+      description: {
+        es: 'Marca cultural que conecta identidad argentina con una narrativa visual contemporanea y digital-first.',
+        en: 'Cultural brand connecting Argentine identity with a contemporary and digital-first visual narrative.',
+      },
+      tags: ['Brand', 'Culture', 'Design', 'Storytelling'],
+      icon: Globe,
+    },
+  ];
+
+  const skillCategories = [
+    {
+      title: { es: 'Optimizacion y servicio', en: 'Optimization and service' },
+      skills: [
+        { label: 'Client Optimization', val: 95 },
+        { label: 'Operating Model Design', val: 92 },
+        { label: 'Service Transformation', val: 90 },
+        { label: 'Stakeholder Management', val: 93 },
+      ],
+    },
+    {
+      title: { es: 'AI y tecnologia', en: 'AI and technology' },
+      skills: [
+        { label: 'GenAI / LLMs', val: 90 },
+        { label: 'AI Adoption', val: 88 },
+        { label: 'Digital Transformation', val: 86 },
+        { label: 'Automation Workflows', val: 87 },
+      ],
+    },
+    {
+      title: { es: 'Liderazgo y negocio', en: 'Leadership and business' },
+      skills: [
+        { label: 'Team Leadership', val: 91 },
+        { label: 'Project Management', val: 89 },
+        { label: 'Business Strategy', val: 86 },
+        { label: 'Entrepreneurship', val: 88 },
+      ],
+    },
+  ];
+
+  const certifications = [
+    'Generative AI for Leaders & Business Professionals',
+    'Generative AI - Risks & Cyber Security Masterclass 2024',
+    'ChatGPT for Finance and Investment Professionals',
+    'The Fundamentals of Digital Marketing',
+  ];
+
+  const contactItems = [
+    { icon: Mail, label: 'Email', value: 'bibanez00@gmail.com' },
+    { icon: Linkedin, label: 'LinkedIn', value: 'ibanezbenjamin' },
+    { icon: Instagram, label: 'Instagram', value: '@benjaminibanezz' },
+  ];
 
   return (
-    <div className="min-h-screen">
-      {/* Navbar */}
-      <nav className="glass-nav h-16 flex items-center px-6 md:px-12">
-        <div className="flex items-center gap-4">
-          <div className="w-[2px] h-6 bg-citi-red"></div>
-          <span className="font-bold text-lg tracking-tight text-citi-blue">Benjamín Ibáñez</span>
-        </div>
-        
-        <div className="hidden md:flex flex-1 justify-center gap-8">
-          {['about', 'exp', 'projects', 'skills', 'edu', 'social', 'contact'].map((item) => (
-            <a 
-              key={item} 
-              href={`#${item}`} 
-              className="text-sm font-medium text-gray-600 hover:text-citi-blue transition-colors"
-            >
-              {t(`nav_${item}`)}
-            </a>
-          ))}
-        </div>
-        
-        <div className="flex-1 md:flex-none flex justify-end">
-          <div className="bg-gray-100 p-1 rounded-full flex gap-1">
-            <button 
-              onClick={() => setLang('es')}
-              className={`px-3 py-1 text-xs font-bold rounded-full transition-all ${lang === 'es' ? 'bg-citi-blue text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-            >
-              ES
-            </button>
-            <button 
-              onClick={() => setLang('en')}
-              className={`px-3 py-1 text-xs font-bold rounded-full transition-all ${lang === 'en' ? 'bg-citi-blue text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-            >
-              EN
-            </button>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-app-gradient text-slate-900">
+      <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <a href="#" className="inline-flex items-center gap-3" onClick={closeMenu}>
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-brand-700 text-xs font-bold text-white shadow-sm">
+              BI
+            </span>
+            <span className="text-sm font-semibold tracking-tight text-slate-900 sm:text-base">Benjamin Ibanez</span>
+          </a>
 
-      {/* Hero Section */}
-      <section className="relative min-h-[calc(100vh-64px)] flex flex-col">
-        <div className="citi-gradient-bar"></div>
-        
-        <div className="flex-1 container mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-center gap-12 py-12">
-          {/* Left Column */}
-          <div className="flex-1 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white rounded-full border border-gray-200 shadow-sm mb-6">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse-green"></span>
-              <span className="text-xs font-medium text-gray-600">{t('hero_badge')}</span>
-            </div>
-            
-            <h1 className="text-5xl md:text-7xl font-extrabold text-citi-blue leading-tight mb-4">
-              Benjamín Ibáñez
-            </h1>
-            
-            <h2 className="text-xl md:text-2xl font-semibold text-citi-medium mb-6">
-              {t('hero_subtitle')}
-            </h2>
-            
-            <p className="text-lg text-gray-500 font-light max-w-[540px] leading-relaxed mb-8">
-              {t('hero_desc')}
-            </p>
-            
-            <div className="flex flex-wrap gap-4 mb-12">
-              <button className="px-8 py-3 bg-citi-blue text-white font-bold rounded-lg hover:bg-citi-medium transition-all shadow-md hover:shadow-lg">
-                {t('hero_btn_contact')}
+          <nav className="hidden items-center gap-6 md:flex">
+            {sections.map((section) => (
+              <a
+                key={section}
+                href={`#${section}`}
+                className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
+              >
+                {t(`nav_${section}`)}
+              </a>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <div className="hidden items-center rounded-full border border-slate-200 bg-white p-1 shadow-sm sm:flex">
+              <button
+                onClick={() => setLang('es')}
+                className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                  lang === 'es' ? 'bg-brand-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                ES
               </button>
-              <button className="px-8 py-3 border-2 border-citi-blue text-citi-blue font-bold rounded-lg hover:bg-citi-pale transition-all">
-                {t('hero_btn_linkedin')}
+              <button
+                onClick={() => setLang('en')}
+                className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                  lang === 'en' ? 'bg-brand-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                EN
               </button>
             </div>
-            
-            <div className="flex items-center gap-6 py-4 border-t border-gray-200">
-              {[
-                { label: t('hero_stat_citi') },
-                { label: t('hero_stat_ai') },
-                { label: t('hero_stat_culture') },
-                { label: t('hero_stat_tz') }
-              ].map((stat, i) => (
-                <div key={i} className="flex items-center gap-6">
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{stat.label}</span>
-                  {i < 3 && <div className="w-[1px] h-4 bg-gray-200"></div>}
-                </div>
+
+            <button
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 md:hidden"
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+              aria-label="Toggle navigation"
+            >
+              {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
+        </div>
+
+        {isMenuOpen && (
+          <div className="border-t border-slate-200 bg-white px-4 py-4 md:hidden">
+            <div className="mx-auto flex max-w-6xl flex-col gap-1">
+              {sections.map((section) => (
+                <a
+                  key={section}
+                  href={`#${section}`}
+                  onClick={closeMenu}
+                  className="rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                >
+                  {t(`nav_${section}`)}
+                </a>
               ))}
+              <div className="mt-2 flex items-center gap-2 rounded-xl border border-slate-200 p-1">
+                <button
+                  onClick={() => setLang('es')}
+                  className={`flex-1 rounded-lg py-2 text-xs font-semibold ${
+                    lang === 'es' ? 'bg-brand-700 text-white' : 'text-slate-500'
+                  }`}
+                >
+                  ES
+                </button>
+                <button
+                  onClick={() => setLang('en')}
+                  className={`flex-1 rounded-lg py-2 text-xs font-semibold ${
+                    lang === 'en' ? 'bg-brand-700 text-white' : 'text-slate-500'
+                  }`}
+                >
+                  EN
+                </button>
+              </div>
             </div>
           </div>
-          
-          {/* Right Column - Employee Card */}
-          <div className="w-full md:w-auto flex justify-center">
-            <motion.div 
+        )}
+      </header>
+
+      <main>
+        <section className="relative overflow-hidden border-b border-slate-200/70">
+          <div className="hero-grid-overlay" aria-hidden="true" />
+          <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 pb-14 pt-14 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-12 lg:px-8 lg:pt-18">
+            <div>
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                {t('hero_status')}
+              </div>
+
+              <h1 className="text-balance text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+                {t('hero_title')}
+              </h1>
+
+              <p className="mt-4 text-lg font-medium text-brand-700">{t('hero_role')}</p>
+              <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-slate-600 sm:text-lg">{t('hero_desc')}</p>
+
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <a href="#contact" className="btn-primary">
+                  {t('hero_cta_primary')}
+                </a>
+                <a href="#social" className="btn-secondary">
+                  {t('hero_cta_secondary')}
+                  <ArrowUpRight size={16} />
+                </a>
+              </div>
+
+              <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {metrics.map((metric) => (
+                  <div key={metric.value + metric.en} className="surface-card px-4 py-4">
+                    <div className="text-2xl font-semibold text-slate-900">{metric.value}</div>
+                    <div className="mt-1 text-xs uppercase tracking-wide text-slate-500">
+                      {lang === 'es' ? metric.es : metric.en}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <motion.aside
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="w-[280px] bg-white rounded-2xl shadow-medium border-t-4 border-linear-to-r from-citi-blue to-citi-red overflow-hidden"
+              transition={{ duration: 0.6, ease: 'easeOut' }}
+              className="surface-card p-6 sm:p-7"
             >
-              <div className="p-6 flex flex-col items-center">
-                <div className="w-20 h-20 rounded-full bg-linear-to-br from-citi-blue to-citi-medium flex items-center justify-center text-white text-2xl font-bold mb-4 shadow-inner">
-                  BI
-                </div>
-                <h3 className="font-bold text-lg text-citi-blue">Benjamín Ibáñez</h3>
-                <p className="text-xs text-citi-medium font-medium mb-4">VP · Senior Service Manager</p>
-                
-                <div className="w-full h-[1px] bg-gray-100 mb-4"></div>
-                
-                <div className="w-full space-y-3 mb-6">
-                  <div className="flex items-center gap-3 text-sm text-gray-600">
-                    <Briefcase size={14} className="text-citi-blue" />
-                    <span>Citi Argentina</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm text-gray-600">
-                    <MapPin size={14} className="text-citi-blue" />
-                    <span>La Plata, AR</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm text-gray-600">
-                    <Mail size={14} className="text-citi-blue" />
-                    <span className="truncate">bibanez00@gmail.com</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm text-gray-600">
-                    <Zap size={14} className="text-citi-blue" />
-                    <span>SurIA · Postales ARG</span>
-                  </div>
-                </div>
-                
-                <div className="w-full py-2 bg-citi-pale rounded-lg flex items-center justify-center gap-2">
-                  <div className="w-6 h-4 bg-citi-blue rounded-sm flex items-center justify-center">
-                    <div className="w-3 h-2 border-t-2 border-white rounded-full"></div>
-                  </div>
-                  <span className="text-[10px] font-black text-citi-blue tracking-tighter">{t('card_employee')}</span>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-        
-        {/* Bottom Stats Bar */}
-        <div className="bg-citi-pale py-8">
-          <div className="container mx-auto px-6 md:px-12 flex flex-wrap justify-between gap-8">
-            {[
-              { val: '10+', label: lang === 'es' ? 'Años de Experiencia' : 'Years of Experience' },
-              { val: '500+', label: lang === 'es' ? 'Clientes Corporativos' : 'Corporate Clients' },
-              { val: '15+', label: lang === 'es' ? 'Proyectos GenAI' : 'GenAI Projects' },
-              { val: '2', label: lang === 'es' ? 'Emprendimientos' : 'Ventures' }
-            ].map((item, i) => (
-              <div key={i} className="flex flex-col">
-                <span className="text-3xl font-extrabold text-citi-blue">{item.val}</span>
-                <span className="text-xs font-bold text-citi-medium uppercase tracking-wider">{item.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section id="about" className="py-24 bg-white">
-        <div className="container mx-auto px-6 md:px-12">
-          <div className="flex flex-col md:flex-row gap-16">
-            <div className="flex-1">
-              <h2 className="text-3xl font-bold text-citi-blue mb-8">{t('about_title')}</h2>
-              <div className="space-y-6 text-gray-600 leading-relaxed">
-                <p dangerouslySetInnerHTML={{ __html: t('about_p1') }} />
-                <p dangerouslySetInnerHTML={{ __html: t('about_p2') }} />
-                <p dangerouslySetInnerHTML={{ __html: t('about_p3') }} />
-              </div>
-            </div>
-            
-            <div className="flex-1 flex flex-col gap-8">
-              <div className="flex flex-wrap gap-3">
-                {[
-                  '🚀 Client Optimization', '⚙️ Operating Models', '🤖 GenAI Adoption', 
-                  '🏦 Banca Corporativa', '💡 Entrepreneurship', '🇦🇷 Culture', 
-                  '🌍 Global mindset', '🗣️ ES/EN'
-                ].map((pill, i) => (
-                  <div 
-                    key={i} 
-                    className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-medium text-gray-700 hover:bg-citi-pale hover:border-citi-medium transition-all cursor-default"
-                  >
-                    {pill}
-                  </div>
-                ))}
-              </div>
-              
-              <div className="bg-white rounded-xl shadow-subtle border border-gray-100 overflow-hidden">
-                <div className="bg-citi-blue p-4">
-                  <h4 className="text-white font-bold text-sm uppercase tracking-widest">Información Profesional</h4>
-                </div>
-                <div className="p-6 space-y-4">
-                  {[
-                    { label: t('info_company'), val: 'Citi Argentina' },
-                    { label: t('info_role'), val: 'VP · Senior Service Manager' },
-                    { label: t('info_area'), val: 'CitiService' },
-                    { label: t('info_location'), val: 'La Plata, Buenos Aires' },
-                    { label: 'Email', val: 'bibanez00@gmail.com' },
-                    { label: t('info_projects'), val: 'SurIA · Postales Argentinas' }
-                  ].map((row, i) => (
-                    <div key={i} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
-                      <span className="text-xs font-bold text-gray-400 uppercase">{row.label}</span>
-                      <span className="text-sm font-semibold text-citi-blue">{row.val}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Experience Section */}
-      <section id="exp" className="py-24 bg-citi-bg">
-        <div className="container mx-auto px-6 md:px-12">
-          <h2 className="text-3xl font-bold text-citi-blue mb-16 text-center">{t('exp_title')}</h2>
-          
-          <div className="max-w-4xl mx-auto space-y-8">
-            {[
-              {
-                company: 'Citi',
-                role: 'VP Senior Service Manager · CitiService',
-                period: 'ene 2023–presente',
-                badge: t('exp_citi_badge'),
-                desc: t('exp_citi_desc'),
-                icon: <div className="w-full h-full bg-citi-blue flex items-center justify-center text-white font-black text-xs">citi</div>
-              },
-              {
-                company: 'SupportYourApp',
-                role: 'Service Delivery Manager',
-                period: 'feb 2022–ene 2023',
-                badge: '1 año',
-                desc: t('exp_sya_desc'),
-                icon: <div className="w-full h-full bg-white flex items-center justify-center text-xl">🎧</div>
-              },
-              {
-                company: 'EY',
-                role: 'Global Compliance & Reporting Senior',
-                period: 'dic 2021–feb 2022',
-                badge: '3 meses',
-                desc: t('exp_ey_desc'),
-                icon: <div className="w-full h-full bg-[#2E2E38] flex items-center justify-center text-[#FFE600] font-bold text-xs">EY</div>
-              },
-              {
-                company: 'DiDi',
-                role: 'Driver Center Sr. Analyst + Team Leader',
-                period: 'jun 2020–dic 2021',
-                badge: '1 año 7 meses',
-                desc: t('exp_didi_desc'),
-                icon: <div className="w-full h-full bg-black flex items-center justify-center text-[#FF7D00] font-bold text-xs">DiDi</div>
-              },
-              {
-                company: 'Accenture',
-                role: 'PMO Analyst + Security Operations',
-                period: 'jul 2014–sep 2017',
-                badge: '3 años 3 meses',
-                desc: t('exp_acc_desc'),
-                icon: <div className="w-full h-full bg-[#A100FF] flex items-center justify-center text-white font-bold text-xs text-center leading-tight">ACC</div>
-              }
-            ].map((item, i) => (
-              <div 
-                key={i} 
-                className="group relative flex gap-6 p-6 bg-white rounded-xl border border-transparent hover:border-citi-pale hover:shadow-medium transition-all duration-300"
-              >
-                <div className="flex-none w-12 h-12 rounded-lg overflow-hidden shadow-sm">
-                  {item.icon}
-                </div>
-                <div className="flex-1">
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <h3 className="font-bold text-lg text-citi-blue">{item.company}</h3>
-                    <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${i === 0 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                      {item.badge}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm font-semibold text-citi-medium mb-3">
-                    <span>{item.role}</span>
-                    <span className="text-gray-300">•</span>
-                    <span className="text-gray-400 font-normal">{item.period}</span>
-                  </div>
-                  <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Projects Section */}
-      <section id="projects" className="py-24 bg-white">
-        <div className="container mx-auto px-6 md:px-12">
-          <h2 className="text-3xl font-bold text-citi-blue mb-16 text-center">{t('proj_title')}</h2>
-          
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {[
-              {
-                name: 'SurIA',
-                cat: t('proj_suria_cat'),
-                desc: t('proj_suria_desc'),
-                tags: ['AI', 'Automation', 'LLMs', 'SaaS'],
-                icon: <Cpu className="text-citi-blue" />
-              },
-              {
-                name: 'Postales Argentinas',
-                cat: t('proj_postales_cat'),
-                desc: t('proj_postales_desc'),
-                tags: ['Culture', 'Design', 'Brand', 'Argentina'],
-                icon: <Globe className="text-citi-blue" />
-              }
-            ].map((proj, i) => (
-              <div 
-                key={i} 
-                className="group p-8 bg-white border border-gray-100 rounded-2xl shadow-subtle hover:shadow-medium hover:-translate-y-1 hover:border-t-4 hover:border-t-citi-pale transition-all duration-300"
-              >
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 bg-citi-pale rounded-xl flex items-center justify-center">
-                    {proj.icon}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-xl text-citi-blue">{proj.name}</h3>
-                    <span className="text-xs font-bold text-citi-medium uppercase tracking-widest">{proj.cat}</span>
-                  </div>
-                </div>
-                <p className="text-gray-500 mb-8 leading-relaxed">{proj.desc}</p>
-                <div className="flex flex-wrap gap-2">
-                  {proj.tags.map((tag, j) => (
-                    <span key={j} className="px-3 py-1 bg-gray-50 text-gray-400 text-[10px] font-bold uppercase tracking-wider rounded-md">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Skills Section */}
-      <section id="skills" ref={skillsRef} className="py-24 bg-citi-bg">
-        <div className="container mx-auto px-6 md:px-12">
-          <h2 className="text-3xl font-bold text-citi-blue mb-16 text-center">{t('skills_title')}</h2>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: t('skills_cat1'),
-                icon: '📈',
-                skills: [
-                  { label: 'Client Optimization', val: 95 },
-                  { label: 'Operating Model Optimization', val: 92 },
-                  { label: 'Service Transformation', val: 90 },
-                  { label: 'Gestión de stakeholders', val: 93 }
-                ]
-              },
-              {
-                title: t('skills_cat2'),
-                icon: '🤖',
-                skills: [
-                  { label: 'GenAI / LLMs', val: 90 },
-                  { label: 'Adopción de IA', val: 88 },
-                  { label: 'Digital Transformation', val: 85 },
-                  { label: 'Automation & Self-service', val: 87 }
-                ]
-              },
-              {
-                title: t('skills_cat3'),
-                icon: '🎯',
-                skills: [
-                  { label: 'Liderazgo de equipos', val: 91 },
-                  { label: 'Gestión de proyectos', val: 89 },
-                  { label: 'Estrategia de negocio', val: 86 },
-                  { label: 'Emprendimiento', val: 88 }
-                ]
-              }
-            ].map((cat, i) => (
-              <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-subtle border border-gray-100">
-                <div className="bg-citi-pale p-6 border-b border-gray-100 flex items-center gap-3">
-                  <span className="text-2xl">{cat.icon}</span>
-                  <h3 className="font-bold text-citi-blue">{cat.title}</h3>
-                </div>
-                <div className="p-6">
-                  {cat.skills.map((skill, j) => (
-                    <SkillBar 
-                      key={j} 
-                      label={skill.label} 
-                      percentage={skill.val} 
-                      animate={skillsVisible} 
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Education & Certifications */}
-      <section id="edu" className="py-24 bg-white">
-        <div className="container mx-auto px-6 md:px-12">
-          <h2 className="text-3xl font-bold text-citi-blue mb-16 text-center">{t('edu_title')}</h2>
-          
-          <div className="grid md:grid-cols-2 gap-16 max-w-5xl mx-auto">
-            {/* Education */}
-            <div>
-              <div className="flex items-center gap-3 mb-8">
-                <BookOpen className="text-citi-blue" />
-                <h3 className="text-xl font-bold text-citi-blue uppercase tracking-widest text-sm">Educación Formal</h3>
-              </div>
-              <div className="p-6 bg-citi-bg rounded-2xl border border-gray-100">
-                <h4 className="font-bold text-citi-blue mb-1">{t('edu_uni')}</h4>
-                <p className="text-citi-medium font-semibold text-sm mb-4">{t('edu_degree')}</p>
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">2015–2020</span>
-              </div>
-            </div>
-            
-            {/* Certifications */}
-            <div>
-              <div className="flex items-center gap-3 mb-8">
-                <Award className="text-citi-blue" />
-                <h3 className="text-xl font-bold text-citi-blue uppercase tracking-widest text-sm">Certificaciones</h3>
-              </div>
-              <div className="grid grid-cols-1 gap-4">
-                {[
-                  { title: 'Generative AI for Leaders & Business Professionals', icon: '🤖' },
-                  { title: 'Generative AI – Risks & Cyber Security Masterclass 2024', icon: '🔐' },
-                  { title: 'ChatGPT for Finance and Investment Professionals', icon: '💹' },
-                  { title: 'The Fundamentals of Digital Marketing', icon: '📱' }
-                ].map((cert, i) => (
-                  <div key={i} className="flex items-center gap-4 p-4 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-subtle transition-all">
-                    <span className="text-xl">{cert.icon}</span>
-                    <span className="text-sm font-semibold text-gray-700">{cert.title}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Social Section */}
-      <section id="social" className="py-24 bg-citi-bg">
-        <div className="container mx-auto px-6 md:px-12">
-          <h2 className="text-3xl font-bold text-citi-blue mb-16 text-center">{t('social_title')}</h2>
-          
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
-            {/* Instagram @benjaminibanezz */}
-            <div className="bg-white rounded-2xl shadow-subtle overflow-hidden border border-gray-100">
-              <div className="p-6 flex items-center justify-between border-b border-gray-50">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-linear-to-tr from-yellow-400 via-red-500 to-purple-600 p-[2px]">
-                    <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-                      <div className="w-full h-full bg-linear-to-br from-citi-blue to-citi-medium flex items-center justify-center text-white text-[10px] font-bold">BI</div>
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-sm text-gray-800">@benjaminibanezz</h4>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Instagram</p>
-                  </div>
-                </div>
-                <button className="px-4 py-1.5 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider rounded-full hover:bg-gray-200 transition-all">
-                  Ver perfil
-                </button>
-              </div>
-              <div className="grid grid-cols-3 p-1 gap-1">
-                {[...Array(9)].map((_, i) => (
-                  <div key={i} className="aspect-square bg-linear-to-br from-gray-100 to-gray-200 relative group cursor-pointer overflow-hidden">
-                    <div className="absolute inset-0 flex items-center justify-center text-xl opacity-40">📸</div>
-                    <div className="absolute inset-0 bg-citi-blue/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <Instagram className="text-white" size={20} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="p-3 text-center">
-                <span className="text-[10px] text-gray-400 font-medium italic">{t('social_ig_preview')}</span>
-              </div>
-            </div>
-            
-            {/* Instagram @postalesargentinas */}
-            <div className="bg-white rounded-2xl shadow-subtle overflow-hidden border border-gray-100">
-              <div className="p-6 flex items-center justify-between border-b border-gray-50">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-linear-to-tr from-blue-400 to-yellow-500 p-[2px]">
-                    <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-                      <div className="w-full h-full bg-citi-blue flex items-center justify-center text-yellow-400 text-[10px] font-black">PA</div>
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-sm text-gray-800">@postalesargentinas</h4>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Instagram</p>
-                  </div>
-                </div>
-                <button className="px-4 py-1.5 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider rounded-full hover:bg-gray-200 transition-all">
-                  Ver perfil
-                </button>
-              </div>
-              <div className="grid grid-cols-3 p-1 gap-1">
-                {[...Array(9)].map((_, i) => (
-                  <div key={i} className="aspect-square bg-linear-to-br from-blue-50 to-yellow-50 relative group cursor-pointer overflow-hidden">
-                    <div className="absolute inset-0 flex items-center justify-center text-xl opacity-40">🇦🇷</div>
-                    <div className="absolute inset-0 bg-citi-blue/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <Instagram className="text-white" size={20} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="p-3 text-center">
-                <span className="text-[10px] text-gray-400 font-medium italic">{t('social_ig_preview')}</span>
-              </div>
-            </div>
-          </div>
-          
-          {/* LinkedIn Widget */}
-          <div className="bg-white rounded-2xl shadow-subtle border border-gray-100 overflow-hidden">
-            <div className="p-8 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-linear-to-br from-citi-blue to-citi-medium flex items-center justify-center text-white text-xl font-bold shadow-sm">BI</div>
+              <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h4 className="font-bold text-lg text-gray-800">Benjamín Ibáñez</h4>
-                  <p className="text-xs text-citi-medium font-semibold">VP Senior Service Manager | GenAI Adoption | Innovation</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t('hero_card_title')}</p>
+                  <h3 className="mt-2 text-xl font-semibold text-slate-900">Benjamin Ibanez</h3>
+                  <p className="mt-1 text-sm text-brand-700">VP Senior Service Manager</p>
+                </div>
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-700 text-sm font-bold text-white shadow-sm">
+                  BI
+                </span>
+              </div>
+
+              <div className="my-6 h-px w-full bg-slate-200" />
+              <div className="space-y-3 text-sm text-slate-600">
+                <div className="inline-flex items-center gap-2">
+                  <Briefcase size={16} className="text-brand-700" /> Citi Argentina
+                </div>
+                <div className="inline-flex items-center gap-2">
+                  <MapPin size={16} className="text-brand-700" /> La Plata, Argentina
+                </div>
+                <div className="inline-flex items-center gap-2">
+                  <Mail size={16} className="text-brand-700" /> bibanez00@gmail.com
+                </div>
+                <div className="inline-flex items-center gap-2">
+                  <Zap size={16} className="text-brand-700" /> SurIA - Postales Argentinas
                 </div>
               </div>
-              <button className="px-6 py-2 bg-citi-pale text-citi-blue font-bold rounded-full hover:bg-citi-blue hover:text-white transition-all shadow-sm">
-                {t('social_li_connect')}
-              </button>
-            </div>
-            
-            <div className="p-8 grid md:grid-cols-3 gap-6">
-              {[
-                { text: t('social_li_post1'), date: '2d' },
-                { text: t('social_li_post2'), date: '1w' },
-                { text: t('social_li_post3'), date: '3w' }
-              ].map((post, i) => (
-                <div key={i} className="p-5 bg-gray-50 rounded-xl border border-gray-100 flex flex-col h-full">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-8 h-8 rounded-full bg-citi-blue flex items-center justify-center text-white text-[10px] font-bold">BI</div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] font-bold text-gray-800">Benjamín Ibáñez</span>
-                      <span className="text-[8px] text-gray-400">{post.date} • 🌐</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-600 leading-relaxed mb-6 flex-1" dangerouslySetInnerHTML={{ __html: post.text }} />
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                    <div className="flex items-center gap-3">
-                      <span className="text-[10px] font-bold text-gray-400 hover:text-citi-blue cursor-pointer">Me gusta</span>
-                      <span className="text-[10px] font-bold text-gray-400 hover:text-citi-blue cursor-pointer">Comentar</span>
-                    </div>
-                    <span className="text-[10px] font-bold text-gray-400 hover:text-citi-blue cursor-pointer">Compartir</span>
+
+              <div className="mt-6 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm font-medium text-brand-800">
+                Strategy + Operations + AI adoption with enterprise focus.
+              </div>
+            </motion.aside>
+          </div>
+        </section>
+
+        <section id="about" className="section-shell">
+          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+            <SectionHeading title={t('section_about_title')} subtitle={t('section_about_sub')} />
+
+            <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+              <article className="surface-card p-7 sm:p-8">
+                <div className="space-y-4 text-pretty text-base leading-relaxed text-slate-600">
+                  <p>{t('about_p1')}</p>
+                  <p>{t('about_p2')}</p>
+                  <p>{t('about_p3')}</p>
+                </div>
+              </article>
+
+              <div className="space-y-6">
+                <div className="surface-card p-6">
+                  <p className="mb-4 text-sm font-semibold text-slate-700">Focus areas</p>
+                  <div className="flex flex-wrap gap-2">
+                    {aboutTags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600"
+                      >
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 </div>
+
+                <div className="surface-card overflow-hidden">
+                  <div className="border-b border-slate-200/70 bg-slate-50 px-6 py-4 text-sm font-semibold text-slate-800">
+                    Professional details
+                  </div>
+                  <div className="divide-y divide-slate-100 px-6 py-2">
+                    {infoRows.map((row) => (
+                      <div key={row.value} className="flex items-center justify-between gap-5 py-3">
+                        <span className="text-xs uppercase tracking-wide text-slate-500">{row.label[lang]}</span>
+                        <span className="text-right text-sm font-semibold text-slate-800">{row.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="exp" className="section-shell section-muted">
+          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+            <SectionHeading title={t('section_exp_title')} subtitle={t('section_exp_sub')} />
+            <div className="space-y-4">
+              {experience.map((item, index) => (
+                <article key={item.company} className="surface-card p-6 transition hover:-translate-y-[2px] hover:shadow-elevated">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="flex gap-4">
+                      <div className={`mt-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-xs font-bold ${item.accent}`}>
+                        {item.company.slice(0, 2).toUpperCase()}
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900">{item.company}</h3>
+                        <p className="mt-1 text-sm font-medium text-brand-700">{item.role}</p>
+                        <p className="mt-1 text-sm text-slate-500">{item.period[lang]}</p>
+                      </div>
+                    </div>
+                    <span
+                      className={`inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${
+                        index === 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'
+                      }`}
+                    >
+                      {item.badge[lang]}
+                    </span>
+                  </div>
+                  <p className="mt-4 text-sm leading-relaxed text-slate-600">{item.description[lang]}</p>
+                </article>
               ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Contact Section */}
-      <section id="contact" className="py-24 bg-white">
-        <div className="container mx-auto px-6 md:px-12">
-          <h2 className="text-3xl font-bold text-citi-blue mb-8 text-center">{t('contact_title')}</h2>
-          <p className="text-center text-gray-500 max-w-[500px] mx-auto mb-16 leading-relaxed">
-            {t('contact_desc')}
-          </p>
-          
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {[
-              { icon: <Mail className="text-citi-blue" />, label: 'Email', val: 'bibanez00@gmail.com' },
-              { icon: <Linkedin className="text-citi-blue" />, label: 'LinkedIn', val: 'ibanezbenjamin' },
-              { icon: <Instagram className="text-citi-blue" />, label: 'Instagram', val: '@benjaminibanezz' }
-            ].map((item, i) => (
-              <div 
-                key={i} 
-                className="p-8 bg-white border border-gray-100 rounded-2xl shadow-subtle hover:shadow-medium hover:-translate-y-1 hover:border-citi-pale transition-all duration-300 flex flex-col items-center text-center"
-              >
-                <div className="w-12 h-12 bg-citi-pale rounded-xl flex items-center justify-center mb-6">
-                  {item.icon}
+        <section id="projects" className="section-shell">
+          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+            <SectionHeading title={t('section_projects_title')} subtitle={t('section_projects_sub')} />
+            <div className="grid gap-6 md:grid-cols-2">
+              {projects.map((project) => {
+                const Icon = project.icon;
+                return (
+                  <article key={project.name} className="surface-card p-7 transition hover:-translate-y-[2px] hover:shadow-elevated">
+                    <div className="flex items-center gap-4">
+                      <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                        <Icon size={20} />
+                      </span>
+                      <div>
+                        <h3 className="text-xl font-semibold text-slate-900">{project.name}</h3>
+                        <p className="text-xs uppercase tracking-wide text-slate-500">{project.category[lang]}</p>
+                      </div>
+                    </div>
+                    <p className="mt-5 text-sm leading-relaxed text-slate-600">{project.description[lang]}</p>
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {project.tags.map((tag) => (
+                        <span key={tag} className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section id="skills" ref={skillsRef} className="section-shell section-muted">
+          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+            <SectionHeading title={t('section_skills_title')} subtitle={t('section_skills_sub')} />
+            <div className="grid gap-6 md:grid-cols-3">
+              {skillCategories.map((category) => (
+                <article key={category.title.en} className="surface-card p-6">
+                  <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-700">
+                    <Sparkles size={14} />
+                    {category.title[lang]}
+                  </div>
+                  <div className="space-y-5">
+                    {category.skills.map((skill) => (
+                      <SkillBar key={skill.label} label={skill.label} percentage={skill.val} animate={skillsVisible} />
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="edu" className="section-shell">
+          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+            <SectionHeading title={t('section_edu_title')} subtitle={t('section_edu_sub')} />
+            <div className="grid gap-6 md:grid-cols-2">
+              <article className="surface-card p-7">
+                <div className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-800">
+                  <BookOpen size={16} className="text-brand-700" />
+                  {lang === 'es' ? 'Educacion formal' : 'Formal education'}
                 </div>
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{item.label}</span>
-                <span className="text-sm font-bold text-citi-blue">{item.val}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+                <h3 className="text-lg font-semibold text-slate-900">Universidad Del Este La Plata</h3>
+                <p className="mt-2 text-sm text-brand-700">
+                  {lang === 'es' ? 'Lic. en Administracion de Empresas' : 'B.S. in Business Administration'}
+                </p>
+                <p className="mt-3 text-xs uppercase tracking-wide text-slate-500">2015 - 2020</p>
+              </article>
 
-      {/* Footer */}
-      <footer className="bg-citi-blue py-12 text-white">
-        <div className="container mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center gap-4">
-            <div className="w-[2px] h-6 bg-citi-red"></div>
-            <span className="font-bold text-lg tracking-tight">Benjamín Ibáñez</span>
+              <article className="surface-card p-7">
+                <div className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-800">
+                  <Award size={16} className="text-brand-700" />
+                  {lang === 'es' ? 'Certificaciones' : 'Certifications'}
+                </div>
+                <div className="space-y-3">
+                  {certifications.map((certification) => (
+                    <div key={certification} className="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                      <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-brand-700" />
+                      <span className="text-sm leading-relaxed text-slate-700">{certification}</span>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
           </div>
-          
-          <div className="text-sm font-medium text-blue-200">
-            {t('footer_copy')}
+        </section>
+
+        <section id="social" className="section-shell section-muted">
+          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+            <SectionHeading title={t('section_social_title')} subtitle={t('section_social_sub')} />
+            <div className="grid gap-6 md:grid-cols-2">
+              {[
+                { handle: '@benjaminibanezz', accent: 'from-fuchsia-500 to-orange-400', label: 'Instagram' },
+                { handle: '@postalesargentinas', accent: 'from-sky-500 to-amber-400', label: 'Instagram' },
+              ].map((account) => (
+                <article key={account.handle} className="surface-card overflow-hidden">
+                  <div className="flex items-center justify-between border-b border-slate-200/70 px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <span className={`inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${account.accent} text-xs font-bold text-white`}>
+                        {account.handle.slice(1, 3).toUpperCase()}
+                      </span>
+                      <div>
+                        <p className="text-sm font-semibold text-slate-900">{account.handle}</p>
+                        <p className="text-xs text-slate-500">{account.label}</p>
+                      </div>
+                    </div>
+                    <button className="btn-quiet">Ver perfil</button>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1 p-1.5">
+                    {Array.from({ length: 9 }).map((_, idx) => (
+                      <div key={`${account.handle}-${idx}`} className="group relative aspect-square overflow-hidden rounded-md bg-slate-100">
+                        <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-slate-400">Preview</div>
+                        <div className="absolute inset-0 bg-brand-700/65 opacity-0 transition group-hover:opacity-100" />
+                      </div>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <article className="surface-card mt-6 p-7">
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-4">
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-700 text-sm font-bold text-white shadow-sm">BI</span>
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-900">Benjamin Ibanez</h3>
+                    <p className="text-sm text-slate-600">VP Senior Service Manager - GenAI Adoption - Innovation</p>
+                  </div>
+                </div>
+                <button className="btn-secondary">
+                  {lang === 'es' ? 'Conectar en LinkedIn' : 'Connect on LinkedIn'}
+                  <ArrowUpRight size={16} />
+                </button>
+              </div>
+
+              <div className="mt-6 grid gap-4 md:grid-cols-3">
+                {[
+                  {
+                    es: 'Explorando el impacto de IA Generativa en banca corporativa. Eficiencia es precision + contexto.',
+                    en: 'Exploring the impact of Generative AI in corporate banking. Efficiency is precision plus context.',
+                  },
+                  {
+                    es: 'Avances en SurIA: automatizar lo repetitivo para liberar foco estrategico.',
+                    en: 'Progress with SurIA: automate repetitive work to unlock strategic focus.',
+                  },
+                  {
+                    es: 'Postales Argentinas: producto cultural con narrativa digital y ejecucion consistente.',
+                    en: 'Postales Argentinas: cultural product with digital storytelling and consistent execution.',
+                  },
+                ].map((post, index) => (
+                  <div key={index} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="text-sm leading-relaxed text-slate-700">{post[lang]}</p>
+                    <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
+                      <span>LinkedIn</span>
+                      <span>{index + 1}w</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </article>
           </div>
-          
-          <button 
-            onClick={scrollToTop}
-            className="flex items-center gap-2 text-sm font-bold text-white hover:text-blue-200 transition-colors group"
-          >
+        </section>
+
+        <section id="contact" className="section-shell">
+          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+            <SectionHeading title={t('section_contact_title')} subtitle={t('section_contact_sub')} align="center" />
+            <div className="grid gap-4 md:grid-cols-3">
+              {contactItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <article key={item.label} className="surface-card p-6 text-center transition hover:-translate-y-[2px] hover:shadow-elevated">
+                    <span className="mx-auto inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                      <Icon size={20} />
+                    </span>
+                    <p className="mt-4 text-xs uppercase tracking-wide text-slate-500">{item.label}</p>
+                    <p className="mt-1 text-sm font-semibold text-slate-900">{item.value}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-slate-200 bg-slate-950 py-8 text-white">
+        <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-5 px-4 sm:flex-row sm:px-6 lg:px-8">
+          <div className="inline-flex items-center gap-3">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-xs font-bold">BI</span>
+            <span className="text-sm font-medium text-slate-100">Benjamin Ibanez</span>
+          </div>
+          <p className="text-sm text-slate-400">{t('footer_copy')}</p>
+          <button onClick={scrollToTop} className="inline-flex items-center gap-2 text-sm font-medium text-slate-200 transition hover:text-white">
             {t('footer_top')}
-            <ChevronUp size={16} className="group-hover:-translate-y-1 transition-transform" />
+            <ChevronUp size={16} />
           </button>
         </div>
       </footer>
+
+      <button className="floating-top" onClick={scrollToTop} aria-label="Back to top">
+        <ChevronUp size={16} />
+      </button>
     </div>
   );
 }
