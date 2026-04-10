@@ -33,7 +33,7 @@ const navItems = [
 
 const impactMetrics = [
   { value: '10+', label: 'anios liderando operaciones y servicio enterprise' },
-  { value: '500+', label: 'clientes corporativos impactados' },
+  { value: '+20', label: 'clientes corporativos impactados' },
   { value: '15+', label: 'iniciativas AI y automatizacion impulsadas' },
   { value: '3', label: 'frentes estrategicos activos: banca, AI, producto' },
 ];
@@ -158,24 +158,52 @@ const certifications = [
   'The Fundamentals of Digital Marketing',
 ];
 
+const WHATSAPP_NUMBER = '+5492215719109';
+const WHATSAPP_MESSAGE = 'Hola Benjamin, vi tu portfolio y quiero contactarte.';
+const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, '')}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+
+const WhatsAppIcon: React.FC<{ size?: number }> = ({ size = 18 }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M4.9 19.1 3 21l1.9-1.9a9 9 0 1 1 3.7 2.4L3 21l1.9-5.6a9 9 0 0 1 0-3.3" />
+    <path d="M9.5 8.8c.2-.4.4-.4.7-.4h.6c.2 0 .4.1.5.4l.6 1.5c.1.2.1.4 0 .6l-.4.6c-.1.2-.1.4 0 .6.4.8 1.1 1.5 1.9 1.9.2.1.4.1.6 0l.6-.4c.2-.1.4-.1.6 0l1.5.6c.2.1.4.3.4.5v.6c0 .3 0 .5-.4.7l-.8.4c-.5.2-1.1.3-1.7.2-2.3-.4-4.5-2.6-4.9-4.9-.1-.6 0-1.2.2-1.7l.4-.8Z" />
+  </svg>
+);
+
 const contactLinks = [
   {
-    icon: Mail,
+    icon: <Mail size={18} />,
     label: 'Email',
     value: 'bibanez00@gmail.com',
     href: 'mailto:bibanez00@gmail.com',
   },
   {
-    icon: Linkedin,
+    icon: <Linkedin size={18} />,
     label: 'LinkedIn',
     value: '/in/ibanezbenjamin',
     href: 'https://www.linkedin.com/in/ibanezbenjamin/',
   },
   {
-    icon: Instagram,
+    icon: <Instagram size={18} />,
     label: 'Instagram',
     value: '@benjaminibanezz',
     href: 'https://www.instagram.com/benjaminibanezz/',
+  },
+  {
+    icon: <WhatsAppIcon size={18} />,
+    label: 'WhatsApp',
+    value: WHATSAPP_NUMBER,
+    href: WHATSAPP_LINK,
   },
 ];
 
@@ -562,11 +590,10 @@ export default function App() {
 
             <div className="contact-grid">
               {contactLinks.map((item) => {
-                const Icon = item.icon;
                 return (
                   <a key={item.label} href={item.href} target="_blank" rel="noreferrer" className="panel contact-item">
                     <span>
-                      <Icon size={18} />
+                      {item.icon}
                     </span>
                     <p>{item.label}</p>
                     <strong>{item.value}</strong>
