@@ -8,8 +8,8 @@ export const SOCIAL_FALLBACK_DATA: SocialFeedPayload = {
       {
         id: 'ig-curated-1',
         url: 'https://www.instagram.com/benjaminibanezz/',
-        title: 'Workshop de adopcion GenAI para operaciones de servicio',
-        excerpt: 'Marco practico para detectar quick wins de automatizacion y elevar calidad de atencion.',
+        title: 'Workshop de adopción GenAI para operaciones de servicio',
+        excerpt: 'Marco práctico para detectar quick wins de automatización y elevar calidad de atención.',
         imageUrl:
           'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=900&q=80',
         publishedAt: '2026-03-21',
@@ -18,8 +18,8 @@ export const SOCIAL_FALLBACK_DATA: SocialFeedPayload = {
       {
         id: 'ig-curated-2',
         url: 'https://www.instagram.com/benjaminibanezz/',
-        title: 'Ejecucion de pilotos: de idea a impacto en 6 semanas',
-        excerpt: 'Como pasar de PoC aisladas a capacidades replicables en equipos de negocio.',
+        title: 'Ejecución de pilotos: de idea a impacto en 6 semanas',
+        excerpt: 'Cómo pasar de PoC aisladas a capacidades replicables en equipos de negocio.',
         imageUrl:
           'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=80',
         publishedAt: '2026-03-14',
@@ -29,7 +29,7 @@ export const SOCIAL_FALLBACK_DATA: SocialFeedPayload = {
         id: 'ig-curated-3',
         url: 'https://www.instagram.com/benjaminibanezz/',
         title: 'Service design orientado a clientes corporativos',
-        excerpt: 'Diseno de journeys con foco en confiabilidad, tiempos de respuesta y transparencia.',
+        excerpt: 'Diseño de journeys con foco en confiabilidad, tiempos de respuesta y transparencia.',
         imageUrl:
           'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=80',
         publishedAt: '2026-03-02',
@@ -39,7 +39,7 @@ export const SOCIAL_FALLBACK_DATA: SocialFeedPayload = {
         id: 'ig-curated-4',
         url: 'https://www.instagram.com/benjaminibanezz/',
         title: 'Product strategy para equipos no-product',
-        excerpt: 'Herramientas para priorizar valor en areas operativas y de servicio.',
+        excerpt: 'Herramientas para priorizar valor en áreas operativas y de servicio.',
         imageUrl:
           'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=900&q=80',
         publishedAt: '2026-02-26',
@@ -48,8 +48,8 @@ export const SOCIAL_FALLBACK_DATA: SocialFeedPayload = {
       {
         id: 'ig-curated-5',
         url: 'https://www.instagram.com/benjaminibanezz/',
-        title: 'Cultura de innovacion con disciplina operativa',
-        excerpt: 'Rituales de gestion para experimentar sin perder control del servicio.',
+        title: 'Cultura de innovación con disciplina operativa',
+        excerpt: 'Rituales de gestión para experimentar sin perder control del servicio.',
         imageUrl:
           'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=900&q=80',
         publishedAt: '2026-02-11',
@@ -59,7 +59,7 @@ export const SOCIAL_FALLBACK_DATA: SocialFeedPayload = {
         id: 'ig-curated-6',
         url: 'https://www.instagram.com/benjaminibanezz/',
         title: 'Dashboard de impacto para iniciativas AI',
-        excerpt: 'Metricas clave para alinear liderazgo, adopcion y retorno de iniciativas.',
+        excerpt: 'Métricas clave para alinear liderazgo, adopción y retorno de iniciativas.',
         imageUrl:
           'https://images.unsplash.com/photo-1551281044-8b1c0f5f57b4?auto=format&fit=crop&w=900&q=80',
         publishedAt: '2026-01-29',
@@ -75,9 +75,9 @@ export const SOCIAL_FALLBACK_DATA: SocialFeedPayload = {
       {
         id: 'li-curated-1',
         url: 'https://www.linkedin.com/in/ibanezbenjamin/',
-        title: 'AI adoption en banca corporativa: menos hype, mas sistema',
+        title: 'AI adoption en banca corporativa: menos hype, más sistema',
         excerpt:
-          'Comparti un framework para priorizar casos de uso por impacto en cliente, riesgo operativo y factibilidad de ejecucion.',
+          'Compartí un framework para priorizar casos de uso por impacto en cliente, riesgo operativo y factibilidad de ejecución.',
         publishedAt: '2026-03-30',
         tag: 'AI Adoption',
       },
@@ -86,7 +86,7 @@ export const SOCIAL_FALLBACK_DATA: SocialFeedPayload = {
         url: 'https://www.linkedin.com/in/ibanezbenjamin/',
         title: 'Service transformation con mentalidad de producto',
         excerpt:
-          'Una transformacion de servicio sostenible combina ownership transversal, datos utiles y rituales de aprendizaje continuo.',
+          'Una transformación de servicio sostenible combina ownership transversal, datos útiles y rituales de aprendizaje continuo.',
         publishedAt: '2026-03-18',
         tag: 'Service Transformation',
       },
@@ -95,16 +95,16 @@ export const SOCIAL_FALLBACK_DATA: SocialFeedPayload = {
         url: 'https://www.linkedin.com/in/ibanezbenjamin/',
         title: 'De operaciones a estrategia: el rol del execution design',
         excerpt:
-          'Explique como convertir equipos de operacion en motores de innovacion con foco en valor de negocio y experiencia de cliente.',
+          'Expliqué cómo convertir equipos de operación en motores de innovación con foco en valor de negocio y experiencia de cliente.',
         publishedAt: '2026-03-05',
         tag: 'Product Strategy',
       },
       {
         id: 'li-curated-4',
         url: 'https://www.linkedin.com/in/ibanezbenjamin/',
-        title: 'Lecciones practicas de liderar iniciativas GenAI internas',
+        title: 'Lecciones prácticas de liderar iniciativas GenAI internas',
         excerpt:
-          'Documente patrones para escalar iniciativas sin friccion con governance y compliance en entornos enterprise.',
+          'Documenté patrones para escalar iniciativas sin fricción con governance y compliance en entornos enterprise.',
         publishedAt: '2026-02-20',
         tag: 'Innovation',
       },

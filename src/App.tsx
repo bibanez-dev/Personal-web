@@ -26,28 +26,28 @@ const navItems = [
   { id: 'experience', label: 'Trayectoria' },
   { id: 'projects', label: 'Proyectos' },
   { id: 'capabilities', label: 'Capacidades' },
-  { id: 'education', label: 'Formacion' },
+  { id: 'education', label: 'Formación' },
   { id: 'social', label: 'Social' },
   { id: 'contact', label: 'Contacto' },
 ] as const;
 
 const impactMetrics = [
-  { value: '10+', label: 'anios liderando operaciones y servicio enterprise' },
+  { value: '10+', label: 'años liderando operaciones y servicio enterprise' },
   { value: '+20', label: 'clientes corporativos impactados' },
-  { value: '15+', label: 'iniciativas AI y automatizacion impulsadas' },
-  { value: '3', label: 'frentes estrategicos activos: banca, AI, producto' },
+  { value: '15+', label: 'iniciativas AI y automatización impulsadas' },
+  { value: '3', label: 'frentes estratégicos activos: banca, AI, producto' },
 ];
 
 const valuePillars = [
   {
     icon: Building2,
     title: 'Enterprise Service Transformation',
-    text: 'Redisenio operaciones de servicio complejas para elevar velocidad, consistencia y confianza del cliente corporativo.',
+    text: 'Rediseño operaciones de servicio complejas para elevar velocidad, consistencia y confianza del cliente corporativo.',
   },
   {
     icon: Brain,
     title: 'AI Adoption con foco de negocio',
-    text: 'Convierto GenAI en capacidades reales: casos de uso priorizados, procesos claros y medicion de impacto tangible.',
+    text: 'Convierto GenAI en capacidades reales: casos de uso priorizados, procesos claros y medición de impacto tangible.',
   },
   {
     icon: Layers,
@@ -61,25 +61,25 @@ const timeline = [
     period: '2023 - Hoy',
     role: 'VP Senior Service Manager - CitiService, Citi Argentina',
     summary:
-      'Gestion de servicio corporativo end-to-end, mejora de SLAs criticos y liderazgo de iniciativas de transformacion digital con AI.',
+      'Gestión de servicio corporativo end-to-end, mejora de SLAs críticos y liderazgo de iniciativas de transformación digital con AI.',
   },
   {
     period: '2022 - 2023',
     role: 'Service Delivery Manager - SupportYourApp',
     summary:
-      'Escalado de operaciones globales, estandarizacion de reporting y mejora de eficiencia operativa para cuentas internacionales.',
+      'Escalado de operaciones globales, estandarización de reporting y mejora de eficiencia operativa para cuentas internacionales.',
   },
   {
     period: '2021 - 2022',
     role: 'Global Compliance & Reporting Senior - EY',
     summary:
-      'Coordinacion de reporting ejecutivo y compliance global, con foco en control, trazabilidad y toma de decisiones.',
+      'Coordinación de reporting ejecutivo y compliance global, con foco en control, trazabilidad y toma de decisiones.',
   },
   {
     period: '2020 - 2021',
     role: 'Sr Analyst + Team Leader - DiDi',
     summary:
-      'Liderazgo de equipos de atencion operacional y optimizacion de tiempos de respuesta en un entorno de alta demanda.',
+      'Liderazgo de equipos de atención operacional y optimización de tiempos de respuesta en un entorno de alta demanda.',
   },
 ];
 
@@ -88,21 +88,21 @@ const projects = [
     name: 'SurIA',
     type: 'AI adoption platform',
     challenge: 'Equipos de servicio con alta carga manual, baja trazabilidad y tiempos de respuesta inestables.',
-    approach: 'Disenio de flujos asistidos por AI para automatizar tareas repetitivas, asistir decisiones y reducir friccion operativa.',
+    approach: 'Diseño de flujos asistidos por AI para automatizar tareas repetitivas, asistir decisiones y reducir fricción operativa.',
     impact: [
-      'Framework de priorizacion de casos de uso AI por valor de negocio y factibilidad.',
-      'Playbook replicable para escalar adopcion de AI en operaciones de servicio.',
-      'Mejor visibilidad para lideres con metricas de adopcion, calidad y velocidad.',
+      'Framework de priorización de casos de uso AI por valor de negocio y factibilidad.',
+      'Playbook replicable para escalar adopción de AI en operaciones de servicio.',
+      'Mejor visibilidad para líderes con métricas de adopción, calidad y velocidad.',
     ],
     tags: ['AI Adoption', 'Automation', 'Ops Design', 'Execution'],
   },
   {
     name: 'Postales Argentinas',
     type: 'Cultural product venture',
-    challenge: 'Construir una marca con identidad local fuerte y ejecucion digital consistente en un mercado saturado.',
-    approach: 'Estrategia de narrativa de marca, producto visual y distribucion digital con ciclos rapidos de aprendizaje.',
+    challenge: 'Construir una marca con identidad local fuerte y ejecución digital consistente en un mercado saturado.',
+    approach: 'Estrategia de narrativa de marca, producto visual y distribución digital con ciclos rápidos de aprendizaje.',
     impact: [
-      'Posicionamiento diferencial con una propuesta cultural y contemporanea.',
+      'Posicionamiento diferencial con una propuesta cultural y contemporánea.',
       'Sistema de contenido para sostener frecuencia y coherencia de marca.',
       'Aprendizajes aplicables a product storytelling en contextos corporativos.',
     ],
@@ -114,7 +114,7 @@ const capabilities = [
   {
     title: 'AI Adoption Leadership',
     level: 'Avanzado',
-    evidence: 'Defino roadmaps de adopcion, marco de priorizacion y rituales para pasar de piloto a capacidad estable.',
+    evidence: 'Defino roadmaps de adopción, marco de priorización y rituales para pasar de piloto a capacidad estable.',
   },
   {
     title: 'Service Model Design',
@@ -124,28 +124,28 @@ const capabilities = [
   {
     title: 'Product Strategy para entornos enterprise',
     level: 'Avanzado',
-    evidence: 'Traduzco objetivos ejecutivos en iniciativas ejecutables con ownership, metricas y gobernanza.',
+    evidence: 'Traduzco objetivos ejecutivos en iniciativas ejecutables con ownership, métricas y gobernanza.',
   },
   {
     title: 'Stakeholder & Change Management',
     level: 'Experto',
-    evidence: 'Alineo liderazgo, equipos y areas de control para ejecutar cambios sin perder estabilidad.',
+    evidence: 'Alineo liderazgo, equipos y áreas de control para ejecutar cambios sin perder estabilidad.',
   },
   {
     title: 'Innovation Program Execution',
     level: 'Avanzado',
-    evidence: 'Convierto vision de innovacion en programas concretos, con entregables visibles y aprendizaje continuo.',
+    evidence: 'Convierto visión de innovación en programas concretos, con entregables visibles y aprendizaje continuo.',
   },
   {
     title: 'Data-informed decision making',
-    level: 'Solido',
-    evidence: 'Diseno tableros y metricas accionables para gestionar performance y calidad de servicio.',
+    level: 'Sólido',
+    evidence: 'Diseño tableros y métricas accionables para gestionar performance y calidad de servicio.',
   },
 ];
 
 const educationItems = [
   {
-    label: 'Licenciatura en Administracion de Empresas',
+    label: 'Licenciatura en Administración de Empresas',
     detail: 'Universidad del Este La Plata',
     period: '2015 - 2020',
   },
@@ -240,7 +240,7 @@ export default function App() {
 
   const socialStatus = useMemo(() => {
     if (socialData.instagram.source === 'instagram_api') {
-      return 'Instagram conectado en vivo via Meta Graph API';
+      return 'Instagram conectado en vivo vía Meta Graph API';
     }
     return 'Instagram en modo curado temporal (fallback cacheado)';
   }, [socialData.instagram.source]);
@@ -265,7 +265,7 @@ export default function App() {
             ))}
           </nav>
 
-          <button className="menu-trigger" onClick={() => setMenuOpen((v) => !v)} aria-label="Abrir menu">
+          <button className="menu-trigger" onClick={() => setMenuOpen((v) => !v)} aria-label="Abrir menú">
             {menuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
         </div>
@@ -288,15 +288,15 @@ export default function App() {
           <div className="container hero-grid">
             <div>
               <span className="hero-badge">
-                <MapPin size={14} /> La Plata, Buenos Aires | Disponible para colaboraciones estrategicas
+                <MapPin size={14} /> La Plata, Buenos Aires | Disponible para colaboraciones estratégicas
               </span>
               <h1>
                 Convierto AI adoption
                 <span> en resultados de negocio.</span>
               </h1>
               <p>
-                Soy VP Senior Service Manager en CitiService. Combino experiencia en banca corporativa, ejecucion operativa y
-                product strategy para disenar transformaciones de alto impacto que si llegan a produccion.
+                Soy VP Senior Service Manager en CitiService. Combino experiencia en banca corporativa, ejecución operativa y
+                product strategy para diseñar transformaciones de alto impacto que sí llegan a producción.
               </p>
 
               <div className="hero-cta-row">
@@ -323,24 +323,24 @@ export default function App() {
                 <img src={profileImage} alt="Benjamin Ibanez" className="hero-portrait" />
               </div>
               <p className="eyebrow">Posicionamiento</p>
-              <h3>Perfil hibrido para entornos complejos</h3>
+              <h3>Perfil híbrido para entornos complejos</h3>
               <p>
-                Lidero la interseccion entre estrategia, operaciones y tecnologia para acelerar decision, ejecucion y resultados en
+                Lidero la intersección entre estrategia, operaciones y tecnología para acelerar decisión, ejecución y resultados en
                 negocios de servicio.
               </p>
               <ul>
                 <li>
-                  <CheckCircle2 size={16} /> Vision enterprise con mentalidad builder.
+                  <CheckCircle2 size={16} /> Visión enterprise con mentalidad builder.
                 </li>
                 <li>
                   <CheckCircle2 size={16} /> Foco en impacto medible, no en experimentos aislados.
                 </li>
                 <li>
-                  <CheckCircle2 size={16} /> Capacidad de alinear negocio, riesgo y ejecucion.
+                  <CheckCircle2 size={16} /> Capacidad de alinear negocio, riesgo y ejecución.
                 </li>
               </ul>
               <a className="inline-link" href="mailto:bibanez00@gmail.com">
-                Iniciar conversacion <ExternalLink size={15} />
+                Iniciar conversación <ExternalLink size={15} />
               </a>
             </aside>
           </div>
@@ -350,8 +350,8 @@ export default function App() {
           <div className="container">
             <SectionTitle
               eyebrow="Propuesta de valor"
-              title="No solo gestiono operaciones: construyo capacidades de transformacion"
-              description="Mi diferencial es integrar disciplina enterprise con velocidad de producto para llevar ideas de innovacion a resultados sostenibles."
+              title="No solo gestiono operaciones: construyo capacidades de transformación"
+              description="Mi diferencial es integrar disciplina enterprise con velocidad de producto para llevar ideas de innovación a resultados sostenibles."
             />
             <div className="pillar-grid">
               {valuePillars.map((pillar) => {
@@ -375,7 +375,7 @@ export default function App() {
             <SectionTitle
               eyebrow="Trayectoria"
               title="Experiencia construida en servicio corporativo, compliance y operaciones globales"
-              description="Un recorrido que combina rigor operativo, liderazgo de equipos y ejecucion de iniciativas estrategicas."
+              description="Un recorrido que combina rigor operativo, liderazgo de equipos y ejecución de iniciativas estratégicas."
             />
             <div className="timeline-list">
               {timeline.map((item) => (
@@ -396,8 +396,8 @@ export default function App() {
           <div className="container">
             <SectionTitle
               eyebrow="Proyectos"
-              title="Iniciativas con contexto, criterio de priorizacion e impacto"
-              description="Cada proyecto esta pensado como una plataforma de aprendizaje y ejecucion para resolver problemas reales de negocio."
+              title="Iniciativas con contexto, criterio de priorización e impacto"
+              description="Cada proyecto está pensado como una plataforma de aprendizaje y ejecución para resolver problemas reales de negocio."
             />
             <div className="project-grid">
               {projects.map((project) => (
@@ -440,7 +440,7 @@ export default function App() {
             <SectionTitle
               eyebrow="Capacidades"
               title="Skills priorizadas por valor, no por barras de porcentaje"
-              description="Este stack refleja donde agrego mas valor estrategico y operativo en entornos de transformacion."
+              description="Este stack refleja dónde agrego más valor estratégico y operativo en entornos de transformación."
             />
             <div className="capability-grid">
               {capabilities.map((capability) => (
@@ -459,13 +459,13 @@ export default function App() {
         <section className="section" id="education">
           <div className="container">
             <SectionTitle
-              eyebrow="Formacion"
-              title="Base academica y upskilling continuo orientado a AI + negocio"
-              description="Formacion formal mas certificaciones practicas para liderar transformaciones en contextos enterprise."
+              eyebrow="Formación"
+              title="Base académica y upskilling continuo orientado a AI + negocio"
+              description="Formación formal más certificaciones prácticas para liderar transformaciones en contextos enterprise."
             />
             <div className="education-grid">
               <article className="panel">
-                <h3>Formacion academica</h3>
+                <h3>Formación académica</h3>
                 <div className="edu-list">
                   {educationItems.map((item) => (
                     <div key={item.label}>
@@ -495,7 +495,7 @@ export default function App() {
           <div className="container">
             <SectionTitle
               eyebrow="Presencia digital"
-              title="Seccion social conectada para produccion"
+              title="Sección social conectada para producción"
               description="Instagram consume API real cuando hay credenciales. LinkedIn usa una capa curada y mantenible sin scraping."
             />
 
@@ -515,7 +515,7 @@ export default function App() {
                 <div className="social-head">
                   <div>
                     <h3>Instagram</h3>
-                    <p>Ultimos contenidos visuales</p>
+                    <p>Últimos contenidos visuales</p>
                   </div>
                   <a href={socialData.instagram.profileUrl} target="_blank" rel="noreferrer">
                     Ver perfil <ArrowUpRight size={15} />
@@ -529,7 +529,7 @@ export default function App() {
                     ))}
                   </div>
                 ) : instagramItems.length === 0 ? (
-                  <div className="empty-state">Todavia no hay posts para mostrar.</div>
+                  <div className="empty-state">Todavía no hay posts para mostrar.</div>
                 ) : (
                   <div className="instagram-grid">
                     {instagramItems.map((post) => (
@@ -560,7 +560,7 @@ export default function App() {
                     ))}
                   </div>
                 ) : linkedinItems.length === 0 ? (
-                  <div className="empty-state">Todavia no hay entradas curadas.</div>
+                  <div className="empty-state">Todavía no hay entradas curadas.</div>
                 ) : (
                   <div className="linkedin-list">
                     {linkedinItems.map((post) => (
@@ -584,8 +584,8 @@ export default function App() {
           <div className="container">
             <SectionTitle
               eyebrow="Contacto"
-              title="Si estas impulsando AI adoption o transformacion de servicio, conversemos"
-              description="Disponible para colaboraciones en consultoria estrategica, advisory en adopcion AI y proyectos de innovacion aplicada."
+              title="Si estás impulsando AI adoption o transformación de servicio, conversemos"
+              description="Disponible para colaboraciones en consultoría estratégica, advisory en adopción AI y proyectos de innovación aplicada."
             />
 
             <div className="contact-grid">
