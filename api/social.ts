@@ -1,5 +1,5 @@
 import { SOCIAL_FALLBACK_DATA } from '../src/data/socialFallback';
-import type { SocialFeedPayload, SocialPost } from '../src/types/social';
+import type { SocialContentState, SocialFeedPayload, SocialPost } from '../src/types/social';
 
 export const config = {
   runtime: 'edge',
@@ -39,21 +39,28 @@ const mapInstagramItems = (items: InstagramApiItem[]): SocialPost[] =>
     }))
     .filter((item) => Boolean(item.imageUrl));
 
+const resolveSource = (items: SocialPost[]): SocialContentState => (items.length > 0 ? 'real_content' : 'no_recent_content');
+
 const buildPayload = (
   instagramItems: SocialPost[],
-  instagramSource: 'instagram_api' | 'curated_fallback',
   overrides: { instagramProfileUrl?: string; linkedinProfileUrl?: string },
-): SocialFeedPayload => ({
-  instagram: {
-    source: instagramSource,
-    profileUrl: overrides.instagramProfileUrl || SOCIAL_FALLBACK_DATA.instagram.profileUrl,
-    items: instagramItems,
-  },
-  linkedin: {
-    ...SOCIAL_FALLBACK_DATA.linkedin,
-    profileUrl: overrides.linkedinProfileUrl || SOCIAL_FALLBACK_DATA.linkedin.profileUrl,
-  },
-});
+): SocialFeedPayload => {
+  const linkedinItems = SOCIAL_FALLBACK_DATA.linkedin.items;
+
+  return {
+    instagram: {
+      source: resolveSource(instagramItems),
+      profileUrl: overrides.instagramProfileUrl || SOCIAL_FALLBACK_DATA.instagram.profileUrl,
+      items: instagramItems,
+    },
+    linkedin: {
+      ...SOCIAL_FALLBACK_DATA.linkedin,
+      source: resolveSource(linkedinItems),
+      profileUrl: overrides.linkedinProfileUrl || SOCIAL_FALLBACK_DATA.linkedin.profileUrl,
+      items: linkedinItems,
+    },
+  };
+};
 
 const getInstagramFeed = async (): Promise<SocialPost[] | null> => {
   const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env ?? {};
@@ -84,24 +91,11 @@ export default async function handler(): Promise<Response> {
     const instagramProfileUrl = env.INSTAGRAM_PROFILE_URL;
     const linkedinProfileUrl = env.LINKEDIN_PROFILE_URL;
 
-    const instagramItems = await getInstagramFeed();
+    const instagramItems = (await getInstagramFeed()) ?? [];
 
-    if (instagramItems && instagramItems.length > 0) {
-      const payload = buildPayload(instagramItems, 'instagram_api', { instagramProfileUrl, linkedinProfileUrl });
-      return new Response(JSON.stringify(payload), {
-        status: 200,
-        headers: {
-          'content-type': 'application/json; charset=utf-8',
-          'cache-control': 'public, s-maxage=3600, stale-while-revalidate=86400',
-        },
-      });
-    }
+    const payload = buildPayload(instagramItems, { instagramProfileUrl, linkedinProfileUrl });
 
-    const fallbackPayload = buildPayload(SOCIAL_FALLBACK_DATA.instagram.items, 'curated_fallback', {
-      instagramProfileUrl,
-      linkedinProfileUrl,
-    });
-    return new Response(JSON.stringify(fallbackPayload), {
+    return new Response(JSON.stringify(payload), {
       status: 200,
       headers: {
         'content-type': 'application/json; charset=utf-8',
@@ -110,10 +104,11 @@ export default async function handler(): Promise<Response> {
     });
   } catch {
     const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env ?? {};
-    const safeFallback = buildPayload(SOCIAL_FALLBACK_DATA.instagram.items, 'curated_fallback', {
+    const safeFallback = buildPayload([], {
       instagramProfileUrl: env.INSTAGRAM_PROFILE_URL,
       linkedinProfileUrl: env.LINKEDIN_PROFILE_URL,
     });
+
     return new Response(JSON.stringify(safeFallback), {
       status: 200,
       headers: {
