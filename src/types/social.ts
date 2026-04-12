@@ -8,14 +8,16 @@ export interface SocialPost {
   tag?: string;
 }
 
+export type SocialContentState = 'real_content' | 'no_recent_content';
+
 export interface SocialFeedPayload {
   instagram: {
-    source: 'instagram_api' | 'curated_fallback';
+    source: SocialContentState;
     profileUrl: string;
     items: SocialPost[];
   };
   linkedin: {
-    source: 'curated_manual';
+    source: SocialContentState;
     profileUrl: string;
     items: SocialPost[];
     lastUpdated: string;
