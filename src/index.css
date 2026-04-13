@@ -519,6 +519,14 @@
     gap: 0.4rem;
   }
 
+  .impact-grid > .reveal-block {
+    height: 100%;
+  }
+
+  .impact-grid .impact-card {
+    height: 100%;
+  }
+
   .impact-metrics li {
     margin: 0;
     border-radius: 0.64rem;
