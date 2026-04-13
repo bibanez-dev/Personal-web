@@ -106,6 +106,8 @@ interface LandingContent {
       message: string;
     };
     status: {
+      idle: string;
+      sending: string;
       success: string;
       error: string;
     };
@@ -245,6 +247,8 @@ const CONTENT: Record<Language, LandingContent> = {
         message: 'Contame brevemente en que te gustaria que colaboremos.',
       },
       status: {
+        idle: 'Completa el formulario y te respondo por email.',
+        sending: 'Enviando mensaje...',
         success: 'Mensaje enviado. Te voy a responder pronto.',
         error: 'No se pudo enviar el mensaje. Intenta nuevamente o escribime por LinkedIn/email.',
       },
@@ -382,6 +386,8 @@ const CONTENT: Record<Language, LandingContent> = {
         message: 'Share briefly how you would like to collaborate.',
       },
       status: {
+        idle: 'Fill out the form and I will reply by email.',
+        sending: 'Sending message...',
         success: 'Message sent. I will get back to you soon.',
         error: 'Could not send the message. Please try again or reach me via LinkedIn/email.',
       },
@@ -494,7 +500,9 @@ export default function App() {
     website: '',
   });
   const [submitState, setSubmitState] = useState<SubmitState>('idle');
-  const [submitMessage, setSubmitMessage] = useState('');
+  const [submitMessage, setSubmitMessage] = useState(CONTENT.es.contact.status.idle);
+
+  const getDefaultSubmitMessage = (locale: Language): string => CONTENT[locale].contact.status.idle;
 
   useEffect(() => {
     const savedLanguage = window.localStorage.getItem(STORAGE_LANGUAGE);
@@ -512,6 +520,10 @@ export default function App() {
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_LANGUAGE, language);
+
+    if (submitState === 'idle') {
+      setSubmitMessage(getDefaultSubmitMessage(language));
+    }
   }, [language]);
 
   useEffect(() => {
@@ -540,14 +552,17 @@ export default function App() {
 
     if (submitState !== 'idle') {
       setSubmitState('idle');
-      setSubmitMessage('');
+      setSubmitMessage(getDefaultSubmitMessage(language));
     }
   };
 
   const onContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitState('sending');
-    setSubmitMessage('');
+    setSubmitMessage(content.contact.status.sending);
+
+    const abortController = new AbortController();
+    const timeoutId = window.setTimeout(() => abortController.abort(), 15000);
 
     try {
       const response = await fetch('/api/contact', {
@@ -563,6 +578,7 @@ export default function App() {
           website: formData.website,
           locale: language,
         }),
+        signal: abortController.signal,
       });
 
       const payload = (await response.json()) as { ok?: boolean; error?: string };
@@ -580,9 +596,21 @@ export default function App() {
         message: '',
         website: '',
       });
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        setSubmitMessage(
+          language === 'en'
+            ? 'The request took too long. Please try again.'
+            : 'La solicitud demoro demasiado. Intenta nuevamente.',
+        );
+      } else if (error instanceof Error && error.message) {
+        setSubmitMessage(error.message);
+      } else {
+        setSubmitMessage(content.contact.status.error);
+      }
       setSubmitState('error');
-      setSubmitMessage(content.contact.status.error);
+    } finally {
+      window.clearTimeout(timeoutId);
     }
   };
 
@@ -815,6 +843,7 @@ export default function App() {
                     onChange={onFormFieldChange}
                     required
                     maxLength={120}
+                    disabled={submitState === 'sending'}
                   />
 
                   <label htmlFor="email">{content.contact.fields.email}</label>
@@ -827,6 +856,7 @@ export default function App() {
                     onChange={onFormFieldChange}
                     required
                     maxLength={160}
+                    disabled={submitState === 'sending'}
                   />
 
                   <label htmlFor="company">{content.contact.fields.company}</label>
@@ -838,6 +868,7 @@ export default function App() {
                     value={formData.company}
                     onChange={onFormFieldChange}
                     maxLength={160}
+                    disabled={submitState === 'sending'}
                   />
 
                   <label htmlFor="message">{content.contact.fields.message}</label>
@@ -851,6 +882,7 @@ export default function App() {
                     minLength={20}
                     maxLength={2000}
                     rows={5}
+                    disabled={submitState === 'sending'}
                   />
 
                   <input
@@ -861,14 +893,25 @@ export default function App() {
                     onChange={onFormFieldChange}
                     tabIndex={-1}
                     autoComplete="off"
+                    disabled={submitState === 'sending'}
                   />
 
                   <button className="btn btn-primary submit-btn" type="submit" disabled={submitState === 'sending'}>
                     {submitState === 'sending' ? content.contact.fields.sending : content.contact.fields.submit}
                   </button>
 
-                  {submitMessage ? (
-                    <p className={`form-feedback ${submitState === 'success' ? 'success' : 'error'}`}>{submitMessage}</p>
+                  {submitState === 'idle' || submitMessage ? (
+                    <p
+                      className={`form-feedback ${
+                        submitState === 'success'
+                          ? 'success'
+                          : submitState === 'error'
+                            ? 'error'
+                            : 'info'
+                      }`}
+                    >
+                      {submitMessage}
+                    </p>
                   ) : null}
                 </form>
               </article>
