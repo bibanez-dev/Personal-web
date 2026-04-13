@@ -581,10 +581,29 @@ export default function App() {
         signal: abortController.signal,
       });
 
-      const payload = (await response.json()) as { ok?: boolean; error?: string };
+      const contentType = response.headers.get('content-type')?.toLowerCase() ?? '';
+      const responseClone = response.clone();
+      let payload: { ok?: boolean; error?: string } | null = null;
+      let nonJsonBody = '';
+
+      if (contentType.includes('application/json')) {
+        try {
+          payload = (await response.json()) as { ok?: boolean; error?: string };
+        } catch {
+          nonJsonBody = await responseClone.text();
+        }
+      } else {
+        nonJsonBody = await response.text();
+      }
 
       if (!response.ok || payload.ok !== true) {
-        throw new Error(payload.error || 'Request failed');
+        const normalizedText = nonJsonBody.trim().replace(/\s+/g, ' ').slice(0, 180);
+        const fallbackMessage =
+          language === 'en'
+            ? 'Unexpected server response. Please try again in a moment.'
+            : 'Respuesta inesperada del servidor. Intenta nuevamente en unos momentos.';
+
+        throw new Error(payload?.error || normalizedText || fallbackMessage);
       }
 
       setSubmitState('success');

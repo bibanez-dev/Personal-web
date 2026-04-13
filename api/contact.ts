@@ -23,6 +23,7 @@ type ErrorKey =
   | 'INVALID_MESSAGE'
   | 'TOO_MANY_REQUESTS'
   | 'MISSING_EMAIL_CONFIG'
+  | 'INVALID_FROM_EMAIL'
   | 'SEND_TIMEOUT'
   | 'SEND_FAILED'
   | 'UNEXPECTED_ERROR';
@@ -44,6 +45,7 @@ const MESSAGES: Record<Locale, LocalizedMessages> = {
     INVALID_MESSAGE: 'El mensaje debe tener entre 20 y 2000 caracteres.',
     TOO_MANY_REQUESTS: 'Demasiados intentos. Espera un minuto e intenta nuevamente.',
     MISSING_EMAIL_CONFIG: 'La configuracion de email no esta completa en el servidor.',
+    INVALID_FROM_EMAIL: 'El remitente configurado no es valido para Resend.',
     SEND_TIMEOUT: 'El envio demoro demasiado. Intenta nuevamente en unos minutos.',
     SEND_FAILED: 'No se pudo enviar el mensaje en este momento. Intenta nuevamente.',
     UNEXPECTED_ERROR: 'Ocurrio un error inesperado. Intenta nuevamente.',
@@ -57,6 +59,7 @@ const MESSAGES: Record<Locale, LocalizedMessages> = {
     INVALID_MESSAGE: 'Message must be between 20 and 2000 characters.',
     TOO_MANY_REQUESTS: 'Too many attempts. Please wait a minute and try again.',
     MISSING_EMAIL_CONFIG: 'Email configuration is incomplete on the server.',
+    INVALID_FROM_EMAIL: 'Configured sender is not valid for Resend.',
     SEND_TIMEOUT: 'Sending timed out. Please try again in a few minutes.',
     SEND_FAILED: 'Could not send the message right now. Please try again shortly.',
     UNEXPECTED_ERROR: 'Unexpected error. Please try again.',
@@ -89,14 +92,34 @@ const isEmailValid = (value: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.te
 
 const normalizeLocale = (locale: unknown): Locale => (locale === 'en' ? 'en' : 'es');
 
-const getClientIp = (request: Request): string => {
-  const forwardedFor = request.headers.get('x-forwarded-for');
+const extractSenderEmail = (from: string): string => {
+  const bracketMatch = from.match(/<([^>]+)>/);
+  if (bracketMatch?.[1]) {
+    return bracketMatch[1].trim().toLowerCase();
+  }
+
+  return from.trim().toLowerCase();
+};
+
+const getHeader = (req: { headers?: Record<string, unknown> }, key: string): string => {
+  const raw = req.headers?.[key] ?? req.headers?.[key.toLowerCase()] ?? req.headers?.[key.toUpperCase()];
+
+  if (Array.isArray(raw)) {
+    return String(raw[0] ?? '');
+  }
+
+  return typeof raw === 'string' ? raw : '';
+};
+
+const getClientIp = (req: { headers?: Record<string, unknown> }): string => {
+  const forwardedFor = getHeader(req, 'x-forwarded-for');
   if (forwardedFor) {
     const firstIp = forwardedFor.split(',')[0]?.trim();
     if (firstIp) return firstIp;
   }
 
-  return request.headers.get('x-real-ip') ?? 'unknown';
+  const realIp = getHeader(req, 'x-real-ip');
+  return realIp || 'unknown';
 };
 
 const isRateLimited = (ip: string): boolean => {
@@ -118,20 +141,61 @@ const isRateLimited = (ip: string): boolean => {
   return false;
 };
 
-const jsonError = (status: number, code: ErrorKey, locale: Locale): Response =>
-  Response.json(
-    {
-      ok: false,
-      error: MESSAGES[locale][code],
-      code,
-    },
-    { status },
-  );
+const sendJson = (res: { statusCode?: number; setHeader: (name: string, value: string) => void; end: (chunk: string) => void }, status: number, body: Record<string, unknown>): void => {
+  res.statusCode = status;
+  res.setHeader('content-type', 'application/json; charset=utf-8');
+  res.setHeader('cache-control', 'no-store');
+  res.end(JSON.stringify(body));
+};
+
+const jsonError = (
+  res: { statusCode?: number; setHeader: (name: string, value: string) => void; end: (chunk: string) => void },
+  status: number,
+  code: ErrorKey,
+  locale: Locale,
+): void => {
+  sendJson(res, status, {
+    ok: false,
+    error: MESSAGES[locale][code],
+    code,
+  });
+};
+
+const parseBody = (body: unknown): ContactRequest | null => {
+  if (!body) {
+    return null;
+  }
+
+  if (typeof body === 'object') {
+    return body as ContactRequest;
+  }
+
+  if (typeof body === 'string') {
+    try {
+      return JSON.parse(body) as ContactRequest;
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+};
 
 const parseResendError = async (response: Response): Promise<string> => {
+  const contentType = response.headers.get('content-type')?.toLowerCase() ?? '';
+
+  if (contentType.includes('application/json')) {
+    try {
+      const payload = (await response.json()) as { message?: string; error?: string };
+      return payload.message ?? payload.error ?? 'unknown';
+    } catch {
+      return 'unknown';
+    }
+  }
+
   try {
-    const payload = (await response.json()) as { message?: string; error?: string };
-    return payload.message ?? payload.error ?? 'unknown';
+    const text = await response.text();
+    return text.slice(0, 180) || 'unknown';
   } catch {
     return 'unknown';
   }
@@ -174,83 +238,118 @@ const sendWithResend = async (params: {
   }
 };
 
-export default async function handler(request: Request): Promise<Response> {
-  const method = request.method.toUpperCase();
-  const localeHeader = normalizeLocale(request.headers.get('accept-language')?.toLowerCase().startsWith('en') ? 'en' : 'es');
-
-  if (method !== 'POST') {
-    return jsonError(405, 'METHOD_NOT_ALLOWED', localeHeader);
-  }
-
-  let payload: ContactRequest;
-  try {
-    payload = (await request.json()) as ContactRequest;
-  } catch {
-    return jsonError(400, 'INVALID_JSON', localeHeader);
-  }
-
-  const locale = normalizeLocale(payload.locale);
-
-  const name = sanitizeInline(safeString(payload.name));
-  const email = sanitizeInline(safeString(payload.email)).toLowerCase();
-  const company = sanitizeInline(safeString(payload.company));
-  const message = sanitizeMultiline(safeString(payload.message));
-  const website = sanitizeInline(safeString(payload.website));
-
-  if (website.length > 0) {
-    return Response.json({ ok: true }, { status: 200 });
-  }
-
-  if (!name || name.length > 120) {
-    return jsonError(400, 'INVALID_NAME', locale);
-  }
-
-  if (!email || email.length > 160 || !isEmailValid(email)) {
-    return jsonError(400, 'INVALID_EMAIL', locale);
-  }
-
-  if (company.length > 160) {
-    return jsonError(400, 'INVALID_COMPANY', locale);
-  }
-
-  if (!message || message.length < 20 || message.length > 2000) {
-    return jsonError(400, 'INVALID_MESSAGE', locale);
-  }
-
-  const clientIp = getClientIp(request);
-  if (isRateLimited(clientIp)) {
-    return jsonError(429, 'TOO_MANY_REQUESTS', locale);
-  }
-
-  const env = getEnv();
-  const resendApiKey = safeString(env.RESEND_API_KEY);
-  const contactToEmail = safeString(env.CONTACT_TO_EMAIL);
-  const contactFromEmail = safeString(env.CONTACT_FROM_EMAIL);
-
-  if (!resendApiKey || !contactToEmail || !contactFromEmail) {
-    console.error('[contact] missing required env vars', {
-      hasResendApiKey: Boolean(resendApiKey),
-      hasContactToEmail: Boolean(contactToEmail),
-      hasContactFromEmail: Boolean(contactFromEmail),
-    });
-    return jsonError(500, 'MISSING_EMAIL_CONFIG', locale);
-  }
-
-  const subjectPrefix = locale === 'en' ? 'New contact form message' : 'Nuevo mensaje desde formulario';
-  const subject = `${subjectPrefix} - ${name}`;
-
-  const lines = [
-    `Name: ${name}`,
-    `Email: ${email}`,
-    `Company: ${company || '-'}`,
-    `Locale: ${locale}`,
-    `IP: ${clientIp}`,
-    '',
-    'Message:',
-    message,
-  ];
+export default async function handler(
+  req: {
+    method?: string;
+    headers?: Record<string, unknown>;
+    body?: unknown;
+  },
+  res: {
+    statusCode?: number;
+    setHeader: (name: string, value: string) => void;
+    end: (chunk: string) => void;
+  },
+): Promise<void> {
+  let locale: Locale = 'es';
+  const requestId = `ct_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
   try {
+    const acceptLanguage = getHeader(req, 'accept-language').toLowerCase();
+    locale = normalizeLocale(acceptLanguage.startsWith('en') ? 'en' : 'es');
+
+    const method = String(req.method ?? 'GET').toUpperCase();
+    if (method !== 'POST') {
+      console.warn(`[contact][${requestId}] method_not_allowed`, { method });
+      jsonError(res, 405, 'METHOD_NOT_ALLOWED', locale);
+      return;
+    }
+
+    const payload = parseBody(req.body);
+    if (!payload) {
+      console.warn(`[contact][${requestId}] invalid_json_body`);
+      jsonError(res, 400, 'INVALID_JSON', locale);
+      return;
+    }
+
+    locale = normalizeLocale(payload.locale ?? locale);
+
+    const name = sanitizeInline(safeString(payload.name));
+    const email = sanitizeInline(safeString(payload.email)).toLowerCase();
+    const company = sanitizeInline(safeString(payload.company));
+    const message = sanitizeMultiline(safeString(payload.message));
+    const website = sanitizeInline(safeString(payload.website));
+
+    if (website.length > 0) {
+      console.info(`[contact][${requestId}] honeypot_triggered`);
+      sendJson(res, 200, { ok: true });
+      return;
+    }
+
+    if (!name || name.length > 120) {
+      jsonError(res, 400, 'INVALID_NAME', locale);
+      return;
+    }
+
+    if (!email || email.length > 160 || !isEmailValid(email)) {
+      jsonError(res, 400, 'INVALID_EMAIL', locale);
+      return;
+    }
+
+    if (company.length > 160) {
+      jsonError(res, 400, 'INVALID_COMPANY', locale);
+      return;
+    }
+
+    if (!message || message.length < 20 || message.length > 2000) {
+      jsonError(res, 400, 'INVALID_MESSAGE', locale);
+      return;
+    }
+
+    const clientIp = getClientIp(req);
+    if (isRateLimited(clientIp)) {
+      console.warn(`[contact][${requestId}] rate_limited`, { clientIp });
+      jsonError(res, 429, 'TOO_MANY_REQUESTS', locale);
+      return;
+    }
+
+    const env = getEnv();
+    const resendApiKey = safeString(env.RESEND_API_KEY);
+    const contactToEmail = safeString(env.CONTACT_TO_EMAIL);
+    const contactFromEmail = safeString(env.CONTACT_FROM_EMAIL);
+
+    if (!resendApiKey || !contactToEmail || !contactFromEmail) {
+      console.error(`[contact][${requestId}] missing_required_env`, {
+        hasResendApiKey: Boolean(resendApiKey),
+        hasContactToEmail: Boolean(contactToEmail),
+        hasContactFromEmail: Boolean(contactFromEmail),
+      });
+      jsonError(res, 500, 'MISSING_EMAIL_CONFIG', locale);
+      return;
+    }
+
+    const senderEmail = extractSenderEmail(contactFromEmail);
+    if (!isEmailValid(senderEmail)) {
+      console.error(`[contact][${requestId}] invalid_contact_from_email`, {
+        contactFromEmail,
+      });
+      jsonError(res, 500, 'INVALID_FROM_EMAIL', locale);
+      return;
+    }
+
+    const subjectPrefix = locale === 'en' ? 'New contact form message' : 'Nuevo mensaje desde formulario';
+    const subject = `${subjectPrefix} - ${name}`;
+
+    const lines = [
+      `Name: ${name}`,
+      `Email: ${email}`,
+      `Company: ${company || '-'}`,
+      `Locale: ${locale}`,
+      `IP: ${clientIp}`,
+      '',
+      'Message:',
+      message,
+    ];
+
     await sendWithResend({
       apiKey: resendApiKey,
       from: contactFromEmail,
@@ -260,20 +359,25 @@ export default async function handler(request: Request): Promise<Response> {
       text: lines.join('\n'),
     });
 
-    return Response.json({ ok: true }, { status: 200 });
+    console.info(`[contact][${requestId}] send_success`, {
+      to: contactToEmail,
+      from: contactFromEmail,
+    });
+
+    sendJson(res, 200, { ok: true });
   } catch (error) {
     const isAbortError = error instanceof Error && error.name === 'AbortError';
 
     if (isAbortError) {
-      console.error('[contact] resend timeout', { ip: clientIp });
-      return jsonError(504, 'SEND_TIMEOUT', locale);
+      console.error(`[contact][${requestId}] resend_timeout`);
+      jsonError(res, 504, 'SEND_TIMEOUT', locale);
+      return;
     }
 
-    console.error('[contact] resend send failed', {
-      ip: clientIp,
+    console.error(`[contact][${requestId}] unhandled_error`, {
       error: error instanceof Error ? error.message : String(error),
     });
 
-    return jsonError(502, 'SEND_FAILED', locale);
+    jsonError(res, 500, 'UNEXPECTED_ERROR', locale);
   }
 }
