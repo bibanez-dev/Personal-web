@@ -16,6 +16,7 @@ Copiar `.env.example` a `.env` y completar:
 - `INSTAGRAM_ACCESS_TOKEN`: token de larga duracion para Graph API
 - `INSTAGRAM_PROFILE_URL` (opcional): URL publica del perfil de Instagram
 - `LINKEDIN_PROFILE_URL` (opcional): URL publica del perfil de LinkedIn
+- `VITE_WHATSAPP_URL` (opcional recomendado): URL completa de WhatsApp para el CTA flotante mobile (ejemplo: `https://wa.me/54911XXXXXXXX`)
 - `RESEND_API_KEY`: API key de Resend
 - `CONTACT_TO_EMAIL`: email que recibe las consultas del formulario
 - `CONTACT_FROM_EMAIL`: remitente verificado en Resend

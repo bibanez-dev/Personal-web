@@ -7,8 +7,10 @@ import {
   Check,
   ChevronUp,
   Languages,
+  Linkedin,
   Mail,
   Menu,
+  MessageCircle,
   Moon,
   Sun,
   X,
@@ -403,6 +405,7 @@ const CONTENT: Record<Language, LandingContent> = {
 
 const LINKEDIN_URL = 'https://www.linkedin.com/in/ibanezbenjamin/';
 const EMAIL = 'bibanez00@gmail.com';
+const WHATSAPP_URL = (import.meta.env.VITE_WHATSAPP_URL as string | undefined)?.trim() ?? '';
 const STORAGE_LANGUAGE = 'site_language';
 const STORAGE_THEME = 'site_theme';
 
@@ -490,6 +493,7 @@ const RevealBlock: React.FC<{
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [floatingCtaOpen, setFloatingCtaOpen] = useState(false);
   const [language, setLanguage] = useState<Language>('es');
   const [theme, setTheme] = useState<Theme>('light');
   const [formData, setFormData] = useState({
@@ -501,6 +505,7 @@ export default function App() {
   });
   const [submitState, setSubmitState] = useState<SubmitState>('idle');
   const [submitMessage, setSubmitMessage] = useState(CONTENT.es.contact.status.idle);
+  const floatingCtaRef = useRef<HTMLDivElement | null>(null);
 
   const getDefaultSubmitMessage = (locale: Language): string => CONTENT[locale].contact.status.idle;
 
@@ -530,7 +535,50 @@ export default function App() {
     window.localStorage.setItem(STORAGE_THEME, theme);
   }, [theme]);
 
+  useEffect(() => {
+    if (!floatingCtaOpen) {
+      return;
+    }
+
+    const onPointerDown = (event: MouseEvent | TouchEvent) => {
+      const target = event.target;
+      if (!(target instanceof Node)) {
+        return;
+      }
+
+      if (!floatingCtaRef.current?.contains(target)) {
+        setFloatingCtaOpen(false);
+      }
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setFloatingCtaOpen(false);
+      }
+    };
+
+    window.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('touchstart', onPointerDown, { passive: true });
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      window.removeEventListener('mousedown', onPointerDown);
+      window.removeEventListener('touchstart', onPointerDown);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [floatingCtaOpen]);
+
   const content = useMemo(() => CONTENT[language], [language]);
+  const floatingCtaText = useMemo(
+    () => ({
+      trigger: language === 'en' ? 'Connect' : 'Conectar',
+      linkedin: 'LinkedIn',
+      whatsapp: 'WhatsApp',
+      email: language === 'en' ? 'Email' : 'Email',
+      whatsappUnavailable: language === 'en' ? 'WhatsApp unavailable' : 'WhatsApp no disponible',
+    }),
+    [language],
+  );
   const currentYear = useMemo(() => new Date().getFullYear(), []);
 
   const navItems = useMemo(
@@ -966,6 +1014,56 @@ export default function App() {
           </button>
         </div>
       </footer>
+
+      <div className="floating-cta-mobile" ref={floatingCtaRef}>
+        <div className={`floating-cta-popover ${floatingCtaOpen ? 'is-open' : ''}`} id="mobile-connect-popover">
+          <a
+            className={`floating-cta-item ${WHATSAPP_URL ? '' : 'is-disabled'}`.trim()}
+            href={WHATSAPP_URL || '#'}
+            target="_blank"
+            rel="noreferrer"
+            aria-disabled={!WHATSAPP_URL}
+            tabIndex={WHATSAPP_URL ? undefined : -1}
+            title={WHATSAPP_URL ? floatingCtaText.whatsapp : floatingCtaText.whatsappUnavailable}
+            onClick={(event) => {
+              if (!WHATSAPP_URL) {
+                event.preventDefault();
+                return;
+              }
+              setFloatingCtaOpen(false);
+            }}
+          >
+            <MessageCircle size={16} />
+            <span>{floatingCtaText.whatsapp}</span>
+          </a>
+          <a
+            className="floating-cta-item"
+            href={LINKEDIN_URL}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => setFloatingCtaOpen(false)}
+          >
+            <Linkedin size={16} />
+            <span>{floatingCtaText.linkedin}</span>
+          </a>
+          <a className="floating-cta-item" href={`mailto:${EMAIL}`} onClick={() => setFloatingCtaOpen(false)}>
+            <Mail size={16} />
+            <span>{floatingCtaText.email}</span>
+          </a>
+        </div>
+
+        <button
+          className={`floating-cta-trigger ${floatingCtaOpen ? 'is-open' : ''}`}
+          type="button"
+          aria-label={floatingCtaText.trigger}
+          aria-expanded={floatingCtaOpen}
+          aria-controls="mobile-connect-popover"
+          onClick={() => setFloatingCtaOpen((current) => !current)}
+        >
+          <span>{floatingCtaText.trigger}</span>
+          {floatingCtaOpen ? <X size={16} /> : <ArrowUpRight size={16} />}
+        </button>
+      </div>
     </div>
   );
 }
