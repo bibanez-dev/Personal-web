@@ -659,6 +659,13 @@
     width: fit-content;
   }
 
+  .submit-btn:disabled {
+    opacity: 0.72;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
   .form-feedback {
     margin: 0.4rem 0 0;
     font-size: 0.83rem;
@@ -672,6 +679,10 @@
 
   .form-feedback.error {
     color: var(--danger);
+  }
+
+  .form-feedback.info {
+    color: var(--text-muted);
   }
 
   .honeypot {
