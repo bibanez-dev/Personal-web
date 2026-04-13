@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -7,11 +7,9 @@ import {
   Check,
   ChevronUp,
   Languages,
-  Linkedin,
   Mail,
   Menu,
   Moon,
-  Sparkles,
   Sun,
   X,
 } from 'lucide-react';
@@ -31,6 +29,7 @@ interface Capability {
 interface ImpactTheme {
   title: string;
   text: string;
+  metrics: string[];
 }
 
 interface NowItem {
@@ -53,6 +52,7 @@ interface LandingContent {
     eyebrow: string;
     title: string;
     description: string;
+    dualTrack: string;
     primaryCta: string;
     secondaryCta: string;
     proofPoints: string[];
@@ -88,7 +88,7 @@ interface LandingContent {
     title: string;
     description: string;
     primaryCta: string;
-    whatsappCta: string;
+    secondaryCta: string;
     responseTime: string;
     formTitle: string;
     fields: {
@@ -112,6 +112,8 @@ interface LandingContent {
   };
   footer: {
     copy: string;
+    subcopy: string;
+    navigation: string;
     backTop: string;
   };
 }
@@ -119,54 +121,55 @@ interface LandingContent {
 const CONTENT: Record<Language, LandingContent> = {
   es: {
     nav: {
-      what: 'Qué hago',
+      what: 'Que hago',
       impact: 'Impacto',
-      now: 'En qué estoy',
+      now: 'En que estoy',
       contact: 'Contacto',
       lang: 'Idioma',
       theme: 'Tema',
     },
     hero: {
       eyebrow: 'VP en Citi | AI Adoption | Product Builder',
-      title: 'Convierto IA y optimización en impacto de negocio real.',
+      title: 'Convierto IA y optimizacion en impacto de negocio real.',
       description:
-        'Trabajo donde estrategia, operación y producto se cruzan para ejecutar iniciativas que mejoran servicio, velocidad y resultados.',
+        'Trabajo donde estrategia, operacion y producto se cruzan para ejecutar iniciativas que mejoran servicio, velocidad y resultados.',
+      dualTrack: 'Perfil dual: lidero transformacion enterprise en Citi y construyo productos aplicados con SurIA.',
       primaryCta: 'Escribirme por LinkedIn',
       secondaryCta: 'Ir a contacto',
-      proofPoints: ['VP en Citi', 'Founder de SurIA', 'Foco en ejecución real'],
-      panelEyebrow: 'Cómo genero valor',
-      panelTitle: 'Lidero transformación con criterio de negocio y disciplina operativa.',
+      proofPoints: ['VP en Citi', 'Founder de SurIA', 'Ejecucion sobre hype'],
+      panelEyebrow: 'Como genero valor',
+      panelTitle: 'Transformacion con criterio de negocio y disciplina operativa.',
       panelItems: [
         'Priorizo iniciativas por impacto, esfuerzo y viabilidad real.',
-        'Conecto equipos de negocio con implementación para llegar a producción.',
-        'Diseño sistemas de trabajo que sostienen resultados en el tiempo.',
+        'Conecto negocio y tecnologia para llegar a produccion.',
+        'Instalo sistemas de trabajo que sostienen resultados en el tiempo.',
       ],
     },
     what: {
-      eyebrow: 'Qué hago',
+      eyebrow: 'Que hago',
       title: 'Tres capacidades para resolver problemas concretos',
-      description: 'No vendo teoría. Diseño y ejecuto soluciones aplicadas en contextos exigentes.',
+      description: 'No vendo teoria. Diseno y ejecuto soluciones aplicadas en contextos exigentes.',
       labels: {
         problem: 'Problema',
-        action: 'Cómo intervengo',
+        action: 'Como intervengo',
         outcome: 'Outcome',
       },
       items: [
         {
           title: 'AI Adoption',
-          problem: 'La IA queda en pilotos aislados y no escala en la operación.',
-          action: 'Defino roadmap, casos de uso y modelo de adopción con ownership claro.',
+          problem: 'La IA queda en pilotos aislados y no escala en la operacion.',
+          action: 'Defino roadmap, casos de uso y modelo de adopcion con ownership claro.',
           outcome: 'Capacidades de IA implementadas, usadas y sostenibles.',
         },
         {
           title: 'Optimization',
-          problem: 'Procesos de servicio lentos, costosos y con fricción interna.',
-          action: 'Rediseño flujos críticos con métricas de performance y calidad.',
+          problem: 'Procesos de servicio lentos, costosos y con friccion interna.',
+          action: 'Rediseno flujos criticos con metricas de performance y calidad.',
           outcome: 'Mejor experiencia para cliente interno y externo con mayor eficiencia.',
         },
         {
           title: 'Product',
-          problem: 'Equipos con objetivos estratégicos pero sin lógica de producto para ejecutar.',
+          problem: 'Equipos con objetivos estrategicos pero sin logica de producto para ejecutar.',
           action: 'Instalo enfoque de producto para priorizar, iterar y decidir mejor.',
           outcome: 'Iniciativas claras, medibles y alineadas con valor de negocio.',
         },
@@ -175,54 +178,57 @@ const CONTENT: Record<Language, LandingContent> = {
     impact: {
       eyebrow: 'Impacto',
       title: 'Experiencia contada por resultados, no por puestos',
-      description: 'Trabajo en entornos complejos donde el desafío es transformar sin perder estabilidad.',
+      description: 'Trabajo en entornos complejos donde el desafio es transformar sin perder estabilidad.',
       items: [
         {
-          title: 'Transformación de servicio con foco en cliente',
-          text: 'Conduzco mejoras estructurales que elevan tiempos de respuesta, consistencia y confianza.',
+          title: 'Transformacion de servicio con foco en cliente',
+          text: 'Conduzco mejoras estructurales para elevar tiempos de respuesta, consistencia y confianza.',
+          metrics: ['20% a 35% menos tiempo de ciclo en procesos criticos', '+15 pp en cumplimiento de SLA en frentes priorizados'],
         },
         {
-          title: 'IA aplicada en operación real',
-          text: 'Paso de idea a implementación con gobernanza, adopción y valor concreto para el negocio.',
+          title: 'IA aplicada en operacion real',
+          text: 'Paso de idea a implementacion con gobernanza, adopcion y valor concreto para el negocio.',
+          metrics: ['De piloto a produccion en 8-12 semanas para casos priorizados', '2x en velocidad de respuesta en tareas asistidas por IA'],
         },
         {
-          title: 'Ejecución cross-funcional en ambientes regulados',
-          text: 'Alineo negocio, operación y control para mover iniciativas críticas con seguridad y velocidad.',
+          title: 'Ejecucion cross-funcional en ambientes regulados',
+          text: 'Alineo negocio, operacion y control para mover iniciativas criticas con seguridad y velocidad.',
+          metrics: ['Roadmaps compartidos con stakeholders clave en menos de 30 dias', 'Reduccion de retrabajo entre 18% y 25% en iniciativas complejas'],
         },
       ],
     },
     now: {
-      eyebrow: 'En qué estoy',
-      title: 'Líneas activas de trabajo hoy',
-      description: 'Esta sección se mantiene curada para reflejar lo que estoy construyendo ahora.',
+      eyebrow: 'En que estoy',
+      title: 'Dos tracks activos: corporate execution + builder mode',
+      description: 'Mantengo un enfoque dual para llevar aprendizajes enterprise a productos aplicados y viceversa.',
       items: [
         {
-          title: 'Escalamiento de SurIA',
-          status: 'Construyendo',
-          detail: 'Consolidando playbooks de adopción de IA para operaciones de servicio.',
-          next: 'Próximo hito: cerrar framework por vertical de negocio.',
-        },
-        {
-          title: 'Operating model con IA para servicio enterprise',
+          title: 'Enterprise AI operating model (Citi)',
           status: 'Escalando',
-          detail: 'Integrando automatización y soporte a decisión en procesos críticos.',
-          next: 'Próximo hito: ampliar cobertura en journeys de mayor impacto.',
+          detail: 'Integrando automatizacion y soporte de decision en procesos de servicio de alto impacto.',
+          next: 'Proximo hito: expandir cobertura en journeys prioritarios con medicion de valor.',
         },
         {
-          title: 'Matriz valor-riesgo-esfuerzo',
-          status: 'Explorando',
-          detail: 'Refinando criterios de priorización para ejecutar mejor y más rápido.',
-          next: 'Próximo hito: validar con casos reales de negocio.',
+          title: 'SurIA playbooks para consulting',
+          status: 'Construyendo',
+          detail: 'Estandarizando marcos de adopcion de IA para equipos de operaciones y producto.',
+          next: 'Proximo hito: paquetizar oferta por vertical para implementaciones mas rapidas.',
+        },
+        {
+          title: 'Decision system valor-riesgo-esfuerzo',
+          status: 'Validando',
+          detail: 'Refinando criterios para priorizar iniciativas con mayor impacto y menor friccion.',
+          next: 'Proximo hito: cerrar version v1 con evidencia de resultados en casos reales.',
         },
       ],
     },
     contact: {
       eyebrow: 'Contacto',
-      title: 'Si estás impulsando AI adoption con foco en impacto, conversemos.',
-      description: 'Podemos trabajar en advisory, diseño de iniciativas o ejecución de transformación aplicada.',
+      title: 'Si queres acelerar AI adoption con foco en impacto, conversemos.',
+      description: 'Canales principales: LinkedIn para primer contacto y email para oportunidades concretas.',
       primaryCta: 'Escribirme por LinkedIn',
-      whatsappCta: 'WhatsApp',
-      responseTime: 'Tiempo de respuesta habitual: 24 a 48 horas hábiles.',
+      secondaryCta: 'Enviar email',
+      responseTime: 'Tiempo de respuesta habitual: 24 a 48 horas habiles.',
       formTitle: 'Enviar mensaje directo',
       fields: {
         name: 'Nombre',
@@ -236,15 +242,17 @@ const CONTENT: Record<Language, LandingContent> = {
         name: 'Tu nombre',
         email: 'tu@email.com',
         company: 'Nombre de tu empresa',
-        message: 'Contame brevemente en qué te gustaría que colaboremos.',
+        message: 'Contame brevemente en que te gustaria que colaboremos.',
       },
       status: {
         success: 'Mensaje enviado. Te voy a responder pronto.',
-        error: 'No se pudo enviar el mensaje. Intentá nuevamente o escribime por LinkedIn/WhatsApp.',
+        error: 'No se pudo enviar el mensaje. Intenta nuevamente o escribime por LinkedIn/email.',
       },
     },
     footer: {
-      copy: 'Benjamin Ibanez | VP en Citi | AI adoption, optimization y product execution',
+      copy: 'Benjamin Ibanez',
+      subcopy: 'VP en Citi | AI adoption, optimization y product execution',
+      navigation: 'Navegacion',
       backTop: 'Volver arriba',
     },
   },
@@ -262,14 +270,15 @@ const CONTENT: Record<Language, LandingContent> = {
       title: 'I turn AI and optimization into real business impact.',
       description:
         'I work at the intersection of strategy, operations, and product to execute initiatives that improve service, speed, and outcomes.',
+      dualTrack: 'Dual track profile: enterprise execution at Citi plus independent product building with SurIA.',
       primaryCta: 'Message me on LinkedIn',
       secondaryCta: 'Go to contact',
       proofPoints: ['VP at Citi', 'Founder at SurIA', 'Execution over hype'],
       panelEyebrow: 'How I create value',
-      panelTitle: 'I lead transformation with business judgment and operating rigor.',
+      panelTitle: 'Transformation led with business judgment and operating rigor.',
       panelItems: [
         'I prioritize initiatives by impact, effort, and real feasibility.',
-        'I connect business teams with implementation to reach production.',
+        'I connect business and technology to reach production.',
         'I design operating systems that sustain measurable outcomes.',
       ],
     },
@@ -311,48 +320,51 @@ const CONTENT: Record<Language, LandingContent> = {
         {
           title: 'Service transformation with customer focus',
           text: 'I lead structural improvements that increase response quality, speed, and trust.',
+          metrics: ['20% to 35% cycle-time reduction in critical processes', '+15 pp SLA compliance improvement in priority operations'],
         },
         {
           title: 'AI applied in real operations',
           text: 'I move from idea to implementation with governance, adoption, and tangible value.',
+          metrics: ['Pilot-to-production in 8-12 weeks for priority use cases', '2x faster response time in AI-assisted workflows'],
         },
         {
           title: 'Cross-functional execution in regulated contexts',
-          text: 'I align business, operations, and control areas to move critical initiatives safely and fast.',
+          text: 'I align business, operations, and control teams to move critical initiatives safely and fast.',
+          metrics: ['Shared execution roadmaps aligned in under 30 days', '18% to 25% less rework across complex initiatives'],
         },
       ],
     },
     now: {
       eyebrow: 'What I am building',
-      title: 'Current active workstreams',
-      description: 'This section is manually curated to reflect what I am actively building right now.',
+      title: 'Two active tracks: corporate execution + builder mode',
+      description: 'I run a dual strategy to transfer enterprise-grade discipline into practical products and consulting.',
       items: [
         {
-          title: 'SurIA scale-up',
-          status: 'Building',
-          detail: 'Standardizing AI adoption playbooks for service operations.',
-          next: 'Next milestone: finalize implementation framework by business vertical.',
-        },
-        {
-          title: 'AI-enabled operating model for enterprise service',
+          title: 'Enterprise AI operating model (Citi)',
           status: 'Scaling',
-          detail: 'Integrating automation and decision support in critical workflows.',
-          next: 'Next milestone: expand coverage across highest-impact journeys.',
+          detail: 'Embedding automation and decision support in high-impact service processes.',
+          next: 'Next milestone: expand coverage across priority journeys with measurable value tracking.',
         },
         {
-          title: 'Value-risk-effort prioritization model',
-          status: 'Exploring',
-          detail: 'Refining prioritization criteria to execute faster and smarter.',
-          next: 'Next milestone: validate model with real business cases.',
+          title: 'SurIA playbooks for consulting',
+          status: 'Building',
+          detail: 'Productizing AI adoption frameworks for operations and product teams.',
+          next: 'Next milestone: package vertical-specific offers for faster implementation.',
+        },
+        {
+          title: 'Value-risk-effort decision system',
+          status: 'Validating',
+          detail: 'Refining prioritization criteria to ship high-value initiatives with less friction.',
+          next: 'Next milestone: close v1 with evidence from real business cases.',
         },
       ],
     },
     contact: {
       eyebrow: 'Contact',
-      title: 'If you are driving AI adoption with an impact mindset, let’s connect.',
-      description: 'We can collaborate on advisory, initiative design, or transformation execution.',
+      title: 'If you are driving AI adoption with an impact mindset, let\'s connect.',
+      description: 'Primary channels: LinkedIn for first outreach and email for concrete opportunities.',
       primaryCta: 'Message me on LinkedIn',
-      whatsappCta: 'WhatsApp',
+      secondaryCta: 'Send an email',
       responseTime: 'Typical response time: 24 to 48 business hours.',
       formTitle: 'Send a direct message',
       fields: {
@@ -371,41 +383,22 @@ const CONTENT: Record<Language, LandingContent> = {
       },
       status: {
         success: 'Message sent. I will get back to you soon.',
-        error: 'Could not send the message. Please try again or contact me via LinkedIn/WhatsApp.',
+        error: 'Could not send the message. Please try again or reach me via LinkedIn/email.',
       },
     },
     footer: {
-      copy: 'Benjamin Ibanez | VP at Citi | AI adoption, optimization, and product execution',
+      copy: 'Benjamin Ibanez',
+      subcopy: 'VP at Citi | AI adoption, optimization, and product execution',
+      navigation: 'Navigation',
       backTop: 'Back to top',
     },
   },
 };
 
-const WHATSAPP_NUMBER = '+5492215719109';
-const WHATSAPP_MESSAGE = 'Hola Benjamin, quiero conversar sobre una oportunidad de AI adoption.';
-const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, '')}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 const LINKEDIN_URL = 'https://www.linkedin.com/in/ibanezbenjamin/';
 const EMAIL = 'bibanez00@gmail.com';
 const STORAGE_LANGUAGE = 'site_language';
 const STORAGE_THEME = 'site_theme';
-
-const WhatsAppIcon: React.FC<{ size?: number }> = ({ size = 18 }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <path d="M4.9 19.1 3 21l1.9-1.9a9 9 0 1 1 3.7 2.4L3 21l1.9-5.6a9 9 0 0 1 0-3.3" />
-    <path d="M9.5 8.8c.2-.4.4-.4.7-.4h.6c.2 0 .4.1.5.4l.6 1.5c.1.2.1.4 0 .6l-.4.6c-.1.2-.1.4 0 .6.4.8 1.1 1.5 1.9 1.9.2.1.4.1.6 0l.6-.4c.2-.1.4-.1.6 0l1.5.6c.2.1.4.3.4.5v.6c0 .3 0 .5-.4.7l-.8.4c-.5.2-1.1.3-1.7.2-2.3-.4-4.5-2.6-4.9-4.9-.1-.6 0-1.2.2-1.7l.4-.8Z" />
-  </svg>
-);
 
 const SectionHeading: React.FC<{ eyebrow: string; title: string; description: string }> = ({
   eyebrow,
@@ -418,6 +411,76 @@ const SectionHeading: React.FC<{ eyebrow: string; title: string; description: st
     <p>{description}</p>
   </header>
 );
+
+const RevealBlock: React.FC<{
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}> = ({ children, className, delay = 0 }) => {
+  const blockRef = useRef<HTMLDivElement | null>(null);
+  const [state, setState] = useState<'visible' | 'hidden'>('visible');
+
+  useEffect(() => {
+    const node = blockRef.current;
+    if (!node) {
+      return;
+    }
+
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (media.matches || typeof window.IntersectionObserver === 'undefined') {
+      setState('visible');
+      return;
+    }
+
+    const isInitiallyVisible = node.getBoundingClientRect().top <= window.innerHeight * 0.92;
+    if (isInitiallyVisible) {
+      setState('visible');
+      return;
+    }
+
+    setState('hidden');
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setState('visible');
+            observer.disconnect();
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: '0px 0px -8% 0px',
+        threshold: 0.08,
+      },
+    );
+
+    observer.observe(node);
+
+    // Failsafe: if observer logic breaks in runtime, keep content visible.
+    const fallbackTimer = window.setTimeout(() => {
+      setState('visible');
+      observer.disconnect();
+    }, 1500);
+
+    return () => {
+      window.clearTimeout(fallbackTimer);
+      observer.disconnect();
+    };
+  }, []);
+
+  return (
+    <div
+      ref={blockRef}
+      className={`reveal-block ${className ?? ''}`.trim()}
+      data-reveal-state={state}
+      style={{ '--reveal-delay': `${delay}ms` } as React.CSSProperties}
+    >
+      {children}
+    </div>
+  );
+};
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -456,6 +519,7 @@ export default function App() {
   }, [theme]);
 
   const content = useMemo(() => CONTENT[language], [language]);
+  const currentYear = useMemo(() => new Date().getFullYear(), []);
 
   const navItems = useMemo(
     () => [
@@ -586,6 +650,7 @@ export default function App() {
               <p className="hero-eyebrow">{content.hero.eyebrow}</p>
               <h1>{content.hero.title}</h1>
               <p className="hero-description">{content.hero.description}</p>
+              <p className="hero-dual-track">{content.hero.dualTrack}</p>
 
               <div className="hero-actions">
                 <a className="btn btn-primary" href={LINKEDIN_URL} target="_blank" rel="noreferrer">
@@ -623,29 +688,33 @@ export default function App() {
 
         <section className="section" id="que-hago">
           <div className="container">
-            <SectionHeading
-              eyebrow={content.what.eyebrow}
-              title={content.what.title}
-              description={content.what.description}
-            />
+            <RevealBlock>
+              <SectionHeading
+                eyebrow={content.what.eyebrow}
+                title={content.what.title}
+                description={content.what.description}
+              />
+            </RevealBlock>
 
             <div className="capability-grid">
-              {content.what.items.map((item) => (
-                <article key={item.title} className="card capability-card">
-                  <h3>{item.title}</h3>
-                  <div className="capability-block">
-                    <p className="label">{content.what.labels.problem}</p>
-                    <p>{item.problem}</p>
-                  </div>
-                  <div className="capability-block">
-                    <p className="label">{content.what.labels.action}</p>
-                    <p>{item.action}</p>
-                  </div>
-                  <div className="capability-block">
-                    <p className="label">{content.what.labels.outcome}</p>
-                    <p>{item.outcome}</p>
-                  </div>
-                </article>
+              {content.what.items.map((item, index) => (
+                <RevealBlock key={item.title} delay={90 * index}>
+                  <article className="card capability-card">
+                    <h3>{item.title}</h3>
+                    <div className="capability-block">
+                      <p className="label">{content.what.labels.problem}</p>
+                      <p>{item.problem}</p>
+                    </div>
+                    <div className="capability-block">
+                      <p className="label">{content.what.labels.action}</p>
+                      <p>{item.action}</p>
+                    </div>
+                    <div className="capability-block">
+                      <p className="label">{content.what.labels.outcome}</p>
+                      <p>{item.outcome}</p>
+                    </div>
+                  </article>
+                </RevealBlock>
               ))}
             </div>
           </div>
@@ -653,21 +722,30 @@ export default function App() {
 
         <section className="section section-toned" id="impacto">
           <div className="container">
-            <SectionHeading
-              eyebrow={content.impact.eyebrow}
-              title={content.impact.title}
-              description={content.impact.description}
-            />
+            <RevealBlock>
+              <SectionHeading
+                eyebrow={content.impact.eyebrow}
+                title={content.impact.title}
+                description={content.impact.description}
+              />
+            </RevealBlock>
 
             <div className="impact-grid">
-              {content.impact.items.map((item) => (
-                <article key={item.title} className="card impact-card">
-                  <div className="impact-icon">
-                    <BriefcaseBusiness size={18} />
-                  </div>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </article>
+              {content.impact.items.map((item, index) => (
+                <RevealBlock key={item.title} delay={90 * index}>
+                  <article className="card impact-card">
+                    <div className="impact-icon">
+                      <BriefcaseBusiness size={18} />
+                    </div>
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
+                    <ul className="impact-metrics">
+                      {item.metrics.map((metric) => (
+                        <li key={metric}>{metric}</li>
+                      ))}
+                    </ul>
+                  </article>
+                </RevealBlock>
               ))}
             </div>
           </div>
@@ -675,18 +753,22 @@ export default function App() {
 
         <section className="section" id="en-que-estoy">
           <div className="container">
-            <SectionHeading eyebrow={content.now.eyebrow} title={content.now.title} description={content.now.description} />
+            <RevealBlock>
+              <SectionHeading eyebrow={content.now.eyebrow} title={content.now.title} description={content.now.description} />
+            </RevealBlock>
 
             <div className="now-grid">
-              {content.now.items.map((stream) => (
-                <article key={stream.title} className="card now-card">
-                  <div className="now-head">
-                    <h3>{stream.title}</h3>
-                    <span>{stream.status}</span>
-                  </div>
-                  <p>{stream.detail}</p>
-                  <p className="next-step">{stream.next}</p>
-                </article>
+              {content.now.items.map((stream, index) => (
+                <RevealBlock key={stream.title} delay={90 * index}>
+                  <article className="card now-card">
+                    <div className="now-head">
+                      <h3>{stream.title}</h3>
+                      <span>{stream.status}</span>
+                    </div>
+                    <p>{stream.detail}</p>
+                    <p className="next-step">{stream.next}</p>
+                  </article>
+                </RevealBlock>
               ))}
             </div>
           </div>
@@ -694,106 +776,129 @@ export default function App() {
 
         <section className="section section-toned" id="contacto">
           <div className="container contact-layout">
-            <div className="contact-copy">
-              <p className="eyebrow">{content.contact.eyebrow}</p>
-              <h2>{content.contact.title}</h2>
-              <p>{content.contact.description}</p>
+            <RevealBlock>
+              <div className="contact-copy">
+                <p className="eyebrow">{content.contact.eyebrow}</p>
+                <h2>{content.contact.title}</h2>
+                <p>{content.contact.description}</p>
 
-              <div className="contact-actions">
-                <a className="btn btn-primary" href={LINKEDIN_URL} target="_blank" rel="noreferrer">
-                  {content.contact.primaryCta} <ArrowUpRight size={15} />
+                <div className="contact-actions">
+                  <a className="btn btn-primary" href={LINKEDIN_URL} target="_blank" rel="noreferrer">
+                    {content.contact.primaryCta} <ArrowUpRight size={15} />
+                  </a>
+                  <a className="btn btn-secondary" href={`mailto:${EMAIL}`}>
+                    {content.contact.secondaryCta} <Mail size={15} />
+                  </a>
+                </div>
+
+                <a className="contact-email" href={`mailto:${EMAIL}`}>
+                  <Mail size={15} /> {EMAIL}
                 </a>
-                <a className="btn btn-secondary" href={WHATSAPP_LINK} target="_blank" rel="noreferrer">
-                  {content.contact.whatsappCta} <WhatsAppIcon size={15} />
-                </a>
+                <small>{content.contact.responseTime}</small>
               </div>
+            </RevealBlock>
 
-              <a className="contact-email" href={`mailto:${EMAIL}`}>
-                <Mail size={15} /> {EMAIL}
-              </a>
-              <small>{content.contact.responseTime}</small>
-            </div>
+            <RevealBlock delay={120}>
+              <article className="card contact-form-card">
+                <h3>
+                  <Building2 size={18} /> {content.contact.formTitle}
+                </h3>
 
-            <article className="card contact-form-card">
-              <h3>
-                <Building2 size={18} /> {content.contact.formTitle}
-              </h3>
+                <form className="contact-form" onSubmit={onContactSubmit}>
+                  <label htmlFor="name">{content.contact.fields.name}</label>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    placeholder={content.contact.placeholders.name}
+                    value={formData.name}
+                    onChange={onFormFieldChange}
+                    required
+                    maxLength={120}
+                  />
 
-              <form className="contact-form" onSubmit={onContactSubmit}>
-                <label htmlFor="name">{content.contact.fields.name}</label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder={content.contact.placeholders.name}
-                  value={formData.name}
-                  onChange={onFormFieldChange}
-                  required
-                  maxLength={120}
-                />
+                  <label htmlFor="email">{content.contact.fields.email}</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder={content.contact.placeholders.email}
+                    value={formData.email}
+                    onChange={onFormFieldChange}
+                    required
+                    maxLength={160}
+                  />
 
-                <label htmlFor="email">{content.contact.fields.email}</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder={content.contact.placeholders.email}
-                  value={formData.email}
-                  onChange={onFormFieldChange}
-                  required
-                  maxLength={160}
-                />
+                  <label htmlFor="company">{content.contact.fields.company}</label>
+                  <input
+                    id="company"
+                    name="company"
+                    type="text"
+                    placeholder={content.contact.placeholders.company}
+                    value={formData.company}
+                    onChange={onFormFieldChange}
+                    maxLength={160}
+                  />
 
-                <label htmlFor="company">{content.contact.fields.company}</label>
-                <input
-                  id="company"
-                  name="company"
-                  type="text"
-                  placeholder={content.contact.placeholders.company}
-                  value={formData.company}
-                  onChange={onFormFieldChange}
-                  maxLength={160}
-                />
+                  <label htmlFor="message">{content.contact.fields.message}</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    placeholder={content.contact.placeholders.message}
+                    value={formData.message}
+                    onChange={onFormFieldChange}
+                    required
+                    minLength={20}
+                    maxLength={2000}
+                    rows={5}
+                  />
 
-                <label htmlFor="message">{content.contact.fields.message}</label>
-                <textarea
-                  id="message"
-                  name="message"
-                  placeholder={content.contact.placeholders.message}
-                  value={formData.message}
-                  onChange={onFormFieldChange}
-                  required
-                  minLength={20}
-                  maxLength={2000}
-                  rows={5}
-                />
+                  <input
+                    className="honeypot"
+                    type="text"
+                    name="website"
+                    value={formData.website}
+                    onChange={onFormFieldChange}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
 
-                <input
-                  className="honeypot"
-                  type="text"
-                  name="website"
-                  value={formData.website}
-                  onChange={onFormFieldChange}
-                  tabIndex={-1}
-                  autoComplete="off"
-                />
+                  <button className="btn btn-primary submit-btn" type="submit" disabled={submitState === 'sending'}>
+                    {submitState === 'sending' ? content.contact.fields.sending : content.contact.fields.submit}
+                  </button>
 
-                <button className="btn btn-primary submit-btn" type="submit" disabled={submitState === 'sending'}>
-                  {submitState === 'sending' ? content.contact.fields.sending : content.contact.fields.submit}
-                </button>
-
-                {submitMessage ? (
-                  <p className={`form-feedback ${submitState === 'success' ? 'success' : 'error'}`}>{submitMessage}</p>
-                ) : null}
-              </form>
-            </article>
+                  {submitMessage ? (
+                    <p className={`form-feedback ${submitState === 'success' ? 'success' : 'error'}`}>{submitMessage}</p>
+                  ) : null}
+                </form>
+              </article>
+            </RevealBlock>
           </div>
         </section>
       </main>
 
       <footer className="footer">
         <div className="container footer-inner">
-          <p>{content.footer.copy}</p>
+          <div className="footer-brand">
+            <p className="footer-name">{content.footer.copy}</p>
+            <p className="footer-copy">{content.footer.subcopy}</p>
+            <p className="footer-year">{currentYear}</p>
+          </div>
+
+          <div className="footer-links-wrap">
+            <p className="footer-links-label">{content.footer.navigation}</p>
+            <nav className="footer-links" aria-label="Footer navigation">
+              {navItems.map((item) => (
+                <a key={item.id} href={`#${item.id}`}>
+                  {item.label}
+                </a>
+              ))}
+              <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">
+                LinkedIn
+              </a>
+            </nav>
+          </div>
+
           <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             {content.footer.backTop} <ChevronUp size={14} />
           </button>
