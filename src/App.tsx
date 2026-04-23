@@ -3,7 +3,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   Building2,
-  Check,
   ChevronUp,
   Languages,
   Linkedin,
@@ -20,224 +19,398 @@ type Language = 'es' | 'en';
 type Theme = 'light' | 'dark';
 type SubmitState = 'idle' | 'sending' | 'success' | 'error';
 
-const CONTENT = {
+interface TextContent {
+  meta: {
+    title: string;
+    description: string;
+  };
+  nav: {
+    services: string;
+    impact: string;
+    current: string;
+    contact: string;
+    language: string;
+    theme: string;
+    openMenu: string;
+    closeMenu: string;
+  };
+  hero: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    primaryCta: string;
+    secondaryCta: string;
+    panelTitle: string;
+    panelBody: string;
+    bullets: string[];
+    signals: Array<{ label: string; value: string }>;
+  };
+  services: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    items: Array<{ title: string; body: string }>;
+  };
+  impact: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    items: Array<{ title: string; body: string; metric: string }>;
+  };
+  current: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    items: Array<{ status: string; title: string; body: string }>;
+  };
+  contact: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    responseTime: string;
+    formTitle: string;
+    primaryCta: string;
+    secondaryCta: string;
+    fields: {
+      name: string;
+      email: string;
+      company: string;
+      message: string;
+      submit: string;
+      sending: string;
+    };
+    placeholders: {
+      name: string;
+      email: string;
+      company: string;
+      message: string;
+    };
+    status: {
+      idle: string;
+      success: string;
+      error: string;
+      timeout: string;
+      unexpected: string;
+      sending: string;
+    };
+  };
+  footer: {
+    copy: string;
+    subcopy: string;
+    navLabel: string;
+    top: string;
+  };
+  floating: {
+    trigger: string;
+    whatsapp: string;
+    linkedin: string;
+    email: string;
+    unavailable: string;
+  };
+}
+
+const CONTENT: Record<Language, TextContent> = {
   es: {
     meta: {
-      title: 'Benjamin Ibanez | AI Adoption, Service Transformation & Product Discipline',
+      title: 'Benjamin Ibanez | AI Adoption and Service Transformation',
       description:
-        'Benjamin Ibanez lidera iniciativas de AI adoption, service transformation y product discipline para operaciones exigentes y contextos de alta responsabilidad.',
+        'Benjamin Ibanez lidera agendas de AI adoption, service transformation y disciplina de producto en operaciones de alta exigencia.',
     },
-    a11y: { skip: 'Ir al contenido principal', open: 'Abrir menu', close: 'Cerrar menu' },
-    nav: { capabilities: 'Capacidades', impact: 'Impacto', focus: 'Foco actual', contact: 'Contacto', lang: 'Cambiar idioma', theme: 'Cambiar tema' },
+    nav: {
+      services: 'Servicios',
+      impact: 'Impacto',
+      current: 'Foco actual',
+      contact: 'Contacto',
+      language: 'Cambiar idioma',
+      theme: 'Cambiar tema',
+      openMenu: 'Abrir menu',
+      closeMenu: 'Cerrar menu',
+    },
     hero: {
-      eyebrow: 'VP at Citi | AI Adoption | Service Transformation | Product Builder',
-      title: 'Transformo ambicion estrategica en sistemas operativos que el negocio realmente usa.',
-      description:
-        'Lidero iniciativas donde IA aplicada, rediseño de servicio y disciplina de producto conviven con rigor, velocidad y ejecucion confiable.',
-      context:
-        'Trabajo entre boardroom y delivery: alineo decisiones, diseño operating models y muevo frentes complejos a implementacion concreta.',
-      primaryCta: 'Abrir conversacion en LinkedIn',
-      secondaryCta: 'Ir a contacto',
-      availability:
-        'Disponible para conversaciones selectivas sobre AI adoption, transformation design y advisory ejecutivo.',
+      eyebrow: 'VP at Citi | AI adoption | Service transformation',
+      title: 'Convierto estrategia en ejecucion real para operaciones complejas.',
+      subtitle:
+        'Trabajo en el punto donde negocio, operacion y producto se tienen que alinear rapido, sin ruido y con resultados medibles.',
+      primaryCta: 'Iniciar conversacion en LinkedIn',
+      secondaryCta: 'Ver contacto',
+      panelTitle: 'Enfoque de trabajo',
+      panelBody:
+        'Menos presentaciones. Mas decisiones claras, ownership definido y ritmo de ejecucion sostenido.',
+      bullets: [
+        'Priorizacion por valor, riesgo y viabilidad.',
+        'Delivery cross-functional con governance practico.',
+        'Adopcion real, no pilotos eternos.',
+      ],
       signals: [
         { label: 'Rol actual', value: 'VP at Citi' },
-        { label: 'Builder track', value: 'Founder at SurIA' },
-        { label: 'Ventaja', value: 'Execution over hype' },
+        { label: 'Track builder', value: 'Founder at SurIA' },
+        { label: 'Estilo', value: 'Execution over hype' },
       ],
-      briefEyebrow: 'Executive brief',
-      briefTitle: 'Seniority operativo para mover iniciativas que no admiten improvisacion.',
-      briefSummary:
-        'Mi valor esta en traducir vision en decisiones, gobernanza y ejecucion visible sin perder estabilidad ni velocidad.',
-      briefPoints: [
-        'Priorizo por impacto, friccion operativa y viabilidad real.',
-        'Conecto sponsors, operacion y tecnologia con ownership claro.',
-        'Instalo ritmo de delivery para que la adopcion no quede en piloto.',
-      ],
-      signatureLabel: 'Modo de trabajo',
-      signatureValue: 'Strategic alignment, operating rigor, measurable movement.',
     },
-    sections: {
-      capabilities: {
-        eyebrow: 'Capacidades',
-        title: 'Tres frentes donde agrego claridad ejecutiva y capacidad de ejecucion.',
-        description:
-          'No entro para sumar discurso. Entro para ordenar criterio, secuencia de decisiones y delivery en contextos donde el costo de errar es alto.',
-        items: [
-          {
-            title: 'AI adoption systems',
-            description: 'Defino donde la IA aporta valor, que modelo operativo la sostiene y como se instala ownership para que llegue a uso real.',
-            emphasis: 'Roadmaps con casos priorizados, gobernanza y adopcion sostenida.',
-          },
-          {
-            title: 'Service transformation',
-            description: 'Rediseño flujos criticos cuando la operacion necesita mas consistencia, velocidad y control.',
-            emphasis: 'Menos friccion, mejor respuesta y decisiones mejor orquestadas.',
-          },
-          {
-            title: 'Product discipline for execution',
-            description: 'Aplico logica de producto para bajar estrategia a prioridades, aprendizaje y foco de negocio.',
-            emphasis: 'Equipos con mejor criterio, menos dispersion y delivery mas confiable.',
-          },
-        ],
-      },
-      impact: {
-        eyebrow: 'Impacto',
-        title: 'Experiencia contada como movimiento real, no como lista de puestos.',
-        description:
-          'Mi trabajo entra donde hay presion por transformar sin romper la operacion. Ahi el diferencial no es la idea: es la calidad de ejecucion.',
-        items: [
-          {
-            label: 'Service operations',
-            title: 'Transformacion de servicio con foco en estabilidad y percepcion de calidad.',
-            narrative: 'Conduzco rediseños estructurales para mejorar tiempos de respuesta, consistencia y confianza.',
-            result: '20%–35% menos tiempo de ciclo en procesos criticos.',
-          },
-          {
-            label: 'Applied AI',
-            title: 'IA aplicada con gobernanza, adopcion y lectura real de valor.',
-            narrative: 'Paso de exploracion a implementacion en operaciones exigentes con foco en uso sostenido.',
-            result: 'Pilot-to-production en 8–12 semanas para casos priorizados.',
-          },
-          {
-            label: 'Cross-functional execution',
-            title: 'Alineacion entre negocio, operacion y control para mover frentes complejos.',
-            narrative: 'Ordeno conversaciones, ownership y secuencia para reducir retrabajo y acelerar decisiones.',
-            result: '18%–25% menos retrabajo en iniciativas complejas.',
-          },
-        ],
-      },
-      focus: {
-        eyebrow: 'Foco actual',
-        title: 'Hoy concentro mi energia en tres lineas de alto apalancamiento.',
-        description:
-          'Mantengo una agenda dual entre ejecucion enterprise y construccion aplicada, con foco en sistemas de decision y adopcion escalable.',
-        items: [
-          { title: 'Enterprise AI operating model', description: 'Escalando automatizacion y soporte de decision en procesos de servicio de alto impacto.', status: 'Scaling at Citi' },
-          { title: 'SurIA consulting playbooks', description: 'Convirtiendo frameworks de adopcion en ofertas mas claras y ejecutables para equipos de operaciones y producto.', status: 'Packaging the offer' },
-          { title: 'Value-risk-effort decision system', description: 'Refinando un criterio practico para priorizar iniciativas con mayor retorno y menor friccion de ejecucion.', status: 'Validating v1' },
-        ],
-      },
+    services: {
+      eyebrow: 'Servicios',
+      title: 'Tres capacidades para mover agendas de transformacion serias.',
+      description:
+        'Entro para ordenar decisiones y acelerar ejecucion en contextos donde el costo de la ambiguedad es alto.',
+      items: [
+        {
+          title: 'AI adoption systems',
+          body: 'Defino casos, modelo operativo y accountability para que la IA llegue a uso real y sostenido.',
+        },
+        {
+          title: 'Service transformation',
+          body: 'Rediseño procesos criticos para ganar velocidad, consistencia y mejor experiencia de servicio.',
+        },
+        {
+          title: 'Product discipline',
+          body: 'Instalo criterio de producto para priorizar mejor, reducir friccion y tomar decisiones con foco.',
+        },
+      ],
+    },
+    impact: {
+      eyebrow: 'Impacto',
+      title: 'Resultados concretos en entornos exigentes.',
+      description:
+        'Mi diferencial no es solo definir una buena direccion. Es sostener la ejecucion hasta que el negocio lo sienta.',
+      items: [
+        {
+          title: 'Service operations',
+          body: 'Transformaciones de servicio con mejoras de velocidad, consistencia y confianza operativa.',
+          metric: '20% a 35% menos tiempo de ciclo en procesos criticos',
+        },
+        {
+          title: 'Applied AI',
+          body: 'Pasaje de idea a implementacion con governance, adopcion y valor visible para el negocio.',
+          metric: 'Pilot-to-production en 8 a 12 semanas en casos priorizados',
+        },
+        {
+          title: 'Cross-functional execution',
+          body: 'Alineacion entre negocio, operacion y control para reducir retrabajo y acelerar decisiones.',
+          metric: '18% a 25% menos retrabajo en iniciativas complejas',
+        },
+      ],
+    },
+    current: {
+      eyebrow: 'Foco actual',
+      title: 'Tres frentes activos de alto apalancamiento.',
+      description:
+        'Hoy combino agenda enterprise con construccion aplicada para cerrar mejor el gap entre estrategia y delivery.',
+      items: [
+        {
+          status: 'Scaling',
+          title: 'Enterprise AI operating model',
+          body: 'Escalando decision support y automatizacion en procesos de servicio de alto impacto.',
+        },
+        {
+          status: 'Building',
+          title: 'SurIA playbooks',
+          body: 'Empaquetando marcos de adopcion para implementaciones mas rapidas en producto y operaciones.',
+        },
+        {
+          status: 'Validating',
+          title: 'Value-risk-effort system',
+          body: 'Refinando criterio de priorizacion para seleccionar mejor donde invertir energia.',
+        },
+      ],
     },
     contact: {
       eyebrow: 'Contacto',
-      title: 'Si estas moviendo una agenda seria de transformacion, conversemos.',
-      description: 'Uso LinkedIn para primeros intercambios y email para oportunidades concretas donde haga sentido profundizar.',
-      primaryCta: 'Escribirme por LinkedIn',
-      secondaryCta: 'Enviar email',
+      title: 'Si estas moviendo una agenda de transformacion, conversemos.',
+      description:
+        'LinkedIn para primer intercambio. Email para oportunidades concretas y conversaciones de trabajo.',
       responseTime: 'Tiempo de respuesta habitual: 24 a 48 horas habiles.',
       formTitle: 'Enviar mensaje directo',
-      fields: { name: 'Nombre', email: 'Email', company: 'Empresa', message: 'Mensaje', submit: 'Enviar mensaje', sending: 'Enviando…' },
+      primaryCta: 'Mensaje por LinkedIn',
+      secondaryCta: 'Enviar email',
+      fields: {
+        name: 'Nombre',
+        email: 'Email',
+        company: 'Empresa',
+        message: 'Mensaje',
+        submit: 'Enviar mensaje',
+        sending: 'Enviando...',
+      },
       placeholders: {
         name: 'Tu nombre',
         email: 'tu@email.com',
         company: 'Tu empresa',
-        message: 'Contame brevemente el contexto, el desafio y que conversacion te gustaria tener…',
+        message: 'Contexto, desafio y objetivo de la conversacion...',
       },
       status: {
-        idle: 'Completa el formulario y te respondo por email.',
-        sending: 'Enviando mensaje…',
-        success: 'Mensaje enviado. Te voy a responder pronto.',
-        error: 'No se pudo enviar el mensaje. Intentalo de nuevo o escribime por LinkedIn/email.',
+        idle: 'Completá el formulario y respondo por email.',
+        success: 'Mensaje enviado. Te respondo pronto.',
+        error: 'No se pudo enviar. Probá de nuevo o escribime por LinkedIn/email.',
         timeout: 'La solicitud demoro demasiado. Intentalo nuevamente.',
-        unexpected: 'Respuesta inesperada del servidor. Intentalo nuevamente en unos minutos.',
+        unexpected: 'Respuesta inesperada del servidor. Intentalo en unos minutos.',
+        sending: 'Enviando mensaje...',
       },
     },
-    footer: { copy: 'Benjamin Ibanez', subcopy: 'AI adoption, service transformation & product discipline for high-stakes operations', navigation: 'Navegacion', backTop: 'Volver arriba' },
-    floatingCta: { trigger: 'Conectar', linkedin: 'LinkedIn', whatsapp: 'WhatsApp', email: 'Email', whatsappUnavailable: 'WhatsApp no disponible' },
+    footer: {
+      copy: 'Benjamin Ibanez',
+      subcopy:
+        'AI adoption, service transformation and product discipline for high-stakes operations',
+      navLabel: 'Navegacion',
+      top: 'Volver arriba',
+    },
+    floating: {
+      trigger: 'Conectar',
+      whatsapp: 'WhatsApp',
+      linkedin: 'LinkedIn',
+      email: 'Email',
+      unavailable: 'WhatsApp no disponible',
+    },
   },
   en: {
     meta: {
-      title: 'Benjamin Ibanez | AI Adoption, Service Transformation & Product Discipline',
+      title: 'Benjamin Ibanez | AI Adoption and Service Transformation',
       description:
-        'Benjamin Ibanez leads AI adoption, service transformation, and product discipline initiatives for high-stakes operations and complex environments.',
+        'Benjamin Ibanez leads AI adoption, service transformation and product discipline initiatives in high-stakes operations.',
     },
-    a11y: { skip: 'Skip to main content', open: 'Open menu', close: 'Close menu' },
-    nav: { capabilities: 'Capabilities', impact: 'Impact', focus: 'Current focus', contact: 'Contact', lang: 'Change language', theme: 'Change theme' },
+    nav: {
+      services: 'Services',
+      impact: 'Impact',
+      current: 'Current focus',
+      contact: 'Contact',
+      language: 'Change language',
+      theme: 'Change theme',
+      openMenu: 'Open menu',
+      closeMenu: 'Close menu',
+    },
     hero: {
-      eyebrow: 'VP at Citi | AI Adoption | Service Transformation | Product Builder',
-      title: 'I turn strategic ambition into operating systems the business will actually use.',
-      description: 'I lead initiatives where applied AI, service redesign, and product discipline coexist with rigor, speed, and reliable execution.',
-      context: 'I operate between boardroom alignment and delivery reality: shaping decisions, designing operating models, and moving complex work into implementation.',
+      eyebrow: 'VP at Citi | AI adoption | Service transformation',
+      title: 'I turn strategy into real execution for complex operations.',
+      subtitle:
+        'I work where business, operations and product must align fast, cut noise and deliver measurable outcomes.',
       primaryCta: 'Start the conversation on LinkedIn',
       secondaryCta: 'Go to contact',
-      availability: 'Available for selective conversations on AI adoption, transformation design, and executive advisory.',
+      panelTitle: 'How I work',
+      panelBody:
+        'Fewer slide decks. More clear decisions, defined ownership and sustainable delivery rhythm.',
+      bullets: [
+        'Prioritization by value, risk and feasibility.',
+        'Cross-functional delivery with pragmatic governance.',
+        'Real adoption, not endless pilot mode.',
+      ],
       signals: [
         { label: 'Current role', value: 'VP at Citi' },
         { label: 'Builder track', value: 'Founder at SurIA' },
-        { label: 'Advantage', value: 'Execution over hype' },
+        { label: 'Style', value: 'Execution over hype' },
       ],
-      briefEyebrow: 'Executive brief',
-      briefTitle: 'Operating seniority for initiatives that cannot afford improvisation.',
-      briefSummary: 'My edge is translating vision into decisions, governance, and visible execution without losing stability or pace.',
-      briefPoints: [
-        'I prioritize by impact, operating friction, and real feasibility.',
-        'I align sponsors, operations, and technology around clear ownership.',
-        'I install delivery rhythm so adoption does not stall in pilot mode.',
-      ],
-      signatureLabel: 'Working style',
-      signatureValue: 'Strategic alignment, operating rigor, measurable movement.',
     },
-    sections: {
-      capabilities: {
-        eyebrow: 'Capabilities',
-        title: 'Three areas where I add executive clarity and executional strength.',
-        description: 'I do not step in to add narrative. I step in to sharpen judgment, sequence decisions, and improve delivery in environments where mistakes are expensive.',
-        items: [
-          { title: 'AI adoption systems', description: 'I define where AI creates value, what operating model can sustain it, and how ownership gets installed so usage becomes real.', emphasis: 'Roadmaps with prioritized use cases, governance, and sustained adoption.' },
-          { title: 'Service transformation', description: 'I redesign critical service flows when operations need stronger consistency, speed, and control.', emphasis: 'Less friction, better response quality, and more coordinated decisions.' },
-          { title: 'Product discipline for execution', description: 'I apply product logic to turn strategy into priorities, learning cycles, and sharper business focus.', emphasis: 'Teams with better judgment, less sprawl, and more reliable delivery.' },
-        ],
-      },
-      impact: {
-        eyebrow: 'Impact',
-        title: 'Experience framed as real movement, not a list of job titles.',
-        description: 'My work enters where there is pressure to transform without destabilizing operations. In that environment, the differentiator is not the idea. It is execution quality.',
-        items: [
-          { label: 'Service operations', title: 'Service transformation with stability and quality perception in view.', narrative: 'I lead structural redesigns that improve response time, consistency, and trust.', result: '20%–35% cycle-time reduction in critical processes.' },
-          { label: 'Applied AI', title: 'AI deployed with governance, adoption, and a real value lens.', narrative: 'I move from exploration to implementation in demanding operations with focus on sustained usage.', result: 'Pilot-to-production in 8–12 weeks for priority use cases.' },
-          { label: 'Cross-functional execution', title: 'Business, operations, and control teams aligned around complex work.', narrative: 'I structure conversations, ownership, and sequencing to reduce rework and accelerate decisions.', result: '18%–25% less rework across complex initiatives.' },
-        ],
-      },
-      focus: {
-        eyebrow: 'Current focus',
-        title: 'Right now I am concentrating energy on three high-leverage tracks.',
-        description: 'I keep a dual agenda across enterprise execution and applied building, with emphasis on scalable adoption and stronger decision systems.',
-        items: [
-          { title: 'Enterprise AI operating model', description: 'Scaling automation and decision support across high-impact service processes.', status: 'Scaling at Citi' },
-          { title: 'SurIA consulting playbooks', description: 'Turning adoption frameworks into clearer, more executable offers for product and operations teams.', status: 'Packaging the offer' },
-          { title: 'Value-risk-effort decision system', description: 'Refining a practical decision lens for prioritizing initiatives with stronger returns and lower execution drag.', status: 'Validating v1' },
-        ],
-      },
+    services: {
+      eyebrow: 'Services',
+      title: 'Three capabilities to move serious transformation agendas.',
+      description:
+        'I step in to clarify decisions and accelerate execution where ambiguity is expensive.',
+      items: [
+        {
+          title: 'AI adoption systems',
+          body: 'I define use cases, operating model and accountability so AI reaches real and sustained adoption.',
+        },
+        {
+          title: 'Service transformation',
+          body: 'I redesign critical service processes to improve speed, consistency and customer experience.',
+        },
+        {
+          title: 'Product discipline',
+          body: 'I install product judgment to prioritize better, reduce friction and improve decision quality.',
+        },
+      ],
+    },
+    impact: {
+      eyebrow: 'Impact',
+      title: 'Concrete outcomes in demanding environments.',
+      description:
+        'My edge is not only setting direction. It is sustaining execution until the business feels the change.',
+      items: [
+        {
+          title: 'Service operations',
+          body: 'Service transformations that improve speed, consistency and operational trust.',
+          metric: '20% to 35% cycle-time reduction in critical processes',
+        },
+        {
+          title: 'Applied AI',
+          body: 'From idea to implementation with governance, adoption and visible business value.',
+          metric: 'Pilot-to-production in 8 to 12 weeks for priority cases',
+        },
+        {
+          title: 'Cross-functional execution',
+          body: 'Business, operations and control alignment to reduce rework and accelerate decisions.',
+          metric: '18% to 25% less rework in complex initiatives',
+        },
+      ],
+    },
+    current: {
+      eyebrow: 'Current focus',
+      title: 'Three active high-leverage workstreams.',
+      description:
+        'I currently combine enterprise execution with applied building to close the strategy-to-delivery gap.',
+      items: [
+        {
+          status: 'Scaling',
+          title: 'Enterprise AI operating model',
+          body: 'Scaling decision support and automation in high-impact service processes.',
+        },
+        {
+          status: 'Building',
+          title: 'SurIA playbooks',
+          body: 'Packaging adoption frameworks for faster implementation in product and operations teams.',
+        },
+        {
+          status: 'Validating',
+          title: 'Value-risk-effort system',
+          body: 'Refining prioritization logic to select where energy creates stronger returns.',
+        },
+      ],
     },
     contact: {
       eyebrow: 'Contact',
-      title: 'If you are moving a serious transformation agenda, let’s talk.',
-      description: 'I use LinkedIn for first contact and email for concrete opportunities where it makes sense to go deeper.',
-      primaryCta: 'Message me on LinkedIn',
-      secondaryCta: 'Send an email',
+      title: 'If you are moving a transformation agenda, let us talk.',
+      description:
+        'LinkedIn for first outreach. Email for concrete opportunities and working conversations.',
       responseTime: 'Typical response time: 24 to 48 business hours.',
       formTitle: 'Send a direct message',
-      fields: { name: 'Name', email: 'Email', company: 'Company', message: 'Message', submit: 'Send message', sending: 'Sending…' },
+      primaryCta: 'Message on LinkedIn',
+      secondaryCta: 'Send email',
+      fields: {
+        name: 'Name',
+        email: 'Email',
+        company: 'Company',
+        message: 'Message',
+        submit: 'Send message',
+        sending: 'Sending...',
+      },
       placeholders: {
         name: 'Your name',
         email: 'you@email.com',
         company: 'Your company',
-        message: 'Share the context, the challenge, and the conversation you would like to have…',
+        message: 'Context, challenge and objective of the conversation...',
       },
       status: {
-        idle: 'Complete the form and I will reply by email.',
-        sending: 'Sending message…',
-        success: 'Message sent. I will get back to you soon.',
-        error: 'Could not send the message. Please try again or reach me via LinkedIn/email.',
+        idle: 'Fill the form and I will reply by email.',
+        success: 'Message sent. I will reply soon.',
+        error: 'Could not send. Please try again or reach out via LinkedIn/email.',
         timeout: 'The request took too long. Please try again.',
         unexpected: 'Unexpected server response. Please try again in a few minutes.',
+        sending: 'Sending message...',
       },
     },
-    footer: { copy: 'Benjamin Ibanez', subcopy: 'AI adoption, service transformation & product discipline for high-stakes operations', navigation: 'Navigation', backTop: 'Back to top' },
-    floatingCta: { trigger: 'Connect', linkedin: 'LinkedIn', whatsapp: 'WhatsApp', email: 'Email', whatsappUnavailable: 'WhatsApp unavailable' },
+    footer: {
+      copy: 'Benjamin Ibanez',
+      subcopy:
+        'AI adoption, service transformation and product discipline for high-stakes operations',
+      navLabel: 'Navigation',
+      top: 'Back to top',
+    },
+    floating: {
+      trigger: 'Connect',
+      whatsapp: 'WhatsApp',
+      linkedin: 'LinkedIn',
+      email: 'Email',
+      unavailable: 'WhatsApp unavailable',
+    },
   },
-} as const;
+};
 
 const LINKEDIN_URL = 'https://www.linkedin.com/in/ibanezbenjamin/';
 const EMAIL = 'bibanez00@gmail.com';
@@ -247,205 +420,556 @@ const STORAGE_THEME = 'site_theme';
 const PROFILE_IMAGE_WIDTH = 864;
 const PROFILE_IMAGE_HEIGHT = 1096;
 
-const prefersReducedMotion = (): boolean => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const scrollToTop = (): void => window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+const prefersReducedMotion = (): boolean =>
+  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const setMetaDescription = (description: string): void => {
-  const meta = document.querySelector('meta[name="description"]');
-  if (meta) {
-    meta.setAttribute('content', description);
-  }
-};
+const smoothOrAuto: ScrollBehavior = prefersReducedMotion() ? 'auto' : 'smooth';
 
-const SectionHeading: React.FC<{
-  eyebrow: string;
-  title: string;
-  description: string;
-}> = ({ eyebrow, title, description }) => (
+const SectionHeading: React.FC<{ eyebrow: string; title: string; description: string }> = ({
+  eyebrow,
+  title,
+  description,
+}) => (
   <header className="section-heading">
-    <p className="section-eyebrow">{eyebrow}</p>
+    <p className="eyebrow">{eyebrow}</p>
     <h2>{title}</h2>
     <p>{description}</p>
   </header>
 );
 
-const RevealBlock: React.FC<{
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-}> = ({ children, className, delay = 0 }) => {
-  const blockRef = useRef<HTMLDivElement | null>(null);
-  const [state, setState] = useState<'visible' | 'hidden'>('visible');
-
-  useEffect(() => {
-    const node = blockRef.current;
-    if (!node || prefersReducedMotion() || typeof window.IntersectionObserver === 'undefined') return;
-    if (node.getBoundingClientRect().top <= window.innerHeight * 0.9) return;
-    setState('hidden');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setState('visible');
-          observer.disconnect();
-        }
-      });
-    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
-  return <div ref={blockRef} className={`reveal-block ${className ?? ''}`.trim()} data-reveal-state={state} style={{ '--reveal-delay': `${delay}ms` } as React.CSSProperties}>{children}</div>;
-};
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [floatingCtaOpen, setFloatingCtaOpen] = useState(false);
+  const [floatingOpen, setFloatingOpen] = useState(false);
   const [language, setLanguage] = useState<Language>('es');
   const [theme, setTheme] = useState<Theme>('light');
-  const [formData, setFormData] = useState({ name: '', email: '', company: '', message: '', website: '' });
   const [submitState, setSubmitState] = useState<SubmitState>('idle');
   const [submitMessage, setSubmitMessage] = useState(CONTENT.es.contact.status.idle);
-  const floatingCtaRef = useRef<HTMLDivElement | null>(null);
-  const formFeedbackRef = useRef<HTMLParagraphElement | null>(null);
-  const content = CONTENT[language];
-  const currentYear = useMemo(() => new Date().getFullYear(), []);
-  const navItems = useMemo(() => [
-    { id: 'capabilities', label: content.nav.capabilities },
-    { id: 'impact', label: content.nav.impact },
-    { id: 'focus', label: content.nav.focus },
-    { id: 'contact', label: content.nav.contact },
-  ], [content.nav.capabilities, content.nav.contact, content.nav.focus, content.nav.impact]);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    company: '',
+    message: '',
+    website: '',
+  });
+
+  const floatingRef = useRef<HTMLDivElement | null>(null);
+  const content = useMemo(() => CONTENT[language], [language]);
+  const year = useMemo(() => new Date().getFullYear(), []);
+
+  const navItems = useMemo(
+    () => [
+      { id: 'services', label: content.nav.services },
+      { id: 'impact', label: content.nav.impact },
+      { id: 'current', label: content.nav.current },
+      { id: 'contact', label: content.nav.contact },
+    ],
+    [content.nav],
+  );
 
   useEffect(() => {
     const savedLanguage = window.localStorage.getItem(STORAGE_LANGUAGE);
-    if (savedLanguage === 'es' || savedLanguage === 'en') setLanguage(savedLanguage);
+    if (savedLanguage === 'es' || savedLanguage === 'en') {
+      setLanguage(savedLanguage);
+    }
     const savedTheme = window.localStorage.getItem(STORAGE_THEME);
-    if (savedTheme === 'light' || savedTheme === 'dark') setTheme(savedTheme);
-    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) setTheme('dark');
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      setTheme(savedTheme);
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setTheme('dark');
+    }
   }, []);
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_LANGUAGE, language);
     document.documentElement.lang = language;
     document.title = content.meta.title;
-    setMetaDescription(content.meta.description);
-    if (submitState === 'idle') setSubmitMessage(CONTENT[language].contact.status.idle);
-  }, [content.meta.description, content.meta.title, language, submitState]);
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) {
+      meta.setAttribute('content', content.meta.description);
+    }
+    if (submitState === 'idle') {
+      setSubmitMessage(content.contact.status.idle);
+    }
+  }, [content.meta, language, submitState]);
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_THEME, theme);
     document.documentElement.style.colorScheme = theme;
     const themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeMeta) themeMeta.setAttribute('content', theme === 'dark' ? '#0b1320' : '#efe7d9');
+    if (themeMeta) {
+      themeMeta.setAttribute('content', theme === 'dark' ? '#070d17' : '#f4f7fb');
+    }
   }, [theme]);
 
   useEffect(() => {
-    document.body.classList.toggle('menu-open', menuOpen);
-    return () => document.body.classList.remove('menu-open');
-  }, [menuOpen]);
-
-  useEffect(() => {
-    if (submitState === 'success' || submitState === 'error') formFeedbackRef.current?.focus();
-  }, [submitState]);
-
-  useEffect(() => {
-    if (!floatingCtaOpen) return;
-    const onPointerDown = (event: MouseEvent | TouchEvent) => {
+    if (!floatingOpen) {
+      return;
+    }
+    const handleClick = (event: MouseEvent | TouchEvent) => {
       const target = event.target;
-      if (!(target instanceof Node)) return;
-      if (!floatingCtaRef.current?.contains(target)) setFloatingCtaOpen(false);
+      if (!(target instanceof Node)) {
+        return;
+      }
+      if (!floatingRef.current?.contains(target)) {
+        setFloatingOpen(false);
+      }
     };
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setFloatingCtaOpen(false);
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setFloatingOpen(false);
+      }
     };
-    window.addEventListener('mousedown', onPointerDown);
-    window.addEventListener('touchstart', onPointerDown, { passive: true });
-    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('mousedown', handleClick);
+    window.addEventListener('touchstart', handleClick, { passive: true });
+    window.addEventListener('keydown', handleKey);
     return () => {
-      window.removeEventListener('mousedown', onPointerDown);
-      window.removeEventListener('touchstart', onPointerDown);
-      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('mousedown', handleClick);
+      window.removeEventListener('touchstart', handleClick);
+      window.removeEventListener('keydown', handleKey);
     };
-  }, [floatingCtaOpen]);
+  }, [floatingOpen]);
 
-  const onFormFieldChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const onFieldChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
     setFormData((current) => ({ ...current, [name]: value }));
     if (submitState !== 'idle') {
       setSubmitState('idle');
-      setSubmitMessage(CONTENT[language].contact.status.idle);
+      setSubmitMessage(content.contact.status.idle);
     }
   };
 
-  const onContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitState('sending');
     setSubmitMessage(content.contact.status.sending);
+
     const abortController = new AbortController();
-    const timeoutId = window.setTimeout(() => abortController.abort(), 15000);
+    const timeout = window.setTimeout(() => abortController.abort(), 15000);
+
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, locale: language }),
+        body: JSON.stringify({
+          ...formData,
+          locale: language,
+        }),
         signal: abortController.signal,
       });
+
       const contentType = response.headers.get('content-type')?.toLowerCase() ?? '';
-      const responseClone = response.clone();
       let payload: { ok?: boolean; error?: string } | null = null;
-      let nonJsonBody = '';
+      let textPayload = '';
+
       if (contentType.includes('application/json')) {
-        try { payload = await response.json() as { ok?: boolean; error?: string }; }
-        catch { nonJsonBody = await responseClone.text(); }
+        payload = (await response.json()) as { ok?: boolean; error?: string };
       } else {
-        nonJsonBody = await response.text();
+        textPayload = await response.text();
       }
+
       if (!response.ok || payload?.ok !== true) {
-        const normalizedText = nonJsonBody.trim().replace(/\s+/g, ' ').slice(0, 180);
-        throw new Error(payload?.error || normalizedText || content.contact.status.unexpected);
+        throw new Error(payload?.error || textPayload || content.contact.status.unexpected);
       }
+
       setSubmitState('success');
       setSubmitMessage(content.contact.status.success);
-      setFormData({ name: '', email: '', company: '', message: '', website: '' });
+      setFormData({
+        name: '',
+        email: '',
+        company: '',
+        message: '',
+        website: '',
+      });
     } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') setSubmitMessage(content.contact.status.timeout);
-      else if (error instanceof Error && error.message) setSubmitMessage(error.message);
-      else setSubmitMessage(content.contact.status.error);
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        setSubmitMessage(content.contact.status.timeout);
+      } else if (error instanceof Error && error.message) {
+        setSubmitMessage(error.message);
+      } else {
+        setSubmitMessage(content.contact.status.error);
+      }
       setSubmitState('error');
     } finally {
-      window.clearTimeout(timeoutId);
+      window.clearTimeout(timeout);
     }
   };
 
   return (
     <div className="site-shell" data-theme={theme}>
-      <a className="skip-link" href="#main-content">{content.a11y.skip}</a>
+      <a className="skip-link" href="#main-content">
+        Skip to content
+      </a>
+
       <header className="topbar">
         <div className="container topbar-inner">
-          <a href="#top" className="brand" translate="no" onClick={() => setMenuOpen(false)}>
+          <a className="brand" href="#top" onClick={() => setMenuOpen(false)}>
             <span className="brand-mark">BI</span>
-            <span className="brand-lockup"><span className="brand-name">Benjamin Ibanez</span><span className="brand-role">AI Adoption & Transformation</span></span>
+            <span className="brand-text">
+              <span className="brand-name">Benjamin Ibanez</span>
+              <span className="brand-subtitle">AI Adoption and Transformation</span>
+            </span>
           </a>
-          <nav className="nav-desktop" aria-label="Primary navigation">{navItems.map((item) => <a key={item.id} href={`#${item.id}`}>{item.label}</a>)}</nav>
+
+          <nav className="desktop-nav" aria-label="Primary navigation">
+            {navItems.map((item) => (
+              <a key={item.id} href={`#${item.id}`}>
+                {item.label}
+              </a>
+            ))}
+          </nav>
+
           <div className="topbar-actions">
-            <button className="chip-btn" type="button" onClick={() => setLanguage((current) => (current === 'es' ? 'en' : 'es'))} aria-label={content.nav.lang}><Languages size={14} aria-hidden="true" /><span>{language.toUpperCase()}</span></button>
-            <button className="chip-btn icon-only" type="button" onClick={() => setTheme((current) => (current === 'light' ? 'dark' : 'light'))} aria-label={content.nav.theme}>{theme === 'light' ? <Moon size={14} aria-hidden="true" /> : <Sun size={14} aria-hidden="true" />}</button>
-            <a className="nav-cta" href={LINKEDIN_URL} target="_blank" rel="noreferrer">{content.hero.primaryCta} <ArrowUpRight size={14} aria-hidden="true" /></a>
-            <button className="menu-trigger" type="button" onClick={() => setMenuOpen((value) => !value)} aria-label={menuOpen ? content.a11y.close : content.a11y.open} aria-expanded={menuOpen} aria-controls="mobile-navigation">{menuOpen ? <X size={18} aria-hidden="true" /> : <Menu size={18} aria-hidden="true" />}</button>
+            <button
+              className="chip"
+              type="button"
+              onClick={() => setLanguage((current) => (current === 'es' ? 'en' : 'es'))}
+              aria-label={content.nav.language}
+            >
+              <Languages size={14} />
+              <span>{language.toUpperCase()}</span>
+            </button>
+            <button
+              className="chip icon-chip"
+              type="button"
+              onClick={() => setTheme((current) => (current === 'light' ? 'dark' : 'light'))}
+              aria-label={content.nav.theme}
+            >
+              {theme === 'light' ? <Moon size={14} /> : <Sun size={14} />}
+            </button>
+            <a className="desktop-cta" href={LINKEDIN_URL} target="_blank" rel="noreferrer">
+              LinkedIn
+              <ArrowUpRight size={14} />
+            </a>
+            <button
+              className="menu-toggle"
+              type="button"
+              onClick={() => setMenuOpen((value) => !value)}
+              aria-label={menuOpen ? content.nav.closeMenu : content.nav.openMenu}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-nav"
+            >
+              {menuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
           </div>
         </div>
-        {menuOpen && <div className="mobile-nav" id="mobile-navigation"><div className="container mobile-nav-items">{navItems.map((item) => <a key={item.id} href={`#${item.id}`} onClick={() => setMenuOpen(false)}>{item.label}</a>)}<div className="mobile-controls"><button className="chip-btn" type="button" onClick={() => setLanguage((current) => (current === 'es' ? 'en' : 'es'))} aria-label={content.nav.lang}><Languages size={14} aria-hidden="true" /><span>{language.toUpperCase()}</span></button><button className="chip-btn icon-only" type="button" onClick={() => setTheme((current) => (current === 'light' ? 'dark' : 'light'))} aria-label={content.nav.theme}>{theme === 'light' ? <Moon size={14} aria-hidden="true" /> : <Sun size={14} aria-hidden="true" />}</button></div><a href={LINKEDIN_URL} target="_blank" rel="noreferrer" onClick={() => setMenuOpen(false)}>{content.hero.primaryCta}</a></div></div>}
+
+        {menuOpen && (
+          <div className="mobile-nav" id="mobile-nav">
+            <div className="container mobile-nav-inner">
+              {navItems.map((item) => (
+                <a key={item.id} href={`#${item.id}`} onClick={() => setMenuOpen(false)}>
+                  {item.label}
+                </a>
+              ))}
+              <a href={LINKEDIN_URL} target="_blank" rel="noreferrer" onClick={() => setMenuOpen(false)}>
+                LinkedIn
+              </a>
+            </div>
+          </div>
+        )}
       </header>
+
       <main id="main-content">
-        <section className="hero" id="top"><div className="hero-orbit hero-orbit-left" aria-hidden="true" /><div className="hero-orbit hero-orbit-right" aria-hidden="true" /><div className="container hero-grid"><RevealBlock className="hero-copy" delay={40}><p className="hero-eyebrow">{content.hero.eyebrow}</p><h1>{content.hero.title}</h1><p className="hero-description">{content.hero.description}</p><p className="hero-context">{content.hero.context}</p><div className="hero-actions"><a className="btn btn-primary" href={LINKEDIN_URL} target="_blank" rel="noreferrer">{content.hero.primaryCta}<ArrowUpRight size={15} aria-hidden="true" /></a><a className="btn btn-secondary" href="#contact">{content.hero.secondaryCta}<ArrowRight size={15} aria-hidden="true" /></a></div><p className="hero-availability">{content.hero.availability}</p><div className="hero-signals" aria-label="Credibility signals">{content.hero.signals.map((signal) => <div key={signal.label} className="hero-signal"><span>{signal.label}</span><strong translate="no">{signal.value}</strong></div>)}</div></RevealBlock><RevealBlock className="hero-brief" delay={140}><div className="hero-portrait-wrap"><img src={profileImage} alt="Benjamin Ibanez" className="hero-portrait" width={PROFILE_IMAGE_WIDTH} height={PROFILE_IMAGE_HEIGHT} fetchPriority="high" /></div><p className="brief-eyebrow">{content.hero.briefEyebrow}</p><h2>{content.hero.briefTitle}</h2><p className="brief-summary">{content.hero.briefSummary}</p><ul className="brief-list">{content.hero.briefPoints.map((point) => <li key={point}><Check size={15} aria-hidden="true" /><span>{point}</span></li>)}</ul><div className="brief-signature"><span>{content.hero.signatureLabel}</span><strong>{content.hero.signatureValue}</strong></div></RevealBlock></div></section>
-        <section className="section section-divider" id="capabilities"><div className="container"><RevealBlock><SectionHeading eyebrow={content.sections.capabilities.eyebrow} title={content.sections.capabilities.title} description={content.sections.capabilities.description} /></RevealBlock><div className="value-list" role="list">{content.sections.capabilities.items.map((item, index) => <RevealBlock key={item.title} delay={index * 80} className="value-item-reveal"><article className="value-item" role="listitem"><div className="value-index" aria-hidden="true">0{index + 1}</div><div className="value-title-wrap"><h3>{item.title}</h3></div><p className="value-description">{item.description}</p><p className="value-emphasis">{item.emphasis}</p></article></RevealBlock>)}</div></div></section>
-        <section className="section section-muted" id="impact"><div className="container"><RevealBlock><SectionHeading eyebrow={content.sections.impact.eyebrow} title={content.sections.impact.title} description={content.sections.impact.description} /></RevealBlock><div className="impact-list">{content.sections.impact.items.map((item, index) => <RevealBlock key={item.title} delay={index * 90}><article className="impact-row"><div className="impact-copy"><p className="impact-label">{item.label}</p><h3>{item.title}</h3><p>{item.narrative}</p></div><p className="impact-result">{item.result}</p></article></RevealBlock>)}</div></div></section>
-        <section className="section section-divider" id="focus"><div className="container"><RevealBlock><SectionHeading eyebrow={content.sections.focus.eyebrow} title={content.sections.focus.title} description={content.sections.focus.description} /></RevealBlock><div className="focus-grid">{content.sections.focus.items.map((item, index) => <RevealBlock key={item.title} delay={index * 90}><article className="focus-item"><span className="focus-status">{item.status}</span><h3>{item.title}</h3><p>{item.description}</p></article></RevealBlock>)}</div></div></section>
-        <section className="section section-contact" id="contact"><div className="container contact-layout"><RevealBlock><div className="contact-copy"><p className="section-eyebrow">{content.contact.eyebrow}</p><h2>{content.contact.title}</h2><p>{content.contact.description}</p><div className="contact-actions"><a className="btn btn-primary" href={LINKEDIN_URL} target="_blank" rel="noreferrer">{content.contact.primaryCta}<Linkedin size={15} aria-hidden="true" /></a><a className="btn btn-secondary" href={`mailto:${EMAIL}`}>{content.contact.secondaryCta}<Mail size={15} aria-hidden="true" /></a></div><a className="contact-email" href={`mailto:${EMAIL}`}><Mail size={15} aria-hidden="true" /><span translate="no">{EMAIL}</span></a><small>{content.contact.responseTime}</small></div></RevealBlock><RevealBlock delay={120}><article className="contact-panel"><h3><Building2 size={18} aria-hidden="true" />{content.contact.formTitle}</h3><form className="contact-form" onSubmit={onContactSubmit}><label htmlFor="name">{content.contact.fields.name}</label><input id="name" name="name" type="text" autoComplete="name" placeholder={content.contact.placeholders.name} value={formData.name} onChange={onFormFieldChange} required maxLength={120} disabled={submitState === 'sending'} /><label htmlFor="email">{content.contact.fields.email}</label><input id="email" name="email" type="email" autoComplete="email" inputMode="email" spellCheck={false} placeholder={content.contact.placeholders.email} value={formData.email} onChange={onFormFieldChange} required maxLength={160} disabled={submitState === 'sending'} /><label htmlFor="company">{content.contact.fields.company}</label><input id="company" name="company" type="text" autoComplete="organization" placeholder={content.contact.placeholders.company} value={formData.company} onChange={onFormFieldChange} maxLength={160} disabled={submitState === 'sending'} /><label htmlFor="message">{content.contact.fields.message}</label><textarea id="message" name="message" autoComplete="off" placeholder={content.contact.placeholders.message} value={formData.message} onChange={onFormFieldChange} required minLength={20} maxLength={2000} rows={5} disabled={submitState === 'sending'} /><input className="honeypot" type="text" name="website" value={formData.website} onChange={onFormFieldChange} tabIndex={-1} autoComplete="off" disabled={submitState === 'sending'} /><button className="btn btn-primary submit-btn" type="submit" disabled={submitState === 'sending'}>{submitState === 'sending' ? content.contact.fields.sending : content.contact.fields.submit}</button><p ref={formFeedbackRef} className={`form-feedback ${submitState}`} tabIndex={-1} role={submitState === 'error' ? 'alert' : 'status'} aria-live={submitState === 'error' ? 'assertive' : 'polite'} aria-atomic="true">{submitMessage}</p></form></article></RevealBlock></div></section>
+        <section className="hero" id="top">
+          <div className="hero-aurora hero-aurora-a" aria-hidden="true" />
+          <div className="hero-aurora hero-aurora-b" aria-hidden="true" />
+          <div className="container hero-grid">
+            <div className="hero-copy">
+              <p className="hero-eyebrow">{content.hero.eyebrow}</p>
+              <h1>{content.hero.title}</h1>
+              <p className="hero-subtitle">{content.hero.subtitle}</p>
+              <div className="hero-actions">
+                <a className="btn primary" href={LINKEDIN_URL} target="_blank" rel="noreferrer">
+                  {content.hero.primaryCta}
+                  <ArrowUpRight size={15} />
+                </a>
+                <a className="btn secondary" href="#contact">
+                  {content.hero.secondaryCta}
+                  <ArrowRight size={15} />
+                </a>
+              </div>
+              <div className="hero-signals">
+                {content.hero.signals.map((signal) => (
+                  <div key={signal.label} className="hero-signal">
+                    <span>{signal.label}</span>
+                    <strong>{signal.value}</strong>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <aside className="hero-panel">
+              <div className="portrait-wrap">
+                <img
+                  src={profileImage}
+                  alt="Benjamin Ibanez"
+                  width={PROFILE_IMAGE_WIDTH}
+                  height={PROFILE_IMAGE_HEIGHT}
+                  className="portrait"
+                  fetchPriority="high"
+                />
+              </div>
+              <h2>{content.hero.panelTitle}</h2>
+              <p>{content.hero.panelBody}</p>
+              <ul>
+                {content.hero.bullets.map((bullet) => (
+                  <li key={bullet}>{bullet}</li>
+                ))}
+              </ul>
+            </aside>
+          </div>
+        </section>
+
+        <section className="section" id="services">
+          <div className="container">
+            <SectionHeading
+              eyebrow={content.services.eyebrow}
+              title={content.services.title}
+              description={content.services.description}
+            />
+            <div className="service-grid">
+              {content.services.items.map((item) => (
+                <article className="service-item" key={item.title}>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section section-tinted" id="impact">
+          <div className="container">
+            <SectionHeading
+              eyebrow={content.impact.eyebrow}
+              title={content.impact.title}
+              description={content.impact.description}
+            />
+            <div className="impact-list">
+              {content.impact.items.map((item) => (
+                <article className="impact-item" key={item.title}>
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>{item.body}</p>
+                  </div>
+                  <p className="impact-metric">{item.metric}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section" id="current">
+          <div className="container">
+            <SectionHeading
+              eyebrow={content.current.eyebrow}
+              title={content.current.title}
+              description={content.current.description}
+            />
+            <div className="current-grid">
+              {content.current.items.map((item) => (
+                <article className="current-item" key={item.title}>
+                  <span>{item.status}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section section-contact" id="contact">
+          <div className="container contact-grid">
+            <div className="contact-copy">
+              <p className="eyebrow">{content.contact.eyebrow}</p>
+              <h2>{content.contact.title}</h2>
+              <p>{content.contact.description}</p>
+              <div className="hero-actions">
+                <a className="btn primary" href={LINKEDIN_URL} target="_blank" rel="noreferrer">
+                  {content.contact.primaryCta}
+                  <Linkedin size={15} />
+                </a>
+                <a className="btn secondary" href={`mailto:${EMAIL}`}>
+                  {content.contact.secondaryCta}
+                  <Mail size={15} />
+                </a>
+              </div>
+              <a className="contact-email" href={`mailto:${EMAIL}`}>
+                <Mail size={15} />
+                {EMAIL}
+              </a>
+              <small>{content.contact.responseTime}</small>
+            </div>
+
+            <article className="contact-form-card">
+              <h3>
+                <Building2 size={18} />
+                {content.contact.formTitle}
+              </h3>
+              <form className="contact-form" onSubmit={onSubmit}>
+                <label htmlFor="name">{content.contact.fields.name}</label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  value={formData.name}
+                  onChange={onFieldChange}
+                  placeholder={content.contact.placeholders.name}
+                  maxLength={120}
+                  required
+                  disabled={submitState === 'sending'}
+                />
+
+                <label htmlFor="email">{content.contact.fields.email}</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  value={formData.email}
+                  onChange={onFieldChange}
+                  placeholder={content.contact.placeholders.email}
+                  maxLength={160}
+                  required
+                  disabled={submitState === 'sending'}
+                />
+
+                <label htmlFor="company">{content.contact.fields.company}</label>
+                <input
+                  id="company"
+                  name="company"
+                  type="text"
+                  autoComplete="organization"
+                  value={formData.company}
+                  onChange={onFieldChange}
+                  placeholder={content.contact.placeholders.company}
+                  maxLength={160}
+                  disabled={submitState === 'sending'}
+                />
+
+                <label htmlFor="message">{content.contact.fields.message}</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={onFieldChange}
+                  placeholder={content.contact.placeholders.message}
+                  minLength={20}
+                  maxLength={2000}
+                  rows={5}
+                  required
+                  disabled={submitState === 'sending'}
+                />
+
+                <input
+                  className="honeypot"
+                  type="text"
+                  name="website"
+                  value={formData.website}
+                  onChange={onFieldChange}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  disabled={submitState === 'sending'}
+                />
+
+                <button className="btn primary" type="submit" disabled={submitState === 'sending'}>
+                  {submitState === 'sending'
+                    ? content.contact.fields.sending
+                    : content.contact.fields.submit}
+                </button>
+                <p
+                  className={`feedback ${submitState}`}
+                  role={submitState === 'error' ? 'alert' : 'status'}
+                  aria-live={submitState === 'error' ? 'assertive' : 'polite'}
+                  aria-atomic="true"
+                >
+                  {submitMessage}
+                </p>
+              </form>
+            </article>
+          </div>
+        </section>
       </main>
-      <footer className="footer"><div className="container footer-inner"><div className="footer-brand"><p className="footer-name" translate="no">{content.footer.copy}</p><p className="footer-copy">{content.footer.subcopy}</p><p className="footer-year">{currentYear}</p></div><div className="footer-links-wrap"><p className="footer-links-label">{content.footer.navigation}</p><nav className="footer-links" aria-label="Footer navigation">{navItems.map((item) => <a key={item.id} href={`#${item.id}`}>{item.label}</a>)}<a href={LINKEDIN_URL} target="_blank" rel="noreferrer">LinkedIn</a></nav></div><button type="button" className="back-top" onClick={scrollToTop}>{content.footer.backTop}<ChevronUp size={14} aria-hidden="true" /></button></div></footer>
-      <div className="floating-cta-mobile" ref={floatingCtaRef}><div className={`floating-cta-popover ${floatingCtaOpen ? 'is-open' : ''}`} id="mobile-connect-popover"><a className={`floating-cta-item ${WHATSAPP_URL ? '' : 'is-disabled'}`.trim()} href={WHATSAPP_URL || '#'} target="_blank" rel="noreferrer" aria-disabled={!WHATSAPP_URL} tabIndex={WHATSAPP_URL ? undefined : -1} title={WHATSAPP_URL ? content.floatingCta.whatsapp : content.floatingCta.whatsappUnavailable} onClick={(event) => { if (!WHATSAPP_URL) { event.preventDefault(); return; } setFloatingCtaOpen(false); }}><MessageCircle size={16} aria-hidden="true" /><span>{content.floatingCta.whatsapp}</span></a><a className="floating-cta-item" href={LINKEDIN_URL} target="_blank" rel="noreferrer" onClick={() => setFloatingCtaOpen(false)}><Linkedin size={16} aria-hidden="true" /><span>{content.floatingCta.linkedin}</span></a><a className="floating-cta-item" href={`mailto:${EMAIL}`} onClick={() => setFloatingCtaOpen(false)}><Mail size={16} aria-hidden="true" /><span>{content.floatingCta.email}</span></a></div><button className={`floating-cta-trigger ${floatingCtaOpen ? 'is-open' : ''}`} type="button" aria-label={content.floatingCta.trigger} aria-expanded={floatingCtaOpen} aria-controls="mobile-connect-popover" onClick={() => setFloatingCtaOpen((current) => !current)}><span>{content.floatingCta.trigger}</span>{floatingCtaOpen ? <X size={16} aria-hidden="true" /> : <ArrowUpRight size={16} aria-hidden="true" />}</button></div>
+
+      <footer className="footer">
+        <div className="container footer-inner">
+          <div>
+            <p className="footer-name">{content.footer.copy}</p>
+            <p className="footer-copy">{content.footer.subcopy}</p>
+            <p className="footer-copy">{year}</p>
+          </div>
+
+          <div>
+            <p className="footer-label">{content.footer.navLabel}</p>
+            <nav className="footer-nav" aria-label="Footer navigation">
+              {navItems.map((item) => (
+                <a key={item.id} href={`#${item.id}`}>
+                  {item.label}
+                </a>
+              ))}
+              <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">
+                LinkedIn
+              </a>
+            </nav>
+          </div>
+
+          <button className="top-button" type="button" onClick={() => window.scrollTo({ top: 0, behavior: smoothOrAuto })}>
+            {content.footer.top}
+            <ChevronUp size={14} />
+          </button>
+        </div>
+      </footer>
+
+      <div className="floating-mobile" ref={floatingRef}>
+        <div className={`floating-menu ${floatingOpen ? 'open' : ''}`} id="mobile-connect-popover">
+          <a
+            className={`floating-item ${WHATSAPP_URL ? '' : 'disabled'}`.trim()}
+            href={WHATSAPP_URL || '#'}
+            target="_blank"
+            rel="noreferrer"
+            aria-disabled={!WHATSAPP_URL}
+            tabIndex={WHATSAPP_URL ? undefined : -1}
+            title={WHATSAPP_URL ? content.floating.whatsapp : content.floating.unavailable}
+            onClick={(event) => {
+              if (!WHATSAPP_URL) {
+                event.preventDefault();
+                return;
+              }
+              setFloatingOpen(false);
+            }}
+          >
+            <MessageCircle size={16} />
+            <span>{content.floating.whatsapp}</span>
+          </a>
+          <a
+            className="floating-item"
+            href={LINKEDIN_URL}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => setFloatingOpen(false)}
+          >
+            <Linkedin size={16} />
+            <span>{content.floating.linkedin}</span>
+          </a>
+          <a className="floating-item" href={`mailto:${EMAIL}`} onClick={() => setFloatingOpen(false)}>
+            <Mail size={16} />
+            <span>{content.floating.email}</span>
+          </a>
+        </div>
+
+        <button
+          className={`floating-trigger ${floatingOpen ? 'open' : ''}`}
+          type="button"
+          aria-label={content.floating.trigger}
+          aria-expanded={floatingOpen}
+          aria-controls="mobile-connect-popover"
+          onClick={() => setFloatingOpen((current) => !current)}
+        >
+          <span>{content.floating.trigger}</span>
+          {floatingOpen ? <X size={16} /> : <ArrowUpRight size={16} />}
+        </button>
+      </div>
     </div>
   );
 }
-
-
