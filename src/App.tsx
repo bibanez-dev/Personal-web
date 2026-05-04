@@ -38,12 +38,14 @@ interface TextContent {
     eyebrow: string;
     title: string;
     subtitle: string;
+    reality: string;
+    identity: string;
     primaryCta: string;
     secondaryCta: string;
+    panelEyebrow: string;
     panelTitle: string;
     panelBody: string;
-    bullets: string[];
-    signals: Array<{ label: string; value: string }>;
+    proofPoints: string[];
   };
   services: {
     eyebrow: string;
@@ -119,7 +121,7 @@ const CONTENT: Record<Language, TextContent> = {
     nav: {
       services: 'Servicios',
       impact: 'Impacto',
-      current: 'Foco actual',
+      current: 'Proyectos',
       contact: 'Contacto',
       language: 'Cambiar idioma',
       theme: 'Cambiar tema',
@@ -127,24 +129,24 @@ const CONTENT: Record<Language, TextContent> = {
       closeMenu: 'Cerrar menu',
     },
     hero: {
-      eyebrow: 'VP at Citi | AI adoption | Service transformation',
-      title: 'Convierto estrategia en ejecucion real para operaciones complejas.',
+      eyebrow: 'VP at Citi · AI Adoption · Product Builder',
+      title: 'Convierto IA y optimizacion en impacto real de negocio.',
       subtitle:
-        'Trabajo en el punto donde negocio, operacion y producto se tienen que alinear rapido, sin ruido y con resultados medibles.',
+        'Lidero iniciativas de adopcion de IA y mejora operacional en corporate banking, elevando eficiencia, calidad de servicio y toma de decisiones a escala.',
+      reality:
+        'Foco en ejecucion: desde workflows internos y copilots hasta mejoras medibles en velocidad, precision y experiencia del cliente.',
+      identity: 'Doble via: ejecucion enterprise en Citi + construccion independiente de producto con SurIA.',
       primaryCta: 'Iniciar conversacion en LinkedIn',
       secondaryCta: 'Ver contacto',
-      panelTitle: 'Enfoque de trabajo',
+      panelEyebrow: 'Como trabajo',
+      panelTitle: 'Medido, operativo y responsable.',
       panelBody:
-        'Menos presentaciones. Mas decisiones claras, ownership definido y ritmo de ejecucion sostenido.',
-      bullets: [
-        'Priorizacion por valor, riesgo y viabilidad.',
-        'Delivery cross-functional con governance practico.',
-        'Adopcion real, no pilotos eternos.',
-      ],
-      signals: [
-        { label: 'Rol actual', value: 'VP at Citi' },
-        { label: 'Track builder', value: 'Founder at SurIA' },
-        { label: 'Estilo', value: 'Execution over hype' },
+        'Trabajo sobre sistemas reales: adopcion interna, optimizacion de servicio y decisiones que necesitan sostenerse dentro de restricciones concretas.',
+      proofPoints: [
+        'Internal AI workflows',
+        'Service optimization',
+        'Client experience improvement',
+        'Execution over hype',
       ],
     },
     services: {
@@ -169,47 +171,47 @@ const CONTENT: Record<Language, TextContent> = {
     },
     impact: {
       eyebrow: 'Impacto',
-      title: 'Resultados concretos en entornos exigentes.',
+      title: 'Impacto concreto en entornos exigentes.',
       description:
-        'Mi diferencial no es solo definir una buena direccion. Es sostener la ejecucion hasta que el negocio lo sienta.',
+        'La propuesta es simple: menos discurso, mas trabajo util que ordena operaciones, acelera decisiones y mejora la experiencia.',
       items: [
         {
-          title: 'Service operations',
-          body: 'Transformaciones de servicio con mejoras de velocidad, consistencia y confianza operativa.',
-          metric: '20% a 35% menos tiempo de ciclo en procesos criticos',
+          title: 'Internal AI workflows',
+          body: 'Diseno y aterrizo flujos internos con IA para reducir friccion operativa y mejorar la calidad de ejecucion.',
+          metric: 'Mas adopcion util, menos experimento aislado',
         },
         {
-          title: 'Applied AI',
-          body: 'Pasaje de idea a implementacion con governance, adopcion y valor visible para el negocio.',
-          metric: 'Pilot-to-production en 8 a 12 semanas en casos priorizados',
+          title: 'Service optimization',
+          body: 'Reordeno procesos y puntos de decision para ganar velocidad, consistencia y mejor respuesta al cliente.',
+          metric: 'Procesos mas claros, confiables y sostenibles',
         },
         {
-          title: 'Cross-functional execution',
-          body: 'Alineacion entre negocio, operacion y control para reducir retrabajo y acelerar decisiones.',
-          metric: '18% a 25% menos retrabajo en iniciativas complejas',
+          title: 'Execution discipline',
+          body: 'Alineo negocio, operacion y producto para que las iniciativas avancen con criterio, ownership y seguimiento real.',
+          metric: 'Execution over hype',
         },
       ],
     },
     current: {
-      eyebrow: 'Foco actual',
-      title: 'Tres frentes activos de alto apalancamiento.',
+      eyebrow: 'Proyectos',
+      title: 'Trabajo actual entre agenda enterprise y construccion independiente.',
       description:
-        'Hoy combino agenda enterprise con construccion aplicada para cerrar mejor el gap entre estrategia y delivery.',
+        'Hoy combino ejecucion corporativa con proyectos propios donde pruebo sistemas, narrativa y producto sobre workflows reales.',
       items: [
         {
           status: 'Scaling',
-          title: 'Enterprise AI operating model',
-          body: 'Escalando decision support y automatizacion en procesos de servicio de alto impacto.',
+          title: 'Enterprise AI and operations',
+          body: 'Impulsando adopcion de IA, mejora operacional y decisiones mas consistentes en procesos de corporate banking de alta exigencia.',
         },
         {
           status: 'Building',
-          title: 'SurIA playbooks',
-          body: 'Empaquetando marcos de adopcion para implementaciones mas rapidas en producto y operaciones.',
+          title: 'SurIA',
+          body: 'Desarrollando automatizacion impulsada por IA para reducir tareas manuales, mejorar decisiones y llevar workflows reales a ejecucion mas simple.',
         },
         {
-          status: 'Validating',
-          title: 'Value-risk-effort system',
-          body: 'Refinando criterio de priorizacion para seleccionar mejor donde invertir energia.',
+          status: 'Curating',
+          title: 'Postales Argentinas',
+          body: 'Construyendo storytelling visual con identidad cultural, comunidad y una linea editorial consistente alrededor de piezas y relatos argentinos.',
         },
       ],
     },
@@ -269,7 +271,7 @@ const CONTENT: Record<Language, TextContent> = {
     nav: {
       services: 'Services',
       impact: 'Impact',
-      current: 'Current focus',
+      current: 'Projects',
       contact: 'Contact',
       language: 'Change language',
       theme: 'Change theme',
@@ -277,24 +279,24 @@ const CONTENT: Record<Language, TextContent> = {
       closeMenu: 'Close menu',
     },
     hero: {
-      eyebrow: 'VP at Citi | AI adoption | Service transformation',
-      title: 'I turn strategy into real execution for complex operations.',
+      eyebrow: 'VP at Citi · AI Adoption · Product Builder',
+      title: 'I turn AI and optimization into real business impact.',
       subtitle:
-        'I work where business, operations and product must align fast, cut noise and deliver measurable outcomes.',
+        'Leading AI adoption and operational initiatives in corporate banking, improving efficiency, service quality, and decision-making at scale.',
+      reality:
+        'Focused on execution: from internal workflows and copilots to measurable improvements in speed, accuracy, and client experience.',
+      identity: 'Dual track: enterprise execution at Citi + independent product building with SurIA.',
       primaryCta: 'Start the conversation on LinkedIn',
       secondaryCta: 'Go to contact',
-      panelTitle: 'How I work',
+      panelEyebrow: 'Approach',
+      panelTitle: 'Measured, operational, accountable.',
       panelBody:
-        'Fewer slide decks. More clear decisions, defined ownership and sustainable delivery rhythm.',
-      bullets: [
-        'Prioritization by value, risk and feasibility.',
-        'Cross-functional delivery with pragmatic governance.',
-        'Real adoption, not endless pilot mode.',
-      ],
-      signals: [
-        { label: 'Current role', value: 'VP at Citi' },
-        { label: 'Builder track', value: 'Founder at SurIA' },
-        { label: 'Style', value: 'Execution over hype' },
+        'The work sits inside real systems: internal AI workflows, service optimization and operating decisions that need to hold up under constraints.',
+      proofPoints: [
+        'Internal AI workflows',
+        'Service optimization',
+        'Client experience improvement',
+        'Execution over hype',
       ],
     },
     services: {
@@ -319,47 +321,47 @@ const CONTENT: Record<Language, TextContent> = {
     },
     impact: {
       eyebrow: 'Impact',
-      title: 'Concrete outcomes in demanding environments.',
+      title: 'Concrete impact in demanding environments.',
       description:
-        'My edge is not only setting direction. It is sustaining execution until the business feels the change.',
+        'The value is straightforward: less theater, more useful work that improves operations, decision quality and client experience.',
       items: [
         {
-          title: 'Service operations',
-          body: 'Service transformations that improve speed, consistency and operational trust.',
-          metric: '20% to 35% cycle-time reduction in critical processes',
+          title: 'Internal AI workflows',
+          body: 'I design and operationalize internal AI workflows that reduce friction and improve execution quality.',
+          metric: 'Useful adoption over isolated experimentation',
         },
         {
-          title: 'Applied AI',
-          body: 'From idea to implementation with governance, adoption and visible business value.',
-          metric: 'Pilot-to-production in 8 to 12 weeks for priority cases',
+          title: 'Service optimization',
+          body: 'I reshape service processes and decision points to improve speed, consistency and response quality.',
+          metric: 'Clearer, more reliable operating flows',
         },
         {
-          title: 'Cross-functional execution',
-          body: 'Business, operations and control alignment to reduce rework and accelerate decisions.',
-          metric: '18% to 25% less rework in complex initiatives',
+          title: 'Execution discipline',
+          body: 'I align business, operations and product so initiatives move with judgment, ownership and real follow-through.',
+          metric: 'Execution over hype',
         },
       ],
     },
     current: {
-      eyebrow: 'Current focus',
-      title: 'Three active high-leverage workstreams.',
+      eyebrow: 'Projects',
+      title: 'Current work across enterprise and independent projects.',
       description:
-        'I currently combine enterprise execution with applied building to close the strategy-to-delivery gap.',
+        'I currently split time between enterprise execution and independent projects where product, automation and editorial consistency meet real workflows.',
       items: [
         {
           status: 'Scaling',
-          title: 'Enterprise AI operating model',
-          body: 'Scaling decision support and automation in high-impact service processes.',
+          title: 'Enterprise AI and operations',
+          body: 'Advancing AI adoption, operational improvement and more consistent decisions in high-stakes corporate banking processes.',
         },
         {
           status: 'Building',
-          title: 'SurIA playbooks',
-          body: 'Packaging adoption frameworks for faster implementation in product and operations teams.',
+          title: 'SurIA',
+          body: 'Building AI-powered automation that reduces manual work, improves decision quality and supports real operational workflows.',
         },
         {
-          status: 'Validating',
-          title: 'Value-risk-effort system',
-          body: 'Refining prioritization logic to select where energy creates stronger returns.',
+          status: 'Curating',
+          title: 'Postales Argentinas',
+          body: 'Developing visual storytelling around cultural identity, community building and steady content consistency across Argentine stories and artifacts.',
         },
       ],
     },
@@ -678,6 +680,10 @@ export default function App() {
               <p className="hero-eyebrow">{content.hero.eyebrow}</p>
               <h1>{content.hero.title}</h1>
               <p className="hero-subtitle">{content.hero.subtitle}</p>
+              <div className="hero-details">
+                <p className="hero-detail hero-detail-primary">{content.hero.reality}</p>
+                <p className="hero-detail">{content.hero.identity}</p>
+              </div>
               <div className="hero-actions">
                 <a className="btn primary" href={LINKEDIN_URL} target="_blank" rel="noreferrer">
                   {content.hero.primaryCta}
@@ -688,11 +694,10 @@ export default function App() {
                   <ArrowRight size={15} />
                 </a>
               </div>
-              <div className="hero-signals">
-                {content.hero.signals.map((signal) => (
-                  <div key={signal.label} className="hero-signal">
-                    <span>{signal.label}</span>
-                    <strong>{signal.value}</strong>
+              <div className="hero-proof-points" aria-label="Proof points">
+                {content.hero.proofPoints.map((point) => (
+                  <div key={point} className="hero-proof-point">
+                    {point}
                   </div>
                 ))}
               </div>
@@ -709,13 +714,9 @@ export default function App() {
                   fetchPriority="high"
                 />
               </div>
+              <p className="hero-panel-eyebrow">{content.hero.panelEyebrow}</p>
               <h2>{content.hero.panelTitle}</h2>
               <p>{content.hero.panelBody}</p>
-              <ul>
-                {content.hero.bullets.map((bullet) => (
-                  <li key={bullet}>{bullet}</li>
-                ))}
-              </ul>
             </aside>
           </div>
         </section>
