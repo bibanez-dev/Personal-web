@@ -64,3 +64,13 @@ Ejemplos de `CONTACT_FROM_EMAIL`:
    - `CONTACT_TO_EMAIL`
    - `CONTACT_FROM_EMAIL`
    - (y las variables sociales si aplican)
+
+## Publicación en Sites
+
+- `npm run build:sites`: compila el frontend y genera `dist/server/index.js`, un Worker ESM que incluye únicamente los cuatro recursos públicos del sitio.
+- `npm run test:sites`: verifica rutas, recursos, límites de tamaño, aislamiento de cabeceras, errores y respuestas de API.
+- `server/sites-worker.mjs` conecta `/api/contact` y `/api/social` con el backend Vercel existente en `https://personal-web-sand-two.vercel.app`. No copia credenciales ni envía cookies o tokens del navegador.
+- El backend Vercel y su configuración de Resend deben mantenerse activos. Sus validaciones, honeypot y rate limit siguen vigentes; el proxy comparte la infraestructura de salida y podría agrupar algunos límites por IP.
+- `.openai/hosting.json` contiene la identidad de este Site. Reutilizarla para nuevas versiones.
+- El repositorio contiene un perfil local de navegador en `.edge-debug`. Para publicar en Sites se usa una copia de entrega con lista explícita de archivos, sin ese perfil ni su historial Git. No subir el repositorio original completo a un destino nuevo.
+- Los controles en vivo de contacto usan un cuerpo inválido (400) y el honeypot (200 sin envío). La entrega de un email real debe comprobarse con un mensaje autorizado.
