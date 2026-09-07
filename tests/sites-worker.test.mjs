@@ -22,7 +22,7 @@ test('forwards only the fixed API destination, preserving validation and rate-li
     assert.equal(new TextDecoder().decode(options.body), payload);
     assert.equal(new Headers(options.headers).has('cookie'), false);
     assert.equal(new Headers(options.headers).has('authorization'), false);
-    assert.equal(options.redirect, 'error');
+    assert.equal(options.redirect, 'manual');
     return Response.json({ ok: false, code: 'TOO_MANY_REQUESTS' }, { status: 429 });
   });
   const response = await worker.fetch(contact(payload, { cookie: 'private-session', authorization: 'private-token' }));
@@ -40,7 +40,7 @@ test('rejects foreign origins, unsupported methods and oversized messages before
 });
 
 test('upstream failures return useful errors without exposing HTML or diagnostics', async () => {
-  for (const fetcher of [async () => new Response('<html>private diagnostic</html>'), async () => { throw new Error('secret detail'); }]) {
+  for (const fetcher of [async () => Response.json({}, { status: 307, headers: { location: 'https://untrusted.example' } }), async () => new Response('<html>private diagnostic</html>'), async () => { throw new Error('secret detail'); }]) {
     const response = await createWorker({}, fetcher).fetch(contact('{}'));
     assert.equal(response.status, 502);
     assert.equal((await response.json()).ok, false);

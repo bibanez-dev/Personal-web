@@ -7,7 +7,7 @@ const json = (status, error) => Response.json({ ok: false, error }, {
   headers: { 'cache-control': 'no-store' },
 });
 
-export function createWorker(assets, fetchUpstream = fetch) {
+export function createWorker(assets, fetchUpstream = (input, init) => globalThis.fetch(input, init)) {
   return {
     async fetch(request) {
       const url = new URL(request.url);
@@ -40,24 +40,30 @@ export function createWorker(assets, fetchUpstream = fetch) {
           let offset = 0;
           for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.length; }
         }
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 13_000);
         try {
           // Never forward browser cookies, authorization, or arbitrary destinations.
           const upstream = await fetchUpstream(API_ORIGIN + path, {
             method,
             headers: { 'content-type': 'application/json', 'accept-language': request.headers.get('accept-language') || 'es' },
             body,
-            redirect: 'error',
-            signal: AbortSignal.timeout(13_000),
+            redirect: 'manual',
+            signal: controller.signal,
           });
-          if (!upstream.headers.get('content-type')?.includes('application/json')) {
+          if ((upstream.status >= 300 && upstream.status < 400) || !upstream.headers.get('content-type')?.includes('application/json')) {
+            console.error('api_bridge_non_json', { status: upstream.status });
             return json(502, 'No se pudo conectar. Probá nuevamente o escribime por email.');
           }
           return new Response(upstream.body, {
             status: upstream.status,
             headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' },
           });
-        } catch {
+        } catch (error) {
+          console.error('api_bridge_failed', { message: error instanceof Error ? error.message : 'Unknown network error' });
           return json(502, 'No se pudo conectar. Probá nuevamente o escribime por email.');
+        } finally {
+          clearTimeout(timeout);
         }
       }
       if (request.method !== 'GET' && request.method !== 'HEAD') return json(405, 'Método no permitido.');
