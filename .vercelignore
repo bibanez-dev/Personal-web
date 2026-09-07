@@ -1,0 +1,9 @@
+.edge-debug/
+.openai/
+docs/
+server/
+scripts/
+tests/
+desktop-hero.png
+mobile-contact.png
+mobile-hero.png
