@@ -1,5 +1,0 @@
-2026/05/04-17:25:17.455 2908 Creating DB C:\Users\Benjamin\Documents\GitHub\Personal-web\.edge-debug\Default\EdgeCoupons/coupons_data.db since it was missing.
-2026/05/04-17:25:17.464 2908 Reusing MANIFEST C:\Users\Benjamin\Documents\GitHub\Personal-web\.edge-debug\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
-2026/05/04-17:25:18.064 5a9c Level-0 table #5: started
-2026/05/04-17:25:18.071 5a9c Level-0 table #5: 682137 bytes OK
-2026/05/04-17:25:18.074 5a9c Delete type=0 #3
