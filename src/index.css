@@ -1013,7 +1013,9 @@
 
   /* --- Enhanced UI/UX Polish & Refinements --- */
   .site-shell {
-    overflow-x: hidden;
+    /* clip keeps horizontal overflow contained without creating a scroll container,
+       so the sticky topbar stays pinned to the viewport. */
+    overflow-x: clip;
     width: 100%;
   }
 
@@ -1215,10 +1217,13 @@
 
   .impact-badge-wrap {
     justify-self: end;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .impact-metric-pill {
     display: inline-block;
+    max-width: 100%;
     padding: 0.38rem 0.9rem;
     border-radius: 9999px;
     background: var(--bg-panel);
@@ -1227,7 +1232,9 @@
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.02em;
-    white-space: nowrap;
+    line-height: 1.35;
+    white-space: normal;
+    overflow-wrap: break-word;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   }
 
@@ -1236,6 +1243,7 @@
       justify-self: start;
       margin-top: 0.6rem;
       margin-left: 3.75rem;
+      max-width: calc(100% - 3.75rem);
     }
   }
 
