@@ -3,14 +3,21 @@ import {
   ArrowRight,
   ArrowUpRight,
   Building2,
+  Check,
   ChevronUp,
+  Copy,
+  ExternalLink,
   Languages,
+  Layers,
   Linkedin,
   Mail,
   Menu,
   MessageCircle,
   Moon,
+  ShieldCheck,
+  Sparkles,
   Sun,
+  Workflow,
   X,
 } from 'lucide-react';
 import profileImage from './assets/profile-benjamin.jpg';
@@ -35,13 +42,20 @@ interface TextContent {
     closeMenu: string;
   };
   hero: {
+    availability: string;
     eyebrow: string;
     title: string;
     subtitle: string;
     identity: string;
+    location: string;
     primaryCta: string;
     secondaryCta: string;
   };
+  stats: Array<{
+    value: string;
+    label: string;
+    detail: string;
+  }>;
   services: {
     eyebrow: string;
     title: string;
@@ -58,7 +72,18 @@ interface TextContent {
     eyebrow: string;
     title: string;
     description: string;
-    items: Array<{ status: string; title: string; body: string }>;
+    approachLabel: string;
+    criterionLabel: string;
+    items: Array<{
+      status: string;
+      title: string;
+      role: string;
+      body: string;
+      approach: string;
+      criterion: string;
+      tags: string[];
+      link?: { url: string; label: string };
+    }>;
   };
   contact: {
     eyebrow: string;
@@ -68,6 +93,8 @@ interface TextContent {
     formTitle: string;
     primaryCta: string;
     secondaryCta: string;
+    copyEmail: string;
+    copiedEmail: string;
     fields: {
       name: string;
       email: string;
@@ -109,13 +136,13 @@ interface TextContent {
 const CONTENT: Record<Language, TextContent> = {
   es: {
     meta: {
-      title: 'Benjamin Ibanez | IA aplicada, operaciones y producto',
+      title: 'Benjamin Ibanez | VP en Citi · IA aplicada, operaciones y producto',
       description:
-        'Benjamin Ibanez. Adopción de IA, mejora de operaciones y desarrollo de producto en banca corporativa y proyectos propios.',
+        'Benjamin Ibanez. VP en Citi y AI Champion LATAM. Adopción de IA, mejora de operaciones en banca corporativa y desarrollo de producto en proyectos propios como SurIA.',
     },
     nav: {
       services: 'Servicios',
-      impact: 'Aplicaciones',
+      impact: 'Criterios',
       current: 'Proyectos',
       contact: 'Contacto',
       language: 'Cambiar idioma',
@@ -124,54 +151,78 @@ const CONTENT: Record<Language, TextContent> = {
       closeMenu: 'Cerrar menú',
     },
     hero: {
-      eyebrow: 'VP en Citi · IA y producto',
+      availability: 'Abierto a conversaciones B2B y asesoría en IA',
+      eyebrow: 'VP en Citi · AI Champion LATAM · Founder',
       title: 'IA aplicada. Operaciones más simples.',
       subtitle:
-        'Lidero la adopción de IA y la mejora de procesos en banca corporativa. Conecto negocio, tecnología y producto para llevar ideas a la práctica.',
-      identity: 'VP en Citi. Construyendo SurIA de forma independiente.',
+        'Lidero la adopción de IA y la mejora continua de procesos en banca corporativa y proyectos propios. Conecto negocio, tecnología y producto para que cada solución resuelva una tarea concreta y pueda ser adoptada, auditada y sostenida por el equipo.',
+      identity: 'VP Senior Service Manager en Citi · Construyendo SurIA de forma independiente.',
+      location: 'Buenos Aires, Argentina · Clúster Cono Sur',
       primaryCta: 'Conectemos en LinkedIn',
       secondaryCta: 'Contactarme',
     },
+    stats: [
+      {
+        value: '12+',
+        label: 'Años de trayectoria',
+        detail: 'Estrategia operativa, banca global y B2B',
+      },
+      {
+        value: '10',
+        label: 'Cuentas Globales',
+        detail: 'Gestión y SLAs de clientes corporativos Tier-1 en Citi',
+      },
+      {
+        value: '+200',
+        label: 'Profesionales capacitados',
+        detail: 'AI Champion Citi: casos reales en Argentina, México y Colombia',
+      },
+      {
+        value: 'Founder',
+        label: 'SurIA & Automatización',
+        detail: 'Stack moderno en Supabase y Vercel para PyMEs',
+      },
+    ],
     services: {
       eyebrow: 'Servicios',
       title: 'Tres formas de aportar valor.',
       description:
-        'Conecto negocio, operaciones y producto para llevar iniciativas a la práctica.',
+        'Empiezo por entender la tarea, dónde se traba y quién tiene que decidir. Después elijo qué simplificar, qué automatizar y qué conviene seguir revisando con criterio humano.',
       items: [
         {
           title: 'Adopción de IA',
-          body: 'Defino casos de uso, responsables y procesos para integrar IA al trabajo cotidiano.',
+          body: 'Antes de sumar IA, analizo si la tarea se repite, qué información necesita y cómo se detecta un error. Si la salida no se puede revisar y auditar, falta resolver una parte crítica del problema.',
         },
         {
           title: 'Mejora de servicios',
-          body: 'Rediseño procesos para mejorar la velocidad, la consistencia y la experiencia del cliente.',
+          body: 'Reviso dónde una solicitud queda esperando, qué datos se piden más de una vez y qué decisiones no tienen un responsable claro. Esos puntos orientan qué cambiar primero para elevar los SLAs.',
         },
         {
           title: 'Estrategia de producto',
-          body: 'Priorizo necesidades y decisiones para desarrollar soluciones útiles y fáciles de usar.',
+          body: 'Priorizo por el problema que se resuelve, la frecuencia con que aparece y el esfuerzo de mantener la solución. Una función nueva tiene que justificar la complejidad que agrega.',
         },
       ],
     },
     impact: {
-      eyebrow: 'Aplicaciones',
-      title: 'En la práctica.',
+      eyebrow: 'Criterios en la práctica',
+      title: 'Cómo evalúo una iniciativa antes de llevarla a producción.',
       description:
-        'Aplico estas capacidades a desafíos concretos de la operación.',
+        'Principios de diseño operativo para garantizar que la tecnología genere impacto real sin introducir riesgos imprevistos.',
       items: [
         {
           title: 'Flujos internos con IA',
-          body: 'Diseño flujos de trabajo que incorporan IA a tareas y decisiones internas.',
-          metric: 'Foco: adopción cotidiana',
+          body: '¿La información de entrada alcanza? ¿Quién revisa la salida? Cada flujo con IA necesita una forma clara de auditar resultados, corregir desvíos y continuar el trabajo sin fricción.',
+          metric: 'Criterio: salida revisable y auditable',
         },
         {
-          title: 'Procesos de servicio',
-          body: 'Reviso pasos y puntos de decisión para simplificar la operación y mejorar la respuesta al cliente.',
-          metric: 'Foco: claridad y consistencia',
+          title: 'Procesos de servicio & SLA',
+          body: '¿Este paso ayuda a resolver la solicitud o solo la pasa a otra persona? Busco simplificar los traspasos sin perder controles regulatorios ni claridad para el cliente.',
+          metric: 'Criterio: menos traspasos, mayor velocidad',
         },
         {
-          title: 'Ejecución de iniciativas',
-          body: 'Alineo negocio, operaciones y producto con responsables y seguimiento.',
-          metric: 'Foco: implementación',
+          title: 'Ejecución y gobernanza',
+          body: 'Antes de avanzar, busco acordar quién decide, quién va a usar el cambio y qué evidencia permitirá sostenerlo o ajustarlo. Una implementación tiene que poder mantenerse viva en la operación.',
+          metric: 'Criterio: uso efectivo y mantenimiento',
         },
       ],
     },
@@ -179,22 +230,46 @@ const CONTENT: Record<Language, TextContent> = {
       eyebrow: 'Proyectos',
       title: 'Ideas que llevo a la práctica.',
       description:
-        'Transformación corporativa y proyectos propios. Dos espacios para construir y aprender.',
+        'En Citi trabajo sobre operaciones de gran escala; con SurIA desarrollo automatizaciones para PyMEs; en Postales Argentinas, una mirada editorial. Cada espacio me obliga a decidir qué vale la pena construir.',
+      approachLabel: 'Qué estoy haciendo',
+      criterionLabel: 'Criterio clave',
       items: [
         {
-          status: 'En curso',
+          status: 'En curso · Banca',
           title: 'IA y operaciones en Citi',
-          body: 'Impulso la adopción de IA y la mejora operativa en procesos de banca corporativa.',
+          role: 'VP – Senior Service Manager & AI Champion',
+          body: 'Lidero la relación de servicio y optimización para 10 clientes corporativos globales, coordinando equipos en varios países y actuando como AI Champion regional para capacitar a más de 200 profesionales en el uso práctico de IA.',
+          approach:
+            'Llevar la adopción de IA al trabajo cotidiano y revisar cómo se integra armoniosamente con los controles y procesos existentes.',
+          criterion:
+            'Una mejora tiene que poder explicarse, revisarse y sostenerse en la operación. La adopción cultural importa tanto como la herramienta.',
+          tags: ['Banca Corporativa', 'Gestión de SLAs', 'Gobernanza', 'Human-in-the-loop'],
         },
         {
-          status: 'En desarrollo',
+          status: 'En desarrollo · Startup',
           title: 'SurIA',
-          body: 'Desarrollo automatizaciones con IA para simplificar tareas manuales y procesos de trabajo.',
+          role: 'Founder & Builder',
+          body: 'Construyo SurIA de forma independiente como práctica y plataforma de consultoría de IA para pequeñas y medianas empresas. Desarrollé el stack completo (demo web, CRM en Supabase, despliegue en Vercel y agentes para WhatsApp).',
+          approach:
+            'Desarrollar automatizaciones orientadas a liberar trabajo manual repetitivo donde la IA es confiable, manteniendo supervisión humana.',
+          criterion:
+            'Empiezo por una tarea acotada: qué entra, qué debería salir y cuándo interviene una persona. Prefiero resolver bien ese recorrido antes de ampliarlo.',
+          tags: ['Next.js', 'Supabase', 'Vercel', 'WhatsApp Agents', 'PyMEs'],
+          link: {
+            url: 'https://github.com/bibanez-dev/suria-core',
+            label: 'Ver repositorio open source',
+          },
         },
         {
-          status: 'En construcción',
-          title: 'Postales Argentinas',
-          body: 'Creo relatos visuales sobre identidad y cultura argentina, con una mirada editorial propia.',
+          status: 'En construcción · Editorial',
+          title: 'Postales Argentinas / Rutas Argentinas',
+          role: 'Dirección Editorial & Multimedia',
+          body: 'Proyecto de relatos visuales sobre identidad, paisajes y cultura argentina (Patagonia, Ruta 3, Moquehue, Río Atuel). Trabajo la selección temática, la dirección de arte y el tratamiento narrativo.',
+          approach:
+            'Crear relatos visuales y documentar destinos explorando nuevas formas de comunicar lo propio con alta calidad estética.',
+          criterion:
+            'Me interesa que cada pieza tenga una historia fundamentada que contar, además de una imagen atractiva. La curaduría y el contexto son esenciales.',
+          tags: ['Visual Storytelling', 'Identidad & Cultura', 'Producción Audiovisual'],
         },
       ],
     },
@@ -202,38 +277,40 @@ const CONTENT: Record<Language, TextContent> = {
       eyebrow: 'Contacto',
       title: 'Una buena conversación puede ser el comienzo.',
       description:
-        'Contame qué querés mejorar y qué necesitás resolver.',
+        'Si estás evaluando una automatización, rediseñando un proceso o explorando soluciones de IA para tu operación o empresa, contame qué desafío tenés por delante.',
       responseTime: 'Suelo responder en 24 a 48 horas hábiles.',
-      formTitle: 'Escribime',
-      primaryCta: 'Mensaje por LinkedIn',
-      secondaryCta: 'Enviar email',
+      formTitle: 'Escribime un mensaje',
+      primaryCta: 'Conectar por LinkedIn',
+      secondaryCta: 'Enviar un email',
+      copyEmail: 'Copiar email',
+      copiedEmail: '¡Email copiado!',
       fields: {
-        name: 'Nombre',
-        email: 'Email',
-        company: 'Empresa (opcional)',
+        name: 'Nombre y apellido',
+        email: 'Email de contacto',
+        company: 'Empresa u organización (opcional)',
         message: 'Mensaje',
         submit: 'Enviar mensaje',
-        sending: 'Enviando...',
+        sending: 'Enviando mensaje...',
       },
       placeholders: {
         name: 'Tu nombre',
         email: 'tu@email.com',
-        company: 'Tu empresa',
-        message: 'Contame el contexto y qué te gustaría lograr...',
+        company: 'Tu empresa o proyecto',
+        message:
+          '¿Qué tarea o proceso querés mejorar? Contame el contexto y qué probaste hasta ahora (mínimo 20 caracteres)...',
       },
       status: {
-        idle: 'Completá el formulario y respondo por email.',
-        success: 'Mensaje enviado. Te respondo pronto.',
-        error: 'No se pudo enviar. Probá de nuevo o escribime por LinkedIn/email.',
-        timeout: 'La solicitud demoró demasiado. Probá nuevamente.',
-        unexpected: 'No se pudo enviar. Probá en unos minutos o escribime por email.',
+        idle: 'Completá el formulario y te respondo por email.',
+        success: '¡Mensaje recibido! Te responderé a la brevedad.',
+        error: 'No se pudo enviar. Podés probar de nuevo o escribirme directamente por LinkedIn o email.',
+        timeout: 'La solicitud demoró más de lo esperado. Probá nuevamente.',
+        unexpected: 'Ocurrió un error inesperado. Escribime a bibanez00@gmail.com.',
         sending: 'Enviando mensaje...',
       },
     },
     footer: {
       copy: 'Benjamin Ibanez',
-      subcopy:
-        'IA aplicada, operaciones y producto',
+      subcopy: 'IA aplicada · Operaciones globales · Producto',
       navLabel: 'Navegación',
       top: 'Volver arriba',
     },
@@ -247,13 +324,13 @@ const CONTENT: Record<Language, TextContent> = {
   },
   en: {
     meta: {
-      title: 'Benjamin Ibanez | AI Adoption and Service Transformation',
+      title: 'Benjamin Ibanez | VP at Citi · Applied AI, Operations & Product',
       description:
-        'Benjamin Ibanez leads AI adoption, service transformation and product discipline initiatives in high-stakes operations.',
+        'Benjamin Ibanez. VP at Citi and LATAM AI Champion. Enterprise AI adoption, corporate banking operations, and independent product ventures like SurIA.',
     },
     nav: {
       services: 'Services',
-      impact: 'Applications',
+      impact: 'Criteria',
       current: 'Projects',
       contact: 'Contact',
       language: 'Change language',
@@ -262,116 +339,166 @@ const CONTENT: Record<Language, TextContent> = {
       closeMenu: 'Close menu',
     },
     hero: {
-      eyebrow: 'VP at Citi · AI & product',
-      title: 'Applied AI. Simpler operations.',
+      availability: 'Open to B2B conversations & AI advisory',
+      eyebrow: 'VP at Citi · LATAM AI Champion · Founder',
+      title: 'Applied AI. Simpler Operations.',
       subtitle:
-        'I lead AI adoption and process improvement in corporate banking, connecting business, technology and product to put ideas into practice.',
-      identity: 'VP at Citi. Independently building SurIA.',
+        'I lead practical AI adoption and service optimization across corporate banking and independent ventures. I connect business, technology, and product so teams can reliably use, audit, and sustain every solution.',
+      identity: 'VP Senior Service Manager at Citi · Independently building SurIA.',
+      location: 'Buenos Aires, Argentina · South America Cluster',
       primaryCta: 'Connect on LinkedIn',
-      secondaryCta: 'Contact me',
+      secondaryCta: 'Get in touch',
     },
+    stats: [
+      {
+        value: '12+',
+        label: 'Years of Experience',
+        detail: 'Operations strategy, global banking & B2B',
+      },
+      {
+        value: '10',
+        label: 'Global Accounts',
+        detail: 'SLA management for Tier-1 corporate clients at Citi',
+      },
+      {
+        value: '+200',
+        label: 'Professionals Trained',
+        detail: 'Citi AI Champion: real-world use cases in Argentina, Mexico & Colombia',
+      },
+      {
+        value: 'Founder',
+        label: 'SurIA & Automation',
+        detail: 'Modern AI stack on Supabase & Vercel for SMEs',
+      },
+    ],
     services: {
       eyebrow: 'Services',
-      title: 'Three ways I can help.',
+      title: 'Three ways I bring value.',
       description:
-        'Connecting business, operations and product to put initiatives into practice.',
+        'I start by understanding the task, where it stalls, and who needs to decide. Then I select what to simplify, what to automate, and what still requires human judgment.',
       items: [
         {
-          title: 'AI adoption',
-          body: 'I define use cases, operating model and accountability so AI reaches real and sustained adoption.',
+          title: 'AI Adoption',
+          body: 'Before adding AI, I look at whether the task is repeatable, what data it needs, and how errors are caught. If the output cannot be audited, a critical piece of the puzzle is missing.',
         },
         {
-          title: 'Service transformation',
-          body: 'I redesign critical service processes to improve speed, consistency and customer experience.',
+          title: 'Service Transformation',
+          body: 'I analyze where requests linger, what data is requested multiple times, and which decisions lack a clear owner to streamline handoffs and improve customer SLAs.',
         },
         {
-          title: 'Product strategy',
-          body: 'I prioritize user needs and product decisions to build useful, accessible solutions.',
+          title: 'Product Strategy',
+          body: 'I prioritize based on problem severity, usage frequency, and maintenance overhead. A new feature must always justify the operational complexity it introduces.',
         },
       ],
     },
     impact: {
-      eyebrow: 'Applications',
-      title: 'In practice.',
+      eyebrow: 'Operational Criteria',
+      title: 'How I evaluate an initiative before production.',
       description:
-        'Applying these capabilities to everyday operational challenges.',
+        'Guiding operational principles to ensure technology delivers measurable business impact without unexpected operational friction.',
       items: [
         {
-          title: 'Internal AI workflows',
-          body: 'I design and operationalize internal AI workflows that reduce friction and improve execution quality.',
-          metric: 'Focus: everyday adoption',
+          title: 'Internal AI Workflows',
+          body: 'Is the input data sufficient? Who reviews the output? Every AI workflow needs a transparent mechanism to verify results, handle exceptions, and keep operations running smoothly.',
+          metric: 'Criterion: reviewable & auditable output',
         },
         {
-          title: 'Service optimization',
-          body: 'I reshape service processes and decision points to improve speed, consistency and response quality.',
-          metric: 'Focus: clarity and consistency',
+          title: 'Service Processes & SLAs',
+          body: 'Does this step help resolve the request or merely pass the baton? I aim to reduce handoffs without sacrificing regulatory compliance or client clarity.',
+          metric: 'Criterion: fewer handoffs, faster resolution',
         },
         {
-          title: 'Execution discipline',
-          body: 'I align business, operations and product so initiatives move with judgment, ownership and real follow-through.',
-          metric: 'Focus: implementation',
+          title: 'Execution & Governance',
+          body: 'Before proceeding, I align on decision rights, user adoption, and key success metrics. An implementation must remain fully maintainable in real-world operations.',
+          metric: 'Criterion: sustained usage & maintenance',
         },
       ],
     },
     current: {
       eyebrow: 'Projects',
-      title: 'Ideas I am putting to work.',
+      title: 'Ideas put into practice.',
       description:
-        'Corporate transformation and independent projects. Two spaces to build and learn.',
+        'At Citi I optimize high-stakes banking operations; with SurIA I build AI automation for SMEs; in Postales Argentinas, an editorial lens. Each environment shapes what is worth building.',
+      approachLabel: 'What I am doing',
+      criterionLabel: 'Core criterion',
       items: [
         {
-          status: 'Scaling',
-          title: 'Enterprise AI and operations',
-          body: 'Advancing AI adoption, operational improvement and more consistent decisions in high-stakes corporate banking processes.',
+          status: 'Ongoing · Banking',
+          title: 'AI & Operations at Citi',
+          role: 'VP – Senior Service Manager & AI Champion',
+          body: 'I own service delivery and process optimization for 10 global corporate clients, coordinating cross-border teams and serving as regional AI Champion to train over 200 colleagues in practical AI adoption.',
+          approach:
+            'Bringing AI adoption into everyday operations while maintaining strict controls and alignment with established institutional processes.',
+          criterion:
+            'An improvement must be easily explained, reviewed, and sustained in daily operations. Cultural adoption matters as much as the tool itself.',
+          tags: ['Corporate Banking', 'SLA Management', 'Governance', 'Human-in-the-loop'],
         },
         {
-          status: 'Building',
+          status: 'In development · Startup',
           title: 'SurIA',
-          body: 'Building AI automations to simplify manual tasks and everyday workflows.',
+          role: 'Founder & Builder',
+          body: 'Independently building SurIA as an applied AI consulting practice and platform for SMEs. Scaffolding the complete tech stack: web demo, Supabase CRM, Vercel deployments, and WhatsApp conversational agents.',
+          approach:
+            'Developing automations designed to eliminate tedious manual work where AI is dependable, retaining human review where judgment is vital.',
+          criterion:
+            'Start with a tightly scoped workflow: understand what enters, what exits, and when human intervention is necessary before expanding.',
+          tags: ['Next.js', 'Supabase', 'Vercel', 'WhatsApp Agents', 'SMEs'],
+          link: {
+            url: 'https://github.com/bibanez-dev/suria-core',
+            label: 'View open source repository',
+          },
         },
         {
-          status: 'Curating',
-          title: 'Postales Argentinas',
-          body: 'Creating visual stories about Argentine identity and culture, with an independent editorial perspective.',
+          status: 'In progress · Editorial',
+          title: 'Postales Argentinas / Rutas Argentinas',
+          role: 'Editorial & Multimedia Direction',
+          body: 'Visual storytelling project exploring Argentine identity, culture, and landscapes (Patagonia, Route 3, Moquehue, Atuel River). Curating thematic narratives and visual brand direction.',
+          approach:
+            'Crafting visual stories and editorial pieces that celebrate local heritage with high aesthetic and narrative discipline.',
+          criterion:
+            'Every piece must tell a meaningful story beyond an attractive image. Curation and cultural context are fundamental.',
+          tags: ['Visual Storytelling', 'Identity & Culture', 'Multimedia Production'],
         },
       ],
     },
     contact: {
       eyebrow: 'Contact',
-      title: 'It starts with a conversation.',
+      title: 'A thoughtful conversation is where it begins.',
       description:
-        'Tell me what you want to improve and what you need to solve.',
-      responseTime: 'Typical response time: 24 to 48 business hours.',
-      formTitle: 'Send a direct message',
-      primaryCta: 'Message on LinkedIn',
-      secondaryCta: 'Send email',
+        'Whether you are assessing an automation, redesigning a process, or exploring AI applications for your company or operations, feel free to reach out.',
+      responseTime: 'I typically reply within 24 to 48 business hours.',
+      formTitle: 'Send a message',
+      primaryCta: 'Connect on LinkedIn',
+      secondaryCta: 'Send an email',
+      copyEmail: 'Copy email',
+      copiedEmail: 'Email copied!',
       fields: {
-        name: 'Name',
-        email: 'Email',
-        company: 'Company (optional)',
+        name: 'Full name',
+        email: 'Contact email',
+        company: 'Company or organization (optional)',
         message: 'Message',
         submit: 'Send message',
-        sending: 'Sending...',
+        sending: 'Sending message...',
       },
       placeholders: {
         name: 'Your name',
         email: 'you@email.com',
-        company: 'Your company',
-        message: 'Context, challenge and objective of the conversation...',
+        company: 'Your company or project',
+        message:
+          'What task or workflow would you like to improve? Share context and what you have explored so far (min 20 characters)...',
       },
       status: {
-        idle: 'Fill the form and I will reply by email.',
-        success: 'Message sent. I will reply soon.',
-        error: 'Could not send. Please try again or reach out via LinkedIn/email.',
-        timeout: 'The request took too long. Please try again.',
-        unexpected: 'Unexpected server response. Please try again in a few minutes.',
+        idle: 'Fill out the form and I will follow up via email.',
+        success: 'Message received! I will reply shortly.',
+        error: 'Could not send. You can try again or reach out directly on LinkedIn or email.',
+        timeout: 'The request took longer than expected. Please try again.',
+        unexpected: 'An unexpected error occurred. Please write directly to bibanez00@gmail.com.',
         sending: 'Sending message...',
       },
     },
     footer: {
       copy: 'Benjamin Ibanez',
-      subcopy:
-        'Applied AI, operations and product',
+      subcopy: 'Applied AI · Global Operations · Product',
       navLabel: 'Navigation',
       top: 'Back to top',
     },
@@ -387,7 +514,11 @@ const CONTENT: Record<Language, TextContent> = {
 
 const LINKEDIN_URL = 'https://www.linkedin.com/in/ibanezbenjamin/';
 const EMAIL = 'bibanez00@gmail.com';
-const WHATSAPP_URL = (import.meta.env.VITE_WHATSAPP_URL as string | undefined)?.trim() ?? '';
+const DEFAULT_WHATSAPP_URL =
+  'https://wa.me/5492215719109?text=Hola%20Benjam%C3%ADn%2C%20estuve%20viendo%20tu%20web%20personal';
+const WHATSAPP_URL =
+  (import.meta.env.VITE_WHATSAPP_URL as string | undefined)?.trim() || DEFAULT_WHATSAPP_URL;
+
 const STORAGE_LANGUAGE = 'site_language';
 const STORAGE_THEME = 'site_theme';
 const PROFILE_IMAGE_WIDTH = 864;
@@ -417,6 +548,9 @@ export default function App() {
   const [theme, setTheme] = useState<Theme>('light');
   const [submitState, setSubmitState] = useState<SubmitState>('idle');
   const [submitMessage, setSubmitMessage] = useState(CONTENT.es.contact.status.idle);
+  const [activeSection, setActiveSection] = useState<string>('top');
+  const [emailCopied, setEmailCopied] = useState(false);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -474,6 +608,26 @@ export default function App() {
     }
   }, [theme]);
 
+  // Scroll spy to highlight active section in navbar
+  useEffect(() => {
+    const sections = ['top', 'services', 'impact', 'current', 'contact'];
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 220;
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const id = sections[i];
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollPosition) {
+          setActiveSection(id);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   useEffect(() => {
     if (!floatingOpen) {
       return;
@@ -509,6 +663,12 @@ export default function App() {
       setSubmitState('idle');
       setSubmitMessage(content.contact.status.idle);
     }
+  };
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(EMAIL);
+    setEmailCopied(true);
+    window.setTimeout(() => setEmailCopied(false), 2400);
   };
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -569,7 +729,7 @@ export default function App() {
   return (
     <div className="site-shell" data-theme={theme}>
       <a className="skip-link" href="#main-content">
-        {language === 'es' ? 'Saltar al contenido' : 'Skip to content'}
+        {language === 'es' ? 'Saltar al contenido principal' : 'Skip to main content'}
       </a>
 
       <header className="topbar">
@@ -578,13 +738,23 @@ export default function App() {
             <span className="brand-mark">BI</span>
             <span className="brand-text">
               <span className="brand-name">Benjamin Ibanez</span>
-              <span className="brand-subtitle">{language === 'es' ? 'IA · Operaciones · Producto' : 'AI · Operations · Product'}</span>
+              <span className="brand-subtitle">
+                {language === 'es' ? 'IA · Operaciones · Producto' : 'AI · Operations · Product'}
+              </span>
             </span>
           </a>
 
-          <nav className="desktop-nav" aria-label={language === 'es' ? 'Navegación principal' : 'Primary navigation'}>
+          <nav
+            className="desktop-nav"
+            aria-label={language === 'es' ? 'Navegación principal' : 'Primary navigation'}
+          >
             {navItems.map((item) => (
-              <a key={item.id} href={`#${item.id}`}>
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                className={activeSection === item.id ? 'active' : ''}
+                aria-current={activeSection === item.id ? 'true' : undefined}
+              >
                 {item.label}
               </a>
             ))}
@@ -609,7 +779,7 @@ export default function App() {
               {theme === 'light' ? <Moon size={14} /> : <Sun size={14} />}
             </button>
             <a className="desktop-cta" href={LINKEDIN_URL} target="_blank" rel="noreferrer">
-              LinkedIn
+              <span>LinkedIn</span>
               <ArrowUpRight size={14} />
             </a>
             <button
@@ -629,12 +799,23 @@ export default function App() {
           <div className="mobile-nav" id="mobile-nav">
             <div className="site-container mobile-nav-inner">
               {navItems.map((item) => (
-                <a key={item.id} href={`#${item.id}`} onClick={() => setMenuOpen(false)}>
+                <a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  className={activeSection === item.id ? 'active' : ''}
+                  onClick={() => setMenuOpen(false)}
+                >
                   {item.label}
                 </a>
               ))}
-              <a href={LINKEDIN_URL} target="_blank" rel="noreferrer" onClick={() => setMenuOpen(false)}>
+              <a
+                href={LINKEDIN_URL}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setMenuOpen(false)}
+              >
                 LinkedIn
+                <ArrowUpRight size={14} />
               </a>
             </div>
           </div>
@@ -642,15 +823,23 @@ export default function App() {
       </header>
 
       <main id="main-content">
+        {/* HERO SECTION */}
         <section className="hero" id="top">
           <div className="site-container hero-grid">
             <div className="hero-copy">
+              <div className="availability-pill">
+                <span className="availability-dot" aria-hidden="true" />
+                <span>{content.hero.availability}</span>
+              </div>
+
               <p className="hero-eyebrow">{content.hero.eyebrow}</p>
               <h1>{content.hero.title}</h1>
               <p className="hero-subtitle">{content.hero.subtitle}</p>
+
               <div className="hero-details">
                 <p className="hero-detail">{content.hero.identity}</p>
               </div>
+
               <div className="hero-actions">
                 <a className="btn primary" href={LINKEDIN_URL} target="_blank" rel="noreferrer">
                   {content.hero.primaryCta}
@@ -673,15 +862,37 @@ export default function App() {
                   className="portrait"
                   fetchPriority="high"
                 />
+                <div className="portrait-badge">
+                  <span className="badge-dot" aria-hidden="true" />
+                  <span>{content.hero.location}</span>
+                </div>
               </div>
               <div className="portrait-caption">
                 <span>Benjamin Ibanez</span>
-                <span>{language === 'es' ? 'IA, operaciones y producto' : 'AI, operations & product'}</span>
+                <span>
+                  {language === 'es' ? 'IA, operaciones y producto' : 'AI, operations & product'}
+                </span>
               </div>
             </aside>
           </div>
         </section>
 
+        {/* METRICS & CREDIBILITY STRIP */}
+        <section className="stats-strip" aria-label="Métricas y credibilidad">
+          <div className="site-container">
+            <div className="stats-grid">
+              {content.stats.map((stat, idx) => (
+                <div className="stat-card" key={idx}>
+                  <p className="stat-value">{stat.value}</p>
+                  <p className="stat-label">{stat.label}</p>
+                  <p className="stat-detail">{stat.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* SERVICES SECTION */}
         <section className="section" id="services">
           <div className="site-container">
             <SectionHeading
@@ -692,7 +903,14 @@ export default function App() {
             <div className="service-grid">
               {content.services.items.map((item, index) => (
                 <article className="service-item" key={item.title}>
-                  <span className="item-number" aria-hidden="true">0{index + 1}</span>
+                  <div className="service-header">
+                    <span className="item-number" aria-hidden="true">
+                      0{index + 1}
+                    </span>
+                    {index === 0 && <Sparkles size={18} className="service-icon" />}
+                    {index === 1 && <Workflow size={18} className="service-icon" />}
+                    {index === 2 && <Layers size={18} className="service-icon" />}
+                  </div>
                   <h3>{item.title}</h3>
                   <p>{item.body}</p>
                 </article>
@@ -701,6 +919,7 @@ export default function App() {
           </div>
         </section>
 
+        {/* IMPACT / ENFOQUE OPERATIVO SECTION */}
         <section className="section section-tinted" id="impact">
           <div className="site-container">
             <SectionHeading
@@ -709,19 +928,29 @@ export default function App() {
               description={content.impact.description}
             />
             <div className="impact-list">
-              {content.impact.items.map((item) => (
+              {content.impact.items.map((item, idx) => (
                 <article className="impact-item" key={item.title}>
-                  <div>
-                    <h3>{item.title}</h3>
-                    <p>{item.body}</p>
+                  <div className="impact-main">
+                    <div className="impact-icon-wrap" aria-hidden="true">
+                      {idx === 0 && <Workflow size={20} />}
+                      {idx === 1 && <ShieldCheck size={20} />}
+                      {idx === 2 && <Layers size={20} />}
+                    </div>
+                    <div>
+                      <h3>{item.title}</h3>
+                      <p>{item.body}</p>
+                    </div>
                   </div>
-                  <p className="impact-metric">{item.metric}</p>
+                  <div className="impact-badge-wrap">
+                    <span className="impact-metric-pill">{item.metric}</span>
+                  </div>
                 </article>
               ))}
             </div>
           </div>
         </section>
 
+        {/* CURRENT PROJECTS SECTION */}
         <section className="section" id="current">
           <div className="site-container">
             <SectionHeading
@@ -732,21 +961,56 @@ export default function App() {
             <div className="current-grid">
               {content.current.items.map((item) => (
                 <article className="current-item" key={item.title}>
-                  <span>{item.status}</span>
+                  <div className="project-top">
+                    <span className="project-status">{item.status}</span>
+                    <span className="project-role">{item.role}</span>
+                  </div>
+
                   <h3>{item.title}</h3>
-                  <p>{item.body}</p>
+                  <p className="project-description">{item.body}</p>
+
+                  <div className="project-tags">
+                    {item.tags.map((tag) => (
+                      <span className="project-tag" key={tag}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <dl className="project-details">
+                    <dt>{content.current.approachLabel}</dt>
+                    <dd>{item.approach}</dd>
+                    <dt>{content.current.criterionLabel}</dt>
+                    <dd>{item.criterion}</dd>
+                  </dl>
+
+                  {item.link && (
+                    <div className="project-footer-link">
+                      <a
+                        href={item.link.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="project-action-link"
+                      >
+                        <span>{item.link.label}</span>
+                        <ExternalLink size={14} />
+                      </a>
+                    </div>
+                  )}
                 </article>
               ))}
             </div>
           </div>
         </section>
 
+        {/* CONTACT SECTION */}
         <section className="section section-contact" id="contact">
           <div className="site-container contact-grid">
             <div className="contact-copy">
               <p className="eyebrow">{content.contact.eyebrow}</p>
               <h2>{content.contact.title}</h2>
               <p>{content.contact.description}</p>
+
               <div className="hero-actions">
                 <a className="btn primary" href={LINKEDIN_URL} target="_blank" rel="noreferrer">
                   {content.contact.primaryCta}
@@ -757,19 +1021,45 @@ export default function App() {
                   <Mail size={15} />
                 </a>
               </div>
-              <a className="contact-email" href={`mailto:${EMAIL}`}>
-                <Mail size={15} />
-                {EMAIL}
-              </a>
-              <small>{content.contact.responseTime}</small>
+
+              <div className="contact-direct-actions">
+                <a className="contact-email" href={`mailto:${EMAIL}`}>
+                  <Mail size={16} />
+                  <span>{EMAIL}</span>
+                </a>
+                <button
+                  type="button"
+                  className="copy-email-btn"
+                  onClick={handleCopyEmail}
+                  aria-label="Copiar email"
+                >
+                  {emailCopied ? (
+                    <>
+                      <Check size={14} className="copy-success" />
+                      <span>{content.contact.copiedEmail}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={14} />
+                      <span>{content.contact.copyEmail}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              <small className="response-time-notice">{content.contact.responseTime}</small>
             </div>
 
             <article className="contact-form-card">
               <h3>
                 <Building2 size={18} />
-                {content.contact.formTitle}
+                <span>{content.contact.formTitle}</span>
               </h3>
-              <form className="contact-form" onSubmit={onSubmit} aria-busy={submitState === 'sending'}>
+              <form
+                className="contact-form"
+                onSubmit={onSubmit}
+                aria-busy={submitState === 'sending'}
+              >
                 <label htmlFor="name">{content.contact.fields.name}</label>
                 <input
                   id="name"
@@ -826,7 +1116,12 @@ export default function App() {
                   disabled={submitState === 'sending'}
                 />
 
-                <p className="field-hint" id="message-hint">{language === 'es' ? 'Entre 20 y 2.000 caracteres.' : 'Between 20 and 2,000 characters.'}</p>
+                <p className="field-hint" id="message-hint">
+                  {language === 'es'
+                    ? 'Entre 20 y 2.000 caracteres.'
+                    : 'Between 20 and 2,000 characters.'}
+                </p>
+
                 <input
                   className="honeypot"
                   aria-hidden="true"
@@ -839,11 +1134,16 @@ export default function App() {
                   disabled={submitState === 'sending'}
                 />
 
-                <button className="btn primary" type="submit" disabled={submitState === 'sending'}>
+                <button
+                  className="btn primary form-submit-btn"
+                  type="submit"
+                  disabled={submitState === 'sending'}
+                >
                   {submitState === 'sending'
                     ? content.contact.fields.sending
                     : content.contact.fields.submit}
                 </button>
+
                 <p
                   className={`feedback ${submitState}`}
                   role={submitState === 'error' ? 'alert' : 'status'}
@@ -858,52 +1158,61 @@ export default function App() {
         </section>
       </main>
 
+      {/* FOOTER */}
       <footer className="footer">
         <div className="site-container footer-inner">
           <div>
             <p className="footer-name">{content.footer.copy}</p>
             <p className="footer-copy">{content.footer.subcopy}</p>
-            <p className="footer-copy">{year}</p>
+            <p className="footer-copy copyright-year">© {year}</p>
           </div>
 
           <div>
             <p className="footer-label">{content.footer.navLabel}</p>
-            <nav className="footer-nav" aria-label={language === 'es' ? 'Navegación al pie' : 'Footer navigation'}>
+            <nav
+              className="footer-nav"
+              aria-label={language === 'es' ? 'Navegación al pie' : 'Footer navigation'}
+            >
               {navItems.map((item) => (
                 <a key={item.id} href={`#${item.id}`}>
                   {item.label}
                 </a>
               ))}
               <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">
-                LinkedIn
+                <span>LinkedIn</span>
+                <ArrowUpRight size={13} />
+              </a>
+              <a href={WHATSAPP_URL} target="_blank" rel="noreferrer">
+                <span>WhatsApp</span>
+                <ArrowUpRight size={13} />
               </a>
             </nav>
           </div>
 
-          <button className="top-button" type="button" onClick={() => window.scrollTo({ top: 0, behavior: smoothOrAuto })}>
+          <button
+            className="top-button"
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: smoothOrAuto })}
+          >
             {content.footer.top}
             <ChevronUp size={14} />
           </button>
         </div>
       </footer>
 
+      {/* FLOATING QUICK CONNECT BUTTON (MOBILE) */}
       <div className="floating-mobile" ref={floatingRef}>
-        <div className={`floating-menu ${floatingOpen ? 'open' : ''}`} id="mobile-connect-popover" inert={!floatingOpen}>
+        <div
+          className={`floating-menu ${floatingOpen ? 'open' : ''}`}
+          id="mobile-connect-popover"
+          inert={!floatingOpen}
+        >
           <a
-            className={`floating-item ${WHATSAPP_URL ? '' : 'disabled'}`.trim()}
-            href={WHATSAPP_URL || '#'}
+            className="floating-item"
+            href={WHATSAPP_URL}
             target="_blank"
             rel="noreferrer"
-            aria-disabled={!WHATSAPP_URL}
-            tabIndex={WHATSAPP_URL ? undefined : -1}
-            title={WHATSAPP_URL ? content.floating.whatsapp : content.floating.unavailable}
-            onClick={(event) => {
-              if (!WHATSAPP_URL) {
-                event.preventDefault();
-                return;
-              }
-              setFloatingOpen(false);
-            }}
+            onClick={() => setFloatingOpen(false)}
           >
             <MessageCircle size={16} />
             <span>{content.floating.whatsapp}</span>
@@ -918,7 +1227,11 @@ export default function App() {
             <Linkedin size={16} />
             <span>{content.floating.linkedin}</span>
           </a>
-          <a className="floating-item" href={`mailto:${EMAIL}`} onClick={() => setFloatingOpen(false)}>
+          <a
+            className="floating-item"
+            href={`mailto:${EMAIL}`}
+            onClick={() => setFloatingOpen(false)}
+          >
             <Mail size={16} />
             <span>{content.floating.email}</span>
           </a>
